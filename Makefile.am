@@ -84,10 +84,16 @@ PACKAGES = meter.tcl bcmMeter.tcl epicsLabel.tcl \
 
 # Man pages:
 
-XMLFILES = meter.xml bcmMeter.xml epicsLabel.xml	\
-	radioMatrix.xml epicsEnumeratedControl.xml	\
-	typeNGo.xml epicsTypeNGo.xml epicsLabelWithUnits.xml \
-	led.xml epicsLed.xml epicsspinbox.xml epicsButton.xml \
+WEBXMLFILES= bcmMeter.xml epicsLabel.xml	\
+		 epicsEnumeratedControl.xml	\
+		 epicsTypeNGo.xml epicsLabelWithUnits.xml \
+		epicsLed.xml epicsspinbox.xml epicsButton.xml \
+		epics.xml 
+
+XMLFILES = meter.xml \
+	radioMatrix.xml \
+	typeNGo.xml      \
+	led.xml  \
 	CTCLApplication.xml CTCLInterpreterObject.xml \
 	CTCLInterpreter.xml CTCLVariable.xml CTCLChannel.xml \
 	CTCLCommandPackage.xml CTCLCompatibilityProcessor.xml \
@@ -96,7 +102,8 @@ XMLFILES = meter.xml bcmMeter.xml epicsLabel.xml	\
 	CTCLList.xml CTCLObject.xml CTCLObjectProcessor.xml \
 	CTCLPackagedCommand.xml CTCLProcessor.xml CTCLResult.xml \
 	CTCLString.xml CTCLTimer.xml TclPlus.xml \
-	epics.xml 
+	$(WEBXMLFILES)
+
 
 MANPAGES = meter.1tcl bcmMeter.1tcl epicsLabel.1tcl \
 	radioMatrix.1tcl epicsEnumeratedControl.1tcl \
@@ -111,6 +118,12 @@ MANPAGES = meter.1tcl bcmMeter.1tcl epicsLabel.1tcl \
 	CTCLPackagedCommand.3 CTCLProcessor.3 CTCLResult.3 \
 	CTCLString.3 CTCLTimer.3 TclPlus.3  epics.3
 
+WEBDOCS = index.html  \
+	bcmMeter.pdf epicsLabel.pdf epicsEnumeratedControl.pdf \
+	epicsTypeNGo.pdf epicsLabelWithUnits.pdf   \
+	epicsLed.pdf epicsspinbox.pdf epicsButton.pdf epics.pdf
+
+
 # Build rule for manpages:
 
 .xml.1tcl:
@@ -119,6 +132,9 @@ MANPAGES = meter.1tcl bcmMeter.1tcl epicsLabel.1tcl \
 
 .xml.3:
 	- $(MANDOCBOOK) man $< 2>/dev/null
+	touch $@
+.xml.pdf:
+	- $(MANDOCBOOK) pdf $< 2>/dev/null
 	touch $@
 
 
@@ -149,6 +165,11 @@ install-data-local:
 clean-local:
 	-rm -f $(MANPAGES)
 
+
+
+webdocs: $(WEBDOCS)
+	$(mkinstalldirs) $(WEBDOCDIR)
+	$(INSTALL_DATA)  $(WEBDOCS) $(WEBDOCDIR)
 
 
 ## Tests:
