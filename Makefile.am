@@ -18,7 +18,7 @@ include_HEADERS = ErrnoException.h Exception.h  StreamIOError.h \
 	TCLObjectProcessor.h TCLCompatibilityProcessor.h histotypes.h \
 	CTCLChannelCommand.h CTCLEpicsCommand.h \
 	CTCLEpicsPackage.h	\
-	CChannel.h
+	CChannel.h CChannelVariable.h
 
 libException_la_LDFLAGS = -version-info 1:0:0 \
 	$(OSLDFLAGS)
@@ -53,7 +53,8 @@ testableObjects = TCLInterpreter.o   TCLProcessor.o    \
 	CLanguageTraceCallbacks.o  TCLObjectProcessor.o \
 	TCLCompatibilityProcessor.o
 
-libtclPlus_la_SOURCES = TCLApplication.cpp $(testableSources)
+libtclPlus_la_SOURCES = TCLApplication.cpp CChannelVariable.cpp \
+	$(testableSources)
 
 
 
