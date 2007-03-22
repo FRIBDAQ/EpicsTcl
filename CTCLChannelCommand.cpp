@@ -22,6 +22,7 @@
 #include "CChannelVariable.h"
 #include "CChannel.h"
 #include "CTCLEpicsPackage.h"
+#include "CTCLEpicsCommand.h"
 
 #ifdef HAVE_STD_NAMESPACE 
 using namespace std;
@@ -263,7 +264,7 @@ CTCLChannelCommand::Updatetime(CTCLInterpreter& interp)
 int
 CTCLChannelCommand::Delete(CTCLInterpreter& interp)
 {
-  delete this;
+  CTCLEpicsCommand::deleteChannel(getName());
   return TCL_OK;
 }
 

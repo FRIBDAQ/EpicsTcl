@@ -35,9 +35,16 @@
 #endif
 #endif
 
+#ifndef __STL_MAP
+#include <map>
+#ifndef __STL_MAP
+#define __STL_MAP
+#endif
+#endif
+
 class CTCLInterpeter;
 class CTCLObject;
-
+class CTCLChannelCommand;
 
 /*!
     The epicschannel command provides a mechanisms for creating objects
@@ -53,6 +60,38 @@ class CTCLObject;
 */
 class CTCLEpicsCommand  : public CTCLObjectProcessor
 {
+private:
+  // This structure is used to manage all the epics channel commands
+  // and their reference counts.  This is done so that sections of a large
+  // application can create/delete channels without any fear of stepping on the
+  // toes of other parts of the same application that might be creatign and
+  // deleting the same channels.  The idea is that creating an existing channel
+  // will just increment its refcount, deleting an existing channel will
+  // decrement its refcount and not delete the actual channel object until
+  // the refcount is 0.
+
+  struct RefCountedChannel {
+    int                 s_refcount;
+    CTCLChannelCommand* s_pChannel;
+    RefCountedChannel(CTCLChannelCommand* p) :
+      s_refcount(0), s_pChannel(p) {}
+    RefCountedChannel() :
+      s_refcount(0), s_pChannel(0) {}
+    RefCountedChannel& operator=(const RefCountedChannel& rhs) 
+    {
+      s_refcount = rhs.s_refcount;
+      s_pChannel = rhs.s_pChannel;
+      return *this;
+    }
+  };
+  // The map type below keeps track of all the channels in a by-name lookup 
+  // structure:
+
+  typedef STD(map)<STD(string), RefCountedChannel> KnownChannels;
+
+  // class level data:
+
+  static KnownChannels  m_channelInfo;
 public:
   CTCLEpicsCommand(CTCLInterpreter& interp, STD(string) command = STD(string)("epicschannel"));
   virtual ~CTCLEpicsCommand();
@@ -67,7 +106,11 @@ public:
   virtual int operator()(CTCLInterpreter& interp,
 			 STD(vector)<CTCLObject>& objv);
 
+  // class level functions:
 
+  static RefCountedChannel*  haveChannel(STD(string) name);
+  static void                deleteChannel(STD(string) name);
+ 
 };
 
 

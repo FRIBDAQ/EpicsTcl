@@ -24,7 +24,11 @@
 using namespace std;
 #endif
 
+// Static class level data:
 
+CTCLEpicsCommand::KnownChannels CTCLEpicsCommand::m_channelInfo;
+
+///////////////////////////////////////////////////////////////////////////////
 /*!
   Construct the command.. nothing much to it.
 */
@@ -32,12 +36,12 @@ CTCLEpicsCommand::CTCLEpicsCommand(CTCLInterpreter& interp, string command) :
   CTCLObjectProcessor(interp, command)
 {
 }
-
+///////////////////////////////////////////////////////////////////////////////
 /*!
   Same for destruction.
 */
 CTCLEpicsCommand::~CTCLEpicsCommand() {}
-
+///////////////////////////////////////////////////////////////////////////////
 /*!
   Even the function call operator just needs to be sure there's a name
   present.
@@ -57,7 +61,57 @@ CTCLEpicsCommand::operator()(CTCLInterpreter& interp,
     return TCL_OK;
   }
 
-  new CTCLChannelCommand(interp, string(objv[1]));
+  std::string channelName(objv[1]);
+
+  RefCountedChannel* pExisting = haveChannel(channelName);
+
+  // If necessary make a new one:
+
+  if (!pExisting) {
+    CTCLChannelCommand* pChannel = new CTCLChannelCommand(interp, string(objv[1]));
+    RefCountedChannel newChan(pChannel);
+    m_channelInfo[channelName] = newChan;
+    pExisting = haveChannel(channelName); // must exist since we just made it!!!
+  }
+  pExisting->s_refcount++;
+
 
   return TCL_OK;
+}
+//////////////////////////////////////////////////////////////////////////////////
+/*
+   Find out if we already have a channel.  If so, return a pointer to its
+   info record.  If not, then return NULL
+*/
+CTCLEpicsCommand::RefCountedChannel*
+CTCLEpicsCommand::haveChannel(string name)
+{
+  KnownChannels::iterator i = m_channelInfo.find(name);
+  if (i == m_channelInfo.end()) {
+    return static_cast<CTCLEpicsCommand::RefCountedChannel*>(NULL);
+  }
+  else {
+    return &(i->second);
+  }
+}
+/////////////////////////////////////////////////////////////////////////////////
+/*
+   Delete a named channel.  This only does something if decrementing the
+   channel's reference count gives a 0.  Note that if the channel does not
+   exist, this is a no-op.
+*/
+void
+CTCLEpicsCommand::deleteChannel(string name)
+{
+  RefCountedChannel*  pInfo = haveChannel(name);
+  if (pInfo) {
+    pInfo->s_refcount--;
+    if(!pInfo->s_refcount) {
+      // Delete the channel; remove from the map.
+
+      delete pInfo->s_pChannel;
+      KnownChannels::iterator i = m_channelInfo.find(name);
+      m_channelInfo.erase(i);
+    }
+  }
 }
