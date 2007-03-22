@@ -32,7 +32,7 @@
 class CTCLInterpreter;
 class CTCLObject;
 class CChannel;
-class CTCLVariable;
+class CChannelVariable;
 
 /*!
    This class implements an epics channel command  Epics channel commands
@@ -60,9 +60,9 @@ public:
     CTCLChannelCommand*  pChangedChannel;
   }; 
 private:
-  CChannel*      m_pChannel;
-  CTCLVariable*  m_pLinkedVar;
-  Tcl_ThreadId   m_interpreterThread;
+  CChannel*          m_pChannel;
+  CChannelVariable*  m_pLinkedVar;
+  Tcl_ThreadId       m_interpreterThread;
 
   // Canonicals:
 public:

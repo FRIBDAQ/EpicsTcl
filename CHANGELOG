@@ -1,0 +1,2 @@
+March 22, 2007 - Use CChannelVariable derived from CTCLVariable so that
+                 epics linked variables are bi-directional.

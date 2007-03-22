@@ -19,6 +19,7 @@
 #include <TCLInterpreter.h>
 #include <TCLObject.h>
 #include "TCLVariable.h"
+#include "CChannelVariable.h"
 #include "CChannel.h"
 #include "CTCLEpicsPackage.h"
 
@@ -293,8 +294,8 @@ CTCLChannelCommand::Link(CTCLInterpreter& interp,
     delete m_pLinkedVar;
     
   }
-  m_pLinkedVar = new CTCLVariable(&interp, tclVarName, kfFALSE);
-  m_pLinkedVar->Set(m_pChannel->getValue().c_str(), TCL_GLOBAL_ONLY);
+  m_pLinkedVar = new CChannelVariable(interp, tclVarName, m_pChannel);
+  m_pLinkedVar->newEpicsValue(m_pChannel->getValue().c_str());
   m_pChannel->setSlot(CTCLChannelCommand::markChange, this);
   
   return TCL_OK;
@@ -343,7 +344,7 @@ void
 CTCLChannelCommand::UpdateLinkedVariable()
 {
   if (m_pLinkedVar) {
-    m_pLinkedVar->Set(m_pChannel->getValue().c_str(), TCL_GLOBAL_ONLY);
+    m_pLinkedVar->newEpicsValue(m_pChannel->getValue().c_str());
   }
 }
 
