@@ -66,12 +66,23 @@ snit::widget controlwidget::meter {
     variable tickIds        {}
     variable lastValue       0
 
+    variable fontList
+
     # Construct the widget:
 
     constructor args {
         $self configurelist $args
 
         set valueRange [expr 1.0*($options(-to) - $options(-from))]
+
+	# In order to get the font info, we need to create an invisible
+	# label so we can query the default font.. we'll accept that
+	# but ensure that the font size is 10.
+
+	label $win.hidden
+	set fontList [$win.hidden cget -font]
+	set fontList [font actual $fontList]
+	set fontList [lreplace $fontList 1 1 10];    # Force size to 10pt.
 
         # Create the canvas and draw the meter into the canvas.
         # The needle is drawn at 1/2 of the rectangle height.
@@ -89,11 +100,13 @@ snit::widget controlwidget::meter {
         set options(-width)  [$win.c cget -width]
 
         # In order to support label we need to create a left margin
-        # the margin will be 8chars (80pt) wide
+        # the margin will be 8chars worth of 8's  in the font we've used
         # and a top/bottom margin of 5pt.. the assumption is that the labels
         # will be drawn in 10pt font.
 
-        set leftmargin [$win.c canvasx 45p]
+	set leftmargin [font measure $fontList 88888888]
+
+        set leftmargin [$win.c canvasx $leftmargin]
         set vmargin    [$win.c canvasy 5p]
 
         # Compute the coordinates of the rectangle and the top/bottom limits
@@ -232,7 +245,7 @@ snit::widget controlwidget::meter {
 
             set label [format %.1e $m]
             set height [$self computeHeight $m]
-            lappend tickIds [$win.c create text  $meterLeft $height -text $label -anchor e]
+            lappend tickIds [$win.c create text  $meterLeft $height -text $label -anchor e -font $fontList]
             lappend tickIds [$win.c create line  $meterLeft $height $majorRight $height]
             for {set i 1} {$i <=  $options(-minorticks)} {incr i} {
                 set minorH [expr $m + 1.0*$i*$minor]

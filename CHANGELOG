@@ -10,3 +10,5 @@ March 26, 2007 - Correct docs for epicsTypeNGo - It should be used as
 	         meter indicator height.
                - Support mult-way links of epics PV's to tcl variables.
                - support epicschannel listlinks subcommand.
+               - First shot at measuring text so it will fit inside the
+                 window even on Weird-ass MAC's for the meter widget.
