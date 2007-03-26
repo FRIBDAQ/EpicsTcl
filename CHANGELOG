@@ -3,3 +3,9 @@ March 22, 2007 - Use CChannelVariable derived from CTCLVariable so that
                - Formally set release level to 1.2
                - Manage duplicate channel definitions by using reference counted
                  channels.
+March 26, 2007 - Correct docs for epicsTypeNGo - It should be used as
+		 controlwidget::epicsTypNGo
+               - Correct docs for meter widget.. in some cases the
+	         phrase 'meter height' is more appropriately 
+	         meter indicator height.
+               - Support mult-way links of epics PV's to tcl variables.
