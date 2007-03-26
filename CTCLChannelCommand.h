@@ -29,6 +29,20 @@
 #endif
 
 
+#ifndef __STL_LIST
+#include <list>
+#ifndef __STL_LIST
+#define __STL_LIST
+#endif
+#endif
+
+#ifndef __STL_STRING
+#include <string>
+#ifndef __STL_STRING
+#define __STL_STRING
+#endif
+#endif
+
 class CTCLInterpreter;
 class CTCLObject;
 class CChannel;
@@ -49,7 +63,8 @@ class CChannelVariable;
                              in form suitable for use with [clock format].
    - delete                - Destroys this command and underlying data etc.
    - link tclvarname       - Links the channel to a Tcl variable.
-   - unlink                - Removes any variable linkage.
+   - listlinks ?pattern?   - List variable links.
+   - unlink name           - Removes the link to the specified variable.
 */
 class CTCLChannelCommand : public CTCLObjectProcessor 
 {
@@ -60,8 +75,22 @@ public:
     CTCLChannelCommand*  pChangedChannel;
   }; 
 private:
+  // Data types
+
+  // Info about a linked variable:
+
+  typedef struct  {
+    STD(string) varname;
+    CChannelVariable* m_pLinkedVar;
+  } VariableInfo;
+  typedef STD(list)<VariableInfo>     VariableInfoList;
+  typedef VariableInfoList::iterator  VariableInfoIterator;
+
+  // member variables
+
   CChannel*          m_pChannel;
-  CChannelVariable*  m_pLinkedVar;
+  //  CChannelVariable*  m_pLinkedVar;
+  VariableInfoList   m_linkedVariables;
   Tcl_ThreadId       m_interpreterThread;
 
   // Canonicals:
@@ -89,7 +118,7 @@ private:
   int Updatetime(CTCLInterpreter& interp);
   int Delete(CTCLInterpreter& interp);
   int Link(CTCLInterpreter& interp, STD(vector)<CTCLObject>& objv);
-  int Unlink(CTCLInterpreter& interp);
+  int Unlink(CTCLInterpreter& interp, STD(vector)<CTCLObject>& objv);
   STD(string) Usage();
   static void markChange(CChannel* pChannel, 
 			 void* pObject);        // Called in Epics thread

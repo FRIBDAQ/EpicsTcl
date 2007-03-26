@@ -24,6 +24,7 @@
 #include "CTCLEpicsPackage.h"
 #include "CTCLEpicsCommand.h"
 
+
 #ifdef HAVE_STD_NAMESPACE 
 using namespace std;
 #endif
@@ -41,8 +42,7 @@ using namespace std;
 CTCLChannelCommand::CTCLChannelCommand(CTCLInterpreter& interp,
 				       string          name) :
   CTCLObjectProcessor(interp, name),
-  m_pChannel(0),
-  m_pLinkedVar(0)
+  m_pChannel(0)
 {
   m_pChannel = new CChannel(name);
   m_pChannel->Connect();
@@ -55,10 +55,16 @@ CTCLChannelCommand::~CTCLChannelCommand()
 {
 
   delete m_pChannel;
-  delete m_pLinkedVar;
-  m_pChannel = 0;
-  m_pLinkedVar = 0;
 
+  // Empty out the list of linked variables...deleting the variable objects.
+
+  while(!m_linkedVariables.empty()) {
+    VariableInfo info = *(m_linkedVariables.begin());
+    delete       info.m_pLinkedVar;
+    m_linkedVariables.pop_front();
+  }
+  m_pChannel = 0;
+  
 }
 
 /*!
@@ -105,7 +111,7 @@ CTCLChannelCommand::operator()(CTCLInterpreter&    interp,
     return Link(interp, objv);
   }
   else if (subcommand == string("unlink")) {
-    return Unlink(interp);
+    return Unlink(interp, objv);
   }
   else {
     string result = objv[0];
@@ -289,14 +295,15 @@ CTCLChannelCommand::Link(CTCLInterpreter& interp,
   }
   string tclVarName = objv[2];
 
-  // If necessary get rid of the old one:
 
-  if (m_pLinkedVar) {
-    delete m_pLinkedVar;
-    
-  }
-  m_pLinkedVar = new CChannelVariable(interp, tclVarName, m_pChannel);
-  m_pLinkedVar->newEpicsValue(m_pChannel->getValue().c_str());
+  CChannelVariable* pLinkedVar = new CChannelVariable(interp, tclVarName, m_pChannel);
+  pLinkedVar->newEpicsValue(m_pChannel->getValue().c_str());
+  VariableInfo vinfo = {tclVarName, pLinkedVar};
+  m_linkedVariables.push_back(vinfo);
+
+  // This may be redundant.. maybe not.. but it does not hurt to do this
+  // more than once..
+
   m_pChannel->setSlot(CTCLChannelCommand::markChange, this);
   
   return TCL_OK;
@@ -306,13 +313,46 @@ CTCLChannelCommand::Link(CTCLInterpreter& interp,
   Unlink a variable from the channel.
 */
 int
-CTCLChannelCommand::Unlink(CTCLInterpreter& interp)
+CTCLChannelCommand::Unlink(CTCLInterpreter& interp,
+			   vector<CTCLObject>& objv)
 {
-  if (m_pLinkedVar) {
-    m_pChannel->setSlot(NULL, NULL);
-    delete m_pLinkedVar;
-    m_pLinkedVar = 0;
+  // We need a single parameter, the variable name to unlink:
+  //
+  if (objv.size() != 3) {
+    string result = "Invalid number of parameers for channel-name unlink\n";
+    result += Usage();
+    interp.setResult(result);
+    return TCL_OK;
   }
+  string tclVarName = objv[2];
+
+  // Locate and erase the selected linked variable.
+  // We keep the slot set... unless we've emptied the list:
+  //
+
+  for (VariableInfoIterator i= m_linkedVariables.begin();
+       i != m_linkedVariables.end(); i++) {
+     if(i->varname == tclVarName) {
+       delete i->m_pLinkedVar;
+       m_linkedVariables.erase(i);
+       if (m_linkedVariables.empty()) {
+	 m_pChannel->setSlot(NULL,NULL);
+       }
+       return TCL_OK;
+     }
+     i++;
+  }
+  // Could not find linked variable:
+
+  string result = "The variable ";
+  result  += tclVarName;
+  result  += "is not linked to ";
+  result  += getName();
+  result  += "\n";
+  result  += Usage();
+  interp.setResult(result);
+  return TCL_ERROR;
+
 }
 
 
@@ -330,7 +370,9 @@ CTCLChannelCommand::Usage()
   result       += getName();
   result       += " link tclVariableName\n";
   result       += getName();
-  result       += " unlink\n";
+  result       += " unlink tclVariableName\n";
+  result       += getName();
+  result       += " listlinks ?pattern?\n";
   result       += getName();
   result       += " updatetime\n";
   result       += getName();
@@ -340,13 +382,20 @@ CTCLChannelCommand::Usage()
   return result;
 }
 
+// Updates the values of all linked variables we are maintaining.
+
+
 
 void
 CTCLChannelCommand::UpdateLinkedVariable()
 {
-  if (m_pLinkedVar) {
-    m_pLinkedVar->newEpicsValue(m_pChannel->getValue().c_str());
+  for (VariableInfoIterator i = m_linkedVariables.begin();
+       i != m_linkedVariables.end(); i++) {
+    CChannelVariable* pVar = i->m_pLinkedVar;
+    pVar->newEpicsValue(m_pChannel->getValue().c_str());
+
   }
+
 }
 
 /*
