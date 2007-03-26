@@ -119,6 +119,7 @@ private:
   int Delete(CTCLInterpreter& interp);
   int Link(CTCLInterpreter& interp, STD(vector)<CTCLObject>& objv);
   int Unlink(CTCLInterpreter& interp, STD(vector)<CTCLObject>& objv);
+  int ListLinks(CTCLInterpreter& interp, STD(vector)<CTCLObject>& objv);
   STD(string) Usage();
   static void markChange(CChannel* pChannel, 
 			 void* pObject);        // Called in Epics thread

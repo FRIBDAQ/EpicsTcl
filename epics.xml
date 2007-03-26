@@ -54,10 +54,14 @@ epicschannel <replaceable>name</replaceable>
         </cmdsynopsis>
         <cmdsynopsis>
              <command>
-<replaceable>name</replaceable> unlink
+<replaceable>name</replaceable> unlink <replaceable>tclVariableName</replaceable>
             </command>
         </cmdsynopsis>
-
+	<cmdsynopsis>
+           <command>   
+<replaceable>name</replaceable> listlinks <replaceable>?pattern?</replaceable>
+            </command>
+        </cmdsynopsis>
     </refsynopsisdiv>
 
     <refsect1>
@@ -153,22 +157,41 @@ aaa delete;       # refcount becomes 0 so aaa is deleted.
                     <term><command>link</command> <replaceable>varname</replaceable></term>
                     <listitem>
                         <para>
-                            Forges a link between the channel or database field value and a
-                            tcl variable.  The variable must be either be at global level or
-                            be defined as a namespace variable.   Reading the variable will
-                            correspond to reading the channel value, while writing to it will
-                            set the channel value.
+                            Links a variable to the epics proces variable
+                            (channel).  Changes to the channel get reflected
+                            into the linked variable.  Changes to the varible
+                            from Tcl scripts are traced and result in attempts
+                            to modify the epics channel.
+                        </para>
+		        <para>
+                            Additional <command>link</command>s are allowed and
+                            create a 1 to many link between an epics channel
+                            and several Tcl Variables.
                         </para>
                     </listitem>
                 </varlistentry>
                 <varlistentry>
   	           <term><command>unlink <replaceable>varname</replaceable></command></term>
                     <listitem>
-                        <para>
-                            unlinks the variable  established with the <command>link</command> subcommand.
-                        </para>
+		       <para>
+                           Removes the link between the epics channel and the 
+                           Tcl variable <varname>varname</varname>.  It is an
+                           error to attempt to unlink from a variable that is
+                           not linked.
+                       </para>
                     </listitem>
                 </varlistentry>
+	        <varlistentry>
+		    <term><replaceable>name</replaceable> listlinks
+		    <replaceable>?pattern?</replaceable></term>
+                    <listitem>
+		      <para>
+                         Lists the set of links that match the optional
+                         <parameter>pattern</parameter>.  If no pattern is
+                         supplied, it defaults to *.
+                      </para>
+                    </listitem>
+               </varlistentry>
             </variablelist>
         </para>
     </refsect1>

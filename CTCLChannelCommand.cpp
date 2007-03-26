@@ -24,6 +24,9 @@
 #include "CTCLEpicsPackage.h"
 #include "CTCLEpicsCommand.h"
 
+#include <set>
+
+
 
 #ifdef HAVE_STD_NAMESPACE 
 using namespace std;
@@ -112,6 +115,9 @@ CTCLChannelCommand::operator()(CTCLInterpreter&    interp,
   }
   else if (subcommand == string("unlink")) {
     return Unlink(interp, objv);
+  }
+  else if (subcommand == string("listlinks")) {
+    return ListLinks(interp, objv);
   }
   else {
     string result = objv[0];
@@ -340,13 +346,12 @@ CTCLChannelCommand::Unlink(CTCLInterpreter& interp,
        }
        return TCL_OK;
      }
-     i++;
   }
   // Could not find linked variable:
 
   string result = "The variable ";
   result  += tclVarName;
-  result  += "is not linked to ";
+  result  += " is not linked to ";
   result  += getName();
   result  += "\n";
   result  += Usage();
@@ -355,7 +360,56 @@ CTCLChannelCommand::Unlink(CTCLInterpreter& interp,
 
 }
 
+/*
+   Lists the set of links that have been created. The links that
+   match the specified pattern are listed in alphabetical order.
+   If no pattern is specified, it defaults, as usual to *
 
+
+*/
+int
+CTCLChannelCommand::ListLinks(CTCLInterpreter& interp, 
+			      STD(vector)<CTCLObject>& objv)
+
+{
+
+  // Figure the pattern and validate the command parameter count.
+
+  string pattern = "*";		// Default pattern.
+  if(objv.size() > 3) {
+    string result = "Too many parametesr to linklist subcommand\n";
+    result += Usage();
+    interp.setResult(result);
+    return TCL_ERROR;
+  }
+  if (objv.size() == 3) {
+    pattern = string(objv[2]);
+  }
+  // We're going to throw the matching variable names up into a set which
+  // will give us a sorted parameter list.
+
+  set<string> sortedList;
+  for (VariableInfoIterator i= m_linkedVariables.begin();
+      i != m_linkedVariables.end(); i++) {
+    string name = i->varname;
+    if (Tcl_StringMatch(name.c_str(), pattern.c_str())) {
+      sortedList.insert(name);
+    }
+  }
+
+  // Now we create a list from this sorted thing.
+
+  CTCLObject result;
+  result.Bind(interp);
+
+  set<string>::iterator p;
+  for(p = sortedList.begin(); p != sortedList.end(); p++) {
+    result += *p;		// Does list formatting.
+  }
+  interp.setResult(result);
+  return TCL_OK;
+
+}
 /*
   Provide command usage.
 */
