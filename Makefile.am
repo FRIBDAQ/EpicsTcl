@@ -81,7 +81,8 @@ PACKAGES = meter.tcl bcmMeter.tcl epicsLabel.tcl \
 	radioMatrix.tcl epicsEnumeratedControl.tcl \
 	typeNGo.tcl epicsTypeNGo.tcl		\
 	epicsLabelWithUnits.tcl bindDown.tcl led.tcl \
-	epicsLed.tcl epicsspinbox.tcl epicsButton.tcl
+	epicsLed.tcl epicsspinbox.tcl epicsButton.tcl \
+	epicsMeter.tcl
 
 # Man pages:
 
@@ -89,7 +90,7 @@ WEBXMLFILES= bcmMeter.xml epicsLabel.xml	\
 		 epicsEnumeratedControl.xml	\
 		 epicsTypeNGo.xml epicsLabelWithUnits.xml \
 		epicsLed.xml epicsspinbox.xml epicsButton.xml \
-		epics.xml 
+		epics.xml epicsMeter.xml
 
 XMLFILES = meter.xml \
 	radioMatrix.xml \
@@ -117,12 +118,13 @@ MANPAGES = meter.1tcl bcmMeter.1tcl epicsLabel.1tcl \
 	CTCLIdleProcess.3 \
 	CTCLList.3 CTCLObject.3 CTCLObjectProcessor.3 \
 	CTCLPackagedCommand.3 CTCLProcessor.3 CTCLResult.3 \
-	CTCLString.3 CTCLTimer.3 TclPlus.3  epics.3
+	CTCLString.3 CTCLTimer.3 TclPlus.3  epics.3 epicsMeter.1tcl
 
 WEBDOCS = index.html  \
 	bcmMeter.pdf epicsLabel.pdf epicsEnumeratedControl.pdf \
 	epicsTypeNGo.pdf epicsLabelWithUnits.pdf   \
-	epicsLed.pdf epicsspinbox.pdf epicsButton.pdf epics.pdf
+	epicsLed.pdf epicsspinbox.pdf epicsButton.pdf epics.pdf \
+	epicsMeter.pdf
 
 
 # Build rule for manpages:

@@ -12,3 +12,5 @@ March 26, 2007 - Correct docs for epicsTypeNGo - It should be used as
                - support epicschannel listlinks subcommand.
                - First shot at measuring text so it will fit inside the
                  window even on Weird-ass MAC's for the meter widget.
+March 27, 2007 - Implement epicsMeter widget.  This widget provides a meter
+                 for any epics channel .. not just a BCM.
