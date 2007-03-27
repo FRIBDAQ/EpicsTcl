@@ -14,3 +14,10 @@ March 26, 2007 - Correct docs for epicsTypeNGo - It should be used as
                  window even on Weird-ass MAC's for the meter widget.
 March 27, 2007 - Implement epicsMeter widget.  This widget provides a meter
                  for any epics channel .. not just a BCM.
+               - Supply a controlwidget::epicsBCMMeter alias to 
+	         controlwidget::bcmMeter to match the normal epics naming 
+                 scheme
+               - Correct epics.xml so that:
+                 o first example uses a label not an entry.
+                 o plug the use of the epics widgets rather than
+                   roll your own.

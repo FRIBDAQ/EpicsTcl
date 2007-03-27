@@ -215,3 +215,17 @@ snit::widget  controlwidget::bcmMeter {
     }
 
 }
+
+package provide epicsBCMMeter 1.0
+
+#  This is the right name for the BCM Meter:
+
+snit::widget  controlwidget::epicsBCMMeter {
+    delegate option * to meter
+    delegate method * to meter
+
+    constructor args {
+	eval install meter as controlwidget::bcmMeter $win.meter $args
+	pack $win.meter
+    }
+}

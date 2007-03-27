@@ -204,9 +204,21 @@ aaa delete;       # refcount becomes 0 so aaa is deleted.
 package require epics
 epicschannel SOMECHANNEL
 SOMECHANNEL link SOMECHANNELvar
-entry .e -textvariable SOMECHANNELvar
-pack .e
+label .l -textvariable SOMECHANNELvar
+pack .l
             </programlisting>
+        </para>
+	<para>
+           Note that this can be done much more simply using the epics Tcl
+           widgets.  Those widgets understand how to display epics channels
+           directly e.g.
+           <programlisting>
+package require epicsLabelWithUnits
+controlwidget::epicsLabelWithUnits .l -channel SOMECHANNEL
+pack .l
+           </programlisting>
+           Creates a GUI that displays SOMECHANNEL with its engineering units,
+           updating as the value updates in Epics.
         </para>
     </refsect1>
 
