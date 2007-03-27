@@ -21,3 +21,4 @@ March 27, 2007 - Implement epicsMeter widget.  This widget provides a meter
                  o first example uses a label not an entry.
                  o plug the use of the epics widgets rather than
                    roll your own.
+                 o Build epicsStripChart widget.. need docs.
