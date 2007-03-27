@@ -86,6 +86,8 @@ snit::type controlwidget::channelHistory {
     option    -channel
     option    -timebase
 
+    variable   lastPeriod
+    variable   lastTime
     variable   maxKept
     variable   afterId  0
 
@@ -111,6 +113,8 @@ snit::type controlwidget::channelHistory {
 
 	set afterId 0
 	set maxKept 0
+	set lastPeriod $options(-period)
+	set lastTime   [expr $options(-timebase)*1.0]
 
 	#  Construct the two vectors...and the epics channel data.
 
@@ -150,7 +154,12 @@ snit::type controlwidget::channelHistory {
 	# Note that epics channels may  not yet be connected:
 	# if not, we don't update:
 	#
-	set time  [expr [clock seconds] - $options(-timebase)]
+
+	set time     [expr $lastTime + $lastPeriod/1000.0]
+	set lastTime $time
+	set lastPeriod $options(-period)
+	set time     [expr $time - $options(-timebase)]
+
 	if {![catch {$options(-channel) get} value]} {
 	    
 	    ${selfns}::time append $time
