@@ -22,3 +22,9 @@ March 27, 2007 - Implement epicsMeter widget.  This widget provides a meter
                  o plug the use of the epics widgets rather than
                    roll your own.
                  o Build epicsStripChart widget.. need docs.
+March 28, 2007 - Fix timebase error in stripchart.
+               - Fix bindDown typo in led.
+               - Hunt for tcl development stuff in /opt/local/{include,lib}
+                 where the OS-X darwin ports put it.. that's the preferred
+                 tcl/tk version for us since it supports a good BLT.
+              
