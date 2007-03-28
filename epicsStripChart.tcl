@@ -114,7 +114,9 @@ snit::type controlwidget::channelHistory {
 	set afterId 0
 	set maxKept 0
 	set lastPeriod $options(-period)
-	set lastTime   [expr $options(-timebase)*1.0]
+	set lastTime  [expr 1.0*[clock seconds]]
+
+	puts "Timebase: $lastTime"
 
 	#  Construct the two vectors...and the epics channel data.
 
