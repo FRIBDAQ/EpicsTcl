@@ -55,7 +55,7 @@ snit::widget controlwidget::led {
 	$win.led create oval $border $border $end $end -fill $options(-off)
 	grid $win.led -sticky nsew
 
-	binddown $win $win
+	bindDown $win $win
     }
 
     # Process the -variable configuration by killing off prior traces
