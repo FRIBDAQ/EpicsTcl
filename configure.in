@@ -218,6 +218,7 @@ fi
 
 #  TCL headers:
 #    We know of a few places the headers can live:
+#       /opt/local/include        OS-X with darwin ports installed (preferred).
 #       /usr/include              redhat linux.
 #       /usr/include/tcl          debian dude that made  link to default tcl.
 #       /usr/include/tcl<version> debian linux
@@ -236,6 +237,15 @@ AC_ARG_WITH(tcl-header-dir,
 	[  --with-tcl-header-dir=path Path to tcl headers],
 	[tcl_header_dir="$withval"
 	tcl_headers_found="yes"],[tcl_headers_found="no"])
+
+
+	# /opt/local/include
+if test $tcl_headers_found == "no"; then
+   AC_CHECK_FILE([/opt/local/include/tcl.h],
+	[tcl_header_dir="/opt/local/include"
+	tcl_headers_found="yes"])
+fi
+
 
 
 	# /usr/include
@@ -284,7 +294,8 @@ fi
 
 #  Tcl libraries:
 #     We look for the following:
-#      /usr/lib/libtclstub.a      -  Stubs library is there.
+#      /opt/local/lib/tclstub.a    - stubs lib for OS-X with darwin port install.
+#      /usr/lib/lib/tclstub.a      -  Stubs library is there.
 #      /usr/lib/libtcl.a           - Usually a link to a default lib.
 #      /usr/lib/libtcl<version>.a  - version of tcl from tcl_versions
 #      /usr/local/lib/libtcl.a     - As above but installed from source.
@@ -304,7 +315,7 @@ AC_ARG_WITH(tcl-libdir,
 	[  --with-tcl-libdir=dir Specify where the tcl libraries live.],
 	[tcl_libsearchpath=$withval])
 
-tcl_libsearchpath="$tcl_libsearchpath /usr/lib /usr/local/lib"
+tcl_libsearchpath="$tcl_libsearchpath /opt/local/lib /usr/lib /usr/local/lib"
 
 tcl_libfiles="libtclstub.a libtcl.a"
 
