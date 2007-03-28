@@ -27,4 +27,5 @@ March 28, 2007 - Fix timebase error in stripchart.
                - Hunt for tcl development stuff in /opt/local/{include,lib}
                  where the OS-X darwin ports put it.. that's the preferred
                  tcl/tk version for us since it supports a good BLT.
+               - Add epicsStripChart documentation.
               
