@@ -1,1444 +1,3108 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!DOCTYPE book PUBLIC "-//OASIS//DTD Docbook XML 4.3//EN"
+
                       "file:///usr/share/xml/docbook/schema/dtd/4.3/docbookx.dtd"
+
  []
+
  >
+
 <book>
+
 <article>
+
 <refentry>
+
     <refmeta>
+
         <refentrytitle>epicsStripChart</refentrytitle>
+
         <manvolnum>1tcl</manvolnum>
+
     </refmeta>
+
     <refnamediv>
+
         <refname>epicsStripChart</refname>
+
         <refpurpose>
+
             Wrap a BLT stripchart with code for plotting epics channel time evolutions.
+
         </refpurpose>
+
     </refnamediv>
+
     <refsynopsisdiv>
+
     <programlisting>
+
 <command>
+
 package require epicsStripChart
 
+
+
 controlwidget::epicsStripChart  <replaceable>name ?options?</replaceable>
+
                                 
+
 name addchannel <replaceable>channel milliseconds ?options?</replaceable>
+
                 
+
 name removechannel <replaceable>channel</replaceable>
+
 </command>
+
     </programlisting>
+
     </refsynopsisdiv>
+
     <refsect1>
+
         <title>DESCRIPTION</title>
+
         <para>
+
             This widget adds machinery to the BLT Strip chart widget to support adding
+
             epics channels to a chart.  For a summary of the BLT stripchart widget, see
+
             the section BLT STRIPCHART below.  For full information about the BLT stripchart
+
             widget see the online man pages at e.g.
+
             <ulink url="http://man-wiki.net/index.php/N:blt_stripchart">http://man-wiki.net/index.php/N:blt_stripchart</ulink>.
+
         </para>
+
     </refsect1>
+
     <refsect1>
+
         <title>OPTIONS</title>
+
         <para>
+
             All BLT stripchart widget options are supported.   For some of the non-standard useful
+
             options see BLT STRIPCHART below, or the online man page referenced in the DESCRIPTION
+
             section.
+
         </para>
+
     </refsect1>
+
     <refsect1>
+
         <title>METHODS</title>
+
         <para>
+
             All blt stripchart methods are supported, in addition to the ones described below.
+
             For some of the more useful blt stripchart methods, see the section
+
             BLT STRIPCHART below, or refer to the online manual pages for the stripchart widget
+
             referred to in the DESCRIPTION section.
+
         </para>
+
         <variablelist>
+
             <varlistentry>
+
                 <term><command>addchannel <replaceable>name milliseconds ?options?</replaceable></command></term>
+
                 <listitem>
+
                     <para>
+
                         Adds the channel <parameter>name</parameter> to the strip chart as a
+
                         new <firstterm>channelHistory</firstterm> element.   The strip chart
+
                         will automatically trace the channel value updating every
+
                         <parameter>milliseconds</parameter> milliseconds.  The
+
                         optional list of <option>?options</option>, can be any of the options
+
                         accepted by the BLT stripchart widget's element component.
+
                     </para>
+
                     <para>
+
                         The method returns a name which is both the name of the new BLT
+
                         strip chart element and a command that can be used to manipulate the
+
                         channelHistory object.  For more information about the channelHistory
+
                         object, see  the section channelHistory OBJECTS below. 
+
                     </para>
+
                 </listitem>
+
             </varlistentry>
+
             <varlistentry>
+
                 <term><command>removechannel <replaceable>name</replaceable></command></term>
+
                 <listitem>
+
                     <para>Removes the specified channel from the strip chart.  Note that this is
+
                         the <emphasis>channel name</emphasis> not the name of the
+
                         channelHistory object returned by the <command>addchannel</command> method.
+
                     </para>
+
                     <para>
+
                         Removing the specified channel from the strip chart destroys the element
+
                         created for the trace.  It also destroys the associated channelHistory object
+
                         and all resources associated with that object.
+
                     </para>
+
                 </listitem>
+
             </varlistentry>
+
         </variablelist>
+
     </refsect1>
+
     <refsect1>
+
         <title>channelHistory OBJECTS</title>
+
         <para>
+
             Adding a channel to the stripchart creates a new object called a
+
             <firstterm>channelHistory</firstterm> object and returns the object name
+
             to the user.  This object also has methods as described in the synopsis below:
+
             <programlisting>
+
             <command>
+
 set <replaceable>object</replaceable> [<replaceable>.stripchart</replaceable> addchannel <replaceable>name millisecondds ?options?</replaceable>
+
+
 
 <replaceable>object</replaceable> clear
 
+
+
 <replaceable>object</replaceable> clearfirst <replaceable>points</replaceable>
+
                                         
+
 <replaceable>object</replaceable> keep <replaceable>points</replaceable>
+
                                     
+
 <replaceable>object</replaceable> updateperiod <replaceable>milliseconds</replaceable>
+
                                                
+
 <replaceable>object</replaceable> get
 
+
+
 <replaceable>object</replaceable> names
+
             </command>
+
             </programlisting>
+
         </para>
+
         <refsect2>
+
             <title>channelHistory OPTIONS</title>
+
             <para>
+
                 These options should be treated as readonly.  That is you should always
+
                 <command>cget</command> them and never <command>configure</command> them.
+
             </para>
+
             <variablelist>
+
                 <varlistentry>
+
                     <term><option>-period</option></term>
+
                     <listitem>
+
                         <para>The number of milliseconds between each update of the object</para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term><option>-channel</option></term>
+
                     <listitem>
+
                         <para>The name of the EPICS channel monitored by this objecdt</para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term><option>-timebase</option></term>
+
                     <listitem>
+
                     <para>
+
                         The time relative to which historical data time offsets are measured.
+
                         This is the output of a [clock seconds] command.  Note that time offsets
+
                         are floating point seconds.  It is possible to use a time offset in
+
                         conjunction with [clock format], a format string and a bit of arithmetic
+
                         to produce a timestamp for an individual data item that is exact to the
+
                         millisecond at which the data was updated.
+
                     </para>
+
                     </listitem>
+
                 </varlistentry>
+
             </variablelist>
+
         </refsect2>
+
                 
+
         <refsect2>
+
             <title>channelHistory METHODS</title>
+
             <variablelist>
+
                 <varlistentry>
+
                     <term><command><replaceable>object</replaceable> clear</command></term>
+
                     <listitem>
+
                         <para>
+
                             Clears all the historical data in the object.  On the stripchart this means
+
                             the trace for the channel managed by this element will vanish and then start
+
                             accumulating again as time passes.
+
                         </para>
+
                         <para>
+
                             In a larger application, you could clear
+
                             the entire strip chart by iterating through the channelHistory elements you
+
                             created and clearing them all.  Since the channelHistory element object name
+
                             is the same as the stripchart element name, the BLT stripchart
+
                             <command>element names</command> can return alll the channel history objects
+
                             created <emphasis>as long as</emphasis> the chart only contains epics channels.
+
                         </para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term><command><replaceable>object</replaceable> clearfirst <replaceable>points</replaceable></command></term>
+
                     <listitem>
+
                         <para>
+
                             Removes the first <parameter>points</parameter> points of history data
+
                             from the object.  See the <command>keep</command> method for a better
+
                             way to keep the history data size under control.
+
                         </para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term><command><replaceable>object</replaceable> keep <replaceable>points</replaceable></command></term>
+
                     <listitem>
+
                         <para>
+
                             Requires that the history object retain at most <parameter>points</parameter>
+
                             data points.  After each update interval, if the history object contains
+
                             more than the specified number of points, the oldest points are discarded
+
                             until the correct number of points are retained.
+
                         </para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term><command><replaceable>object</replaceable> updateperiod <replaceable>milliseconds</replaceable></command></term>
+
                     <listitem>
+
                         <para>
+
                             Changes the update period to the <parameter>milliseconds</parameter> milliseconds.
+
                             this takes effect after the next update period.
+
                         </para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term><command><replaceable>object</replaceable> get</command></term>
+
                     <listitem>
+
                     <para>
+
                         Returns the historical data for the parameter logged.  The historical data
+
                         is returned as a Tcl list of pairs.  Each pair contains a time offset (floating
+
                         point seconds) from the time base of the object (See the -timebase option), and
+
                         the value of the channel at that time.
+
                     </para>
+
                     <para>
+
                         This can be used to, e.g. perform analysis, logging or serialization for later
+
                         re-load, of the historical data.
+
                     </para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term><command><replaceable>object</replaceable> names</command></term>
+
                     <listitem>
+
                         <para>
+
                             The historical data are stored in two BLT vectors, a time and a data
+
                             vector.  This method returns a two element list consisting of the name
+
                             of the time and data vectors in that order.
+
                         </para>
+
                     </listitem>
+
                 </varlistentry>
+
             </variablelist>
+
         </refsect2>
+
     </refsect1>
+
     <refsect1>
+
         <title>BLT STRIPCHART</title>
+
         <para>
+
             This section summarizes the BLT stripchart widget.  This is intended just to provide
+
             an overview of the most useful options.  It is not intended as a complete
+
             document for that widget.  Complete documentation of the BLT strip chart widget can
+
             be found online at:
+
             <ulink url="http://man-wiki.net/index.php/N:blt_stripchart">http://man-wiki.net/index.php/N:blt_stripchart</ulink>.
+
         </para>
+
         <para>
+
             The stripchart widget is very flexible it can be configured via options, methods, and
+
             components.   Components are named entities that can be added to the stripchart and
+
             then manipulated via their own options and components.  The following component are
+
             supported:
+
         </para>
+
             <variablelist>
+
                 <varlistentry>
+
                     <term>axis</term>
+
                     <listitem>
+
                         <para>Coordinate axes control the region of data displayed and how the
+
                             data are scaled.  Up to four axes (2 x and 2 y) can be displayed on the
+
                             chart.
+
                         </para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term>crosshairs</term>
+
                     <listitem>
+
                     <para>crosshairs can be defined to get a better idea of where the cursor is</para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term>element</term>
+
                     <listitem>
+
                         <para>
+
                             Elements are data point sets and their attributes.  Each channel added
+
                             to the chart creates an element.
+
                         </para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term>grid</term>
+
                     <listitem>
+
                         <para>
+
                             The grid extends major and minor ticks across the plotting area to make it
+
                             easier to read the location of points off the plot by eye.
+
                         </para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term>legend</term>
+
                     <listitem>
+
                         <para>
+
                             Legends display labels for the elements and their styles.  Note that while
+
                             the strip chart default label is the element name, the
+
                             <command>epicsStripChart addchannel</command> command labels the element's
+
                             entry in the legend with the EPICS channel name.
+
                         </para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term>marker</term>
+
                     <listitem>
+
                         <para>
+
                             Markers are used to annotate or highlight areas of the graph.
+
                             Many different marker types are supported including text, bitmaps,
+
                             polylines, images, polgons, and embedded widgets.
+
                         </para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term>pen</term>
+
                     <listitem>
+
                         <para>
+
                             Pens define attributes for elements.  They can be thought of as attribute
+
                             bundles that can be applied in a single configuration parameter.
+
                         </para>
+
                     </listitem>
+
                 </varlistentry>
+
                 <varlistentry>
+
                     <term>postscript</term>
+
                     <listitem>
+
                         <para>The postscript component allows you to save the contents of the graph in
+
                             a postscript file as well as to configure the way in which that file is
+
                             produced.
+
                         </para>
+
                     </listitem>
+
                 </varlistentry>
+
             </variablelist>
+
             <refsect2>
+
                 <title>Key Stripchart options</title>
+
                 <para>
+
                     This section provides a summary of a few of the more interesting, non-standard
+
                     options recognized by the strip chart widget.  See the online docs for complete
+
                     documentation.
+
                 </para>
+
                 <variablelist>
+
                     <varlistentry>
+
                         <term><option>-halo <replaceable>pixels</replaceable></option></term>
+
                         <listitem>
+
                             <para>
+
                                 Specifies a maximum distance to consider when searching for
+
                                 the closest data point  (see  the  element's closest operation below).
+
                                 Data points further than pixels away are ignored.  The default is
+
                                 0.5i.  This is used e.g. to process mouse hits in event bindings.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><option>-height <replaceable>measure</replaceable></option></term>
+
                         <listitem>
+
                             <para>
+
                                 Specifies the requested height of widget.  The default is 4i.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><option>-invertxy <replaceable>boolean</replaceable></option></term>
+
                         <listitem>
+
                             <para>
+
                                Indicates whether the placement X-axis and Y-axis should be inverted.
+
                                If boolean is  true,  the  X and Y axes are swapped.  The default is 0
+
                                (unswapped).
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><option>-tile <replaceable>image</replaceable></option></term>
+
                         <listitem>
+
                             <para>
+
                                 Specifies  a tiled background.  If image isn't "", the background
+
                                 is tiled using image.  Otherwise, the normal background color is
+
                                 drawn.  Image must be an image  created
+
                                 using the Tk image command.  The default is "".
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><option>-title <replaceable>text</replaceable></option></term>
+
                         <listitem>
+
                             <para>
+
                                 Sets the title to <replaceable>text</replaceable>. If
+
                                 <replaceable>text</replaceable> is "", no title will be displayed.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><option>-width <replaceable>measure</replaceable></option></term>
+
                         <listitem>
+
                             <para>
+
                                 Specifies the requested width of the widget.  The default is 5i.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                 </variablelist>
+
             </refsect2>
+
             <refsect2>
+
                 <title>Key Stripchart methods</title>
+
                 <para>
+
                     This section is a summary of the most useful stripchart methods.
+
                     See the online manpage for the BLT Stripchart for more complete documentation.
+
                     (We don't bother to document configure and cget as these are 'well understood'
+
                     Tk methods).
+
                 </para>
+
                 <variablelist>
+
                     <varlistentry>
+
                         <term><command>axis <replaceable>operation ...</replaceable></command></term>
+
                         <listitem>
+
                             <para>
+
                                 Manipulates axis components.   See the section "Stripchart components"
+
                                 for more information about this.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><command>crosshairs <replaceable>operation ...</replaceable></command></term>
+
                         <listitem>
+
                             <para>
+
                                 Manipulates the crosshairs component of the stripchart.  See
+
                                 the section "Stripchart components" below for more information.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><command>element <replaceable>operation ...</replaceable></command></term>
+
                         <listitem>
+
                             <para>
+
                                 Manipulates element components.  Note that channels become element
+
                                 components of the stripchart.  See the section
+
                                 "Stripchart components" below for more information.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><command>grid <replaceable>operation ...</replaceable></command></term>
+
                         <listitem>
+
                             <para>
+
                                 Manipulates the grid component of the stripchart.  See the section
+
                                 "Stripchart components" below for more information.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><command>invtransform <replaceable>winX winY</replaceable></command></term>
+
                         <listitem>
+
                             <para>
+
                                 Performs a coordinate transform that maps the point defined by
+
                                 (<replaceable>winX winY</replaceable>) into the graph real
+
                                 coordinate system.  Returns the transformed X/Y coordinates.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><command>legend <replaceable>operation ...</replaceable></command></term>
+
                         <listitem>
+
                             <para>
+
                                 Manipulates the legend component of the strip chart widget.
+
                                  See the section
+
                                 "Stripchart components" below for more information.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><command>marker <replaceable>operation ...</replaceable></command></term>
+
                         <listitem>
+
                             <para>
+
                                 Manipulates marker components of the strip chart widget.
+
                                  See the section
+
                                 "Stripchart components" below for more information.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><command>postscript <replaceable>operation ...</replaceable></command></term>
+
                         <listitem>
+
                             <para>
+
                                 Manipulates the postscript snapshot component of the widget.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><command>transform <replaceable>x y</replaceable></command></term>
+
                         <listitem>
+
                             <para>Transforms the point (<replaceable>x y</replaceable>) specified
+
                             in graph coordinates to widget coordinates.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                     <varlistentry>
+
                         <term><command>xaxis | x2axis | yaxis | y2axis <replaceable>operation ...</replaceable></command></term>
+
                         <listitem>
+
                             <para>
+
                                 Manipulates an axis component of the graph.
+
                                  See the section
+
                                 "Stripchart components" below for more information.
+
                             </para>
+
                         </listitem>
+
                     </varlistentry>
+
                 </variablelist>
+
             </refsect2>
+
             <refsect2>
+
                 <title>Stripchart components</title>
+
                 <para>
+
                     This section describes the various stripchart components and how
+
                     to create and manipulate them.
+
                 </para>
+
                 <refsect3>
+
                 <title>Stripchart axes</title>
+
                     <formalpara>
+
                         <title>Stripchart axes</title>
+
                     <para>
+
                         Four  coordinate  axes  are automatically created: two X-coordinate axes (x and x2)
+
                         and two Y-coordinate axes (y, and y2).  By default, the axis x is located in the
+
                         bottom margin, y in the left margin, x2 in the top margin, and y2 in the right margin.
+
                     </para>
+
                     </formalpara>
+
                     <para>
+
                         An  axis consists of the axis line, title, major and minor ticks, and
+
                         tick labels.  Major ticks are drawn at uniform intervals along the axis.
+
                         Each tick is labeled with its coordinate value.  Minor ticks are drawn at uniform
+
                         intervals within major ticks.
+
                     </para>
+
                     <para>
+
                         The  range of the axis controls what region of data is plotted.
+
                         Data points outside the minimum and maximum limits of the axis are
+
                         not plotted.  By default, the minimum and maximum limits are determined
+
                         from  the  data,  but you can reset either limit.
+
                     </para>
+
                     <para>
+
                         You can create and use several axes. To create an axis, invoke the
+
                         axis component and its create operation.
+
                         <programlisting>
+
                         # Create a new axis called "temperature"
+
                         .s axis create temperature
+
                         </programlisting>
+
                     </para>
+
                     <para>
+
                         You  map  data  elements  to  an axis using the element's
+
                         <option>-mapy</option> and <option>-mapx</option> configuration options.
+
                         They specify the
+
                         coordinate axes an element is mapped onto.
+
                         <programlisting> 
+
                         # Now map the temperature data to this axis.
+
                         .s element create "temp" -xdata $x -ydata $tempData \
+
                                                  -mapy temperature
+
                         </programlisting>
+
                     </para>
+
                     <para>
+
                         While you can have many axes, only four axes can be displayed
+
                         simultaneously.  They are drawn in each of the margins  surrounding
+
                         the plotting area.  The axes x and y are drawn in the bottom and
+
                         left margins. The axes x2 and y2 are drawn in top and right margins.
+
                         Only x and y are shown by default. Note that the axes can have  different
+
                         scales.
+
                     </para>
+
                     <para>
+
                         To  display  a different axis, you invoke one of the following
+
                         components: xaxis, yaxis, x2axis, and y2axis.  The <command>use</command>
+
                         operation designates the axis to be drawn in the corresponding margin:
+
                         xaxis in  the  bottom,  yaxis  in  the left, x2axis in the top, and
+
                         y2axis in the right.
+
                         <programlisting>
+
                         # Display the axis temperature in the left margin.
+
                         .s yaxis use temperature
+
                         </programlisting>
+
                     </para>
+
                     <para>
+
                         You  can configure axes in many ways. The axis scale can be linear or
+
                         logarithmic.  The values along the axis can either monotonically
+
                         increase or decrease.  If you need custom tick labels, you can specify
+
                         a  Tcl  procedure  to format  the  label  as you wish.
+
                         You can control how ticks are drawn, by changing the major
+
                         tick interval or the number of minor ticks.  You can define
+
                         non-uniform tick intervals, such as for time-series plots.
+
                     </para>
+
                     <para>
+
                         This section describes the major operations on the strip chart axis
+
                         component.  All of these are invoked using the form
+
                         <programlisting>
+
                         <command>
+
                         <replaceable>.stripchart</replaceable> axis <replaceable>operation ...</replaceable>
+
                         </command>
+
                         </programlisting>
+
                         Where we will now describe the most useful operations.
+
                     </para>
+
                     <variablelist>
+
                         <varlistentry>
+
                             <term><command>create <replaceable>name ?options?</replaceable></command></term>
+
                             <listitem>
+
                                 <para>
+
                                     Creates a new axis <parameter>name</parameter> the optional
+
                                     options configure the axis as per the configuration options
+
                                     described below.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><command>delete <replaceable>name</replaceable></command></term>
+
                             <listitem>
+
                                 <para>
+
                                     Deletes an existing axis.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><command>invtransform <replaceable>name screenCoords</replaceable></command></term>
+
                             <listitem>
+
                                 <para>
+
                                     Transforms <parameter>screenCoords</parameter> from the widget
+
                                     coordinate system to the axis coordinate system defined by
+
                                     the axis <parameter>name</parameter>.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><command>names <replaceable>?pattern ...</replaceable></command></term>
+
                             <listitem>
+
                                 <para>Returns the name of all defined axes that match at least one of
+
                                     the patterns provided.  Patterns can contain <firstterm>glob</firstterm>
+
                                     wildcard characters. If no pattern is provided the command
+
                                     operates as if there was a single pattern: <literal>*</literal>.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><command>transform <replaceable>axisName axisCoord</replaceable></command></term>
+
                             <listitem>
+
                                 <para>
+
                                     Returns <parameter>axisCoord</parameter> transformed to widget
+
                                     coordinates using the transformation defined by the axis
+
                                     <parameter>axisName</parameter>
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                     </variablelist>
+
                     <para>
+
                         Axes can be configured using the <command>configure</command> subcommand
+
                         and their configuration can be inquired using the <command>cget</command>
+
                         subcommand. For example:
+
                         <programlisting>
+
                             <command>
+
                         <replaceable>.stripchart</replaceable> axis configure <replaceable>axisName ...</replaceable>
+
                             </command>
+
                         </programlisting>
+
                     </para>
+
                     <para>
+
                         More useful configuration parameters for an axis include:
+
                     </para>
+
                     <variablelist>
+
                         <varlistentry>
+
                             <term><option>-logscale <replaceable>boolean</replaceable></option></term>
+
                             <listitem>
+
                                 <para>
+
                                     Indicates whether the scale of the axis is logarithmic
+
                                     or linear.  If <replaceable>boolean</replaceable>
+
                                     is true, the axis  is logarithmic.  The default scale is linear.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><option>-majorticks <replaceable>ticklist</replaceable></option></term>
+
                             <listitem>
+
                                 <para>
+
                                     Specifies  where to display major axis ticks.  You can
+
                                     use this option to display ticks at non-uniform intervals.
+
                                     <replaceable>ticklist</replaceable> is a list of axis
+
                                     coordinates designating the location of  major  ticks.
+
                                     No  minor  ticks  are  drawn.   If <replaceable>ticklist</replaceable>
+
                                     is "", major ticks will be automatically computed. The
+
                                     default is "".
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><option>-max <replaceable>value</replaceable></option></term>
+
                             <listitem>
+
                                 <para>
+
                                     Sets the maximum limit of axisName.  Any data point
+
                                     greater than value is not displayed.  If  value is "",
+
                                     the maximum limit is calculated using the largest data
+
                                     value.  The default is "".
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><option>-min <replaceable>value</replaceable></option></term>
+
                             <listitem>
+
                                 <para>
+
                                     Sets  the  minimum limit of axisName. Any data point
+
                                     less than value is not displayed.  If value is "", the
+
                                     minimum limit is calculated using the smallest data value.
+
                                     The default is "".
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><option>-minorticks <replaceable>ticklist</replaceable></option></term>
+
                             <listitem>
+
                                 <para>
+
                                     Specifies where to display minor axis ticks.  You can
+
                                     use this option to  display  minor  ticks  at non-uniform
+
                                     intervals. <replaceable>ticklist</replaceable> is a
+
                                     list of real values, ranging from 0.0 to 1.0, designating the
+
                                     placement of a minor tick.  No minor ticks are drawn if the
+
                                     -majortick  option  is  also  set.   If minorList is "",
+
                                     minor ticks will be automatically computed. The default is "".
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><option>-shiftby <replaceable>value</replaceable></option></term>
+
                             <listitem>
+
                                 <para>
+
                                     Specifies how much to automatically shift the range of the axis.
+
                                     When the  new  data  exceeds  the
+
                                     current  axis maximum, the maximum is increased in increments
+
                                     of <replaceable>value</replaceable>.
+
                                     You can use this option to prevent the axis limits from
+
                                     being recomputed at each new time point. If
+
                                     <replaceable>value</replaceable>  is  0.0,  then  no
+
                                     automatic shifting is done. The default is 0.0.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><option>-title <replaceable>text</replaceable></option></term>
+
                             <listitem>
+
                                 <para>
+
                                     Sets the title of the axis. If <replaceable>text</replaceable>
+
                                     is "", no axis title will be displayed.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                     </variablelist>
+
                         
+
                     <para>
+
                         The axis positions at the bottom, top, left and right can be selected and
+
                         manipulated using the <command>xaxis xaxis1 yaxis yaxis2</command> commands
+
                         respectively.  In this document, we only describe how to select an axis for
+
                         use in that position:
+
                         <programlisting>
+
                             <command>
+
                 <replaceable>.stripchart</replaceable> {xaxis | xaxis1 | yaxis | yaxis1}  use <replaceable>axisName</replaceable>
+
                             </command>
+
                         </programlisting>
+
                         For example, to create an axis named george and display it at the top part of the
+
                         graph:
+
                         <programlisting>
+
                             <command>
+
                 <replaceable>.stripchart</replaceable> axis create george
+
                 <replaceable>.stripchart</replaceable> xaxis1 use george
+
                             </command>
+
                         </programlisting>
+
                     </para>
+
                 </refsect3>
+
                 <refsect3>
+
                     <title>Stripchart crosshairs</title>
+
                     <formalpara><title>Crosshairs</title>
+
                     <para>
+
                         This section describes the crosshairs component of the stripchart.
+
                         Cross hairs consist of two intersecting lines (one vertical and
+
                         one horizontal) drawn completely across the plotting area.
+
                         They are used to position the mouse in relation to the
+
                         coordinate axes.  Cross hairs differ from line
+
                         markers in that they are implemented using XOR drawing primitives.
+
                         This means that they can be quickly drawn and
+
                         erased without redrawing the entire strip chart.
+
                     </para>
+
                     </formalpara>
+
                     <para>
+
                         There is only a single crosshair.  To turn crosshairs on for the
+
                         stripchart .stripchart:
+
                         <programlisting>
+
 <command><replaceable>.stripchart</replaceable> crosshairs on</command>
+
                         </programlisting>
+
                     </para>
+
                     <para>
+
                         Similarly to turn crosshairs off:
+
                         <programlisting>
+
 <command><replaceable>.stripchart</replaceable> crosshairs off</command>
+
                         </programlisting>
+
                     </para>
+
                 </refsect3>
+
                 <refsect3>
+
                     <title>Stripchart elements (traces)</title>
+
                     <para>
+
                         Elements are data sets that are drawn on the stripchart.
+
                         In the case of the <command>epicsStripChart</command> elements
+
                         are created using the <command>addchannel</command> method.
+
                         It is also possible to intermix elements created 'manualy'.
+
                         We will not document how to do this. You will need to
+
                         read the online BLT Stripchart widget to see how to do this.
+
                     </para>
+
                     <para>
+
                         When you create an element via <command>addchannel</command> the
+
                         name of the element will be returned and can be captured via e.g.:
+
                         <programlisting>
+
                             <command>
+
 set elementName [<replaceable>.stripchart</replaceable> addchannel <replaceable>someChannel</replaceable>]
+
                             </command>
+
                         </programlisting>
+
                         Once this is done you can use <varname>$elementName</varname>
+
                         wherever an element name is
+
                         required to refer to that element.
+
                     </para>
+
                     <para>
+
                         Elements can be configured with various options, and their configurations
+
                         queried via e.g.:
+
                         <programlisting>
+
                             <command>
+
 <replaceable>.stripchart</replaceable> element configure <replaceable>name options...</replaceable>
+
 <replaceable>.stripchart</replaceable> element cget <replaceable>name option-name</replaceable>
+
                             </command>  
+
                         </programlisting>
+
                         A useful subset of the options is:
+
                     </para>
+
                     <variablelist>
+
                         <varlistentry>
+
                             <term><option>-activepen <replaceable>penName</replaceable></option></term>
+
                             <listitem>
+
                                 <para>
+
                                     Specifies pen to use to draw active element.  If
+
                                     <replaceable>penName</replaceable> is "",
+
                                     no active elements will  be  drawn.
+
                                     The default is activeLine.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><option>-color <replaceable>color</replaceable></option></term>
+
                             <listitem>
+
                                 <para>Sets the color of the traces connecting the data points.</para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><option>-linewidth <replaceable>pixels</replaceable></option></term>
+
                             <listitem>
+
                                 <para>
+
                                     Specifies the line width of the element in pixels.  If
+
                                     <parameter>pixels</parameter> is zero, no line will be drawn,
+
                                     between symbols.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><option>-mapx</option> <parameter>axisName</parameter></term>
+
                             <listitem>
+
                                 <para>
+
                                     Selects the X-axis to map the element's X-coordinates onto.
+
                                     <parameter>axisName</parameter> must be the  name  of  an  axis.
+
                                     The default is <literal>xaxis</literal>.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><option>-mapy</option>  <parameter>axisName</parameter></term>
+
                             <listitem>
+
                                 <para>
+
                                     Selects the Y-axis to map the element's Y-coordinates onto.
+
                                     <parameter>axisName</parameter>
+
                                     must be the name of an axis. The default is yaxis.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><option>-smooth <parameter>style</parameter></option></term>
+
                             <listitem>
+
                                 <para>
+
                                     Specifies how connecting line segments are drawn between data points.
+
                                     <parameter>style</parameter> can be either
+
                                     <literal>linear</literal>,
+
                                     <literal>step</literal>,
+
                                     <literal>natural</literal>  , or
+
                                     <literal>quadratic</literal>.
+
                                     If <parameter>style</parameter> is <literal>linear</literal>,
+
                                     a single line segment is drawn, connecting both
+
                                     data points. When <parameter>style</parameter> is <literal>step</literal>,
+
                                     two line segments are drawn. The first is a horizontal line  segment
+
                                     which steps the next x-coordinate.  The second is a vertical line,
+
                                     moving to the next y-coordinate.  Both
+
                                     <literal>natural</literal> and
+
                                     <literal>quadratic</literal> generate multiple segments between
+
                                     data  points.   If  <literal>natural</literal>,
+
                                     the  segments  are  generated using a cubic spline.
+
                                     If <literal>quadratic</literal>, a quadratic spline is used.  The
+
                                     default is linear.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><option>-symbol <parameter>symbol</parameter></option></term>
+
                             <listitem>
+
                                 <para>
+
                                     Specifies the symbol for data points.
+
                                     <parameter>symbol</parameter> can be either
+
                                     <literal>square</literal>, <literal>circle</literal>,
+
                                     <literal>diamond</literal>,  <literal>plus</literal>,
+
                                     <literal>cross</literal>, <literal>splus</literal>,
+
                                     <literal>scross</literal>,  <literal>triangle</literal>,
+
                                     <literal>""</literal>  (where  no symbol is drawn), or a bitmap.
+
                                     Bitmaps are specified as
+
                                     <literal>"source ?mask?"</literal>,
+
                                     where source is the name of the bitmap, and mask is the  bitmap's
+
                                     optional  mask.
+
                                     The default is <literal>circle</literal>.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                     </variablelist>
+
                     <para>
+
                         Element are invoked using the following general form:
+
                         <programlisting>
+
 <command><replaceable>.stripchart</replaceable> element <replaceable>methodname ...</replaceable></command>
+
                         </programlisting>
+
                         Where the most useful methodnames and their parameters are:
+
                     </para>
+
                     <variablelist>
+
                         <varlistentry>
+
                             <term><command>closest <replaceable>x y varName ?option value?... ?elemName?...</replaceable></command></term>
+
                             <listitem>
+
                                 <para>
+
                                     Finds  the  data point closest to the window coordinates
+
                                     <parameter>x</parameter> and <parameter>y</parameter> in the element
+
                                     <parameter>elemName</parameter>.  <parameter>ElemName</parameter>
+
                                     is the
+
                                     name of an element, that must not be hidden.
+
                                     If no elements are specified, then all visible elements  are
+
                                     searched.   It  returns  via  the array variable varName
+
                                     the name of the closest element, the index of its
+
                                     closest point, and the graph coordinates of the point.
+
                                     Returns 0, if no data point  within  the  threshold
+
                                     distance can be found, otherwise 1 is returned.
+
                                     The following option-value pairs are available.
+
                                     <variablelist>
+
                                         <varlistentry>
+
                                             <term><option>-halo <replaceable>distance</replaceable></option></term>
+
                                             <listitem>
+
                                                 <para>
+
                                                     Specifies  a  threshold  distance where selected
+
                                                     data points are ignored.  
+
                                                     <parameter>distance</parameter> is a valid screen
+
                                                     distance, such as 2 or 1.2i.  If this option isn't
+
                                                     specified, then it defaults to the value of  the
+
                                                     stripchart's <option>-halo</option> option.
+
                                                 </para>
+
                                             </listitem>
+
                                         </varlistentry>
+
                                         <varlistentry>
+
                                             <term><option>-interpolate <replaceable>boolean</replaceable></option></term>
+
                                             <listitem>
+
                                                 <para>
+
                                                     Indicates that both the data points and interpolated
+
                                                     points along the line segment formed should be
+
                                                     considered.  If
+
                                                     <parameter>boolean</parameter> is <literal>true</literal>,
+
                                                     the closest line segment will be selected instead of
+
                                                     the  closest
+
                                                     point. If this option isn't specified,
+
                                                     <parameter>boolean</parameter> defaults to <literal>0</literal>
+
                                                     which is a Tcl <literal>false</literal> value.
+
                                                     </para>
+
                                             </listitem>
+
                                         </varlistentry>
+
                                     </variablelist>
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><command>exists <replaceable>elemName</replaceable></command></term>
+
                             <listitem>
+
                                 <para>
+
                                     Returns 1 if an element elemName currently exists and 0 otherwise.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                         <varlistentry>
+
                             <term><command>names <replaceable>?pattern? ...</replaceable></command></term>
+
                             <listitem>
+
                                 <para>
+
                                     Returns the elements matching one or more pattern.  If no pattern
+
                                     is given, the names of all  elements  is returned.  Note that if
+
                                     the widget is only displaying epics channels, these names are the
+
                                     same as the names of the channelHistory objects that contain and
+
                                     maintain the data that is being plotted.
+
                                 </para>
+
                             </listitem>
+
                         </varlistentry>
+
                     </variablelist>
+
                 </refsect3>
+
                 <refsect3>
+
                     <title>Stripchart grids</title>
+
                     <formalpara>
+
                         <title>Stripchart Grids</title>
+
                     <para>
+
                         Stripchart grids extend the tick marks on the axes across the entire face of
+
                         the graph part of the widget.  grids make it easier to read a point off the
+
                         graph.
+
                     </para>
+
                     </formalpara>
+
                     <para>
+
                         Grids have configuration options that are set and gotten via e.g.
+
                         <programlisting>
+
                             
+
 <command><replaceable>.stripchart</replaceable> grid configure  <replaceable>options...</replaceable></command>
+
 <command><replaceable>.stripchart</replaceable>grid cget <replaceable>option-name</replaceable></command>
 
-                        </programlisting>                                                                                  
-                    </para>
-                    <para>
-                        Grids also have methods that are invoked via e.g:
-                        <programlisting>
-<command><replaceable>.stripchart</replaceable> grid <replaceable>methodname ...</replaceable></command>
-                        </programlisting>
-                    </para>
-                    <para>
-                        The key configuration options for the grid are:
-                    </para>
-                    <variablelist>
-                        <varlistentry>
-                            <term><option>-color</option> <replaceable>color</replaceable></term>
-                            <listitem>
-                                <para>
-                                    Sets the color of the grid lines.  The default is black.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><option>-mapx</option> <replaceable>xAxis</replaceable></term>
-                            <listitem>
-                                <para>
-                                    Specifies the X-axis to display grid lines.
-                                    <parameter>XAxis</parameter> must be the name of an axis.
-                                    The default is  <literal>xaxis</literal>.
-                                    </para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><option>-mapy</option> <replaceable>yAxis</replaceable></term>
-                            <listitem>
-                                <para>
-                                    Specifies the Y-axis to display grid lines.
-                                    <parameter>YAxis</parameter> must be the name of an axis.
-                                    The default is <literal>y</literal>.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                    </variablelist>
-                    <para>
-                        In addition to the <command>configure</command> and <command>cget</command>
-                        methods that manipulate grid configuration parameters. the two main
-                        methods are:
-                    </para>
-                    <variablelist>
-                        <varlistentry>
-                            <term><command>off</command></term>
-                            <listitem>
-                                <para>Turns off the display the grid lines.</para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><command>on</command></term>
-                            <listitem>
-                                <para>Turns on the display the grid lines.</para>
-                            </listitem>
-                        </varlistentry>
-                    </variablelist>
-                </refsect3>
-                <refsect3>
-                    <title>Stripchart legends</title>
-                    <formalpara>
-                        <title>Stripchart legends</title>
-                    <para>
-                        The  legend  displays  a  list of the data elements.  Each
-                        entry consists of the element's symbol and label.  The
-                        legend can appear in any margin (the default location is
-                        in the right margin).  It can also  be  positioned  any where within
-                        the plotting area.
-                    </para>
-                    </formalpara>
-                    <para>
-                        The legend documentation we will provide here are the legend options
-                        that can all be configured or queried via e.g.:
-                        <programlisting>
-<command><replaceable>.stripchart</replaceable> configure <replaceable>options...</replaceable></command>
-<command><replaceable>.stripchart</replaceable> cget <replaceable>option-name</replaceable></command>
-                        </programlisting>
-                        Where the most common options are:
-                    </para>
-                    <variablelist>
-                        <varlistentry>
-                            <term><option>-hide <replaceable>boolean</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    Indicates  whether the legend should be displayed.
-                                    If <parameter>boolean</parameter> is true, the legend
-                                    will not be drawn.
-                                    The default is false, allowing the legend to be visible.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><option>-postition <replaceable>pos</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    Specifies where the legend is drawn.   If <parameter>pos</parameter>
-                                    is <literal>left</literal>,
-                                    <literal>left</literal>, <literal>top</literal>, or
-                                    <literal>bottom</literal>, the legend is drawn in the
-                                    specified margin.  If <parameter>pos</parameter>
-                                    is <literal>plotarea</literal>, then the legend is drawn
-                                    inside the plotting area.  If  <parameter>pos</parameter>  is
-                                    in  the  form <literal>"@x,y"</literal>, where
-                                    <literal>x</literal> and <literal>y</literal> are
-                                    the window coordinates, the legend is drawn in the plotting
-                                    area at the specified coordinates.  The default is right.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                    </variablelist>
-                </refsect3>
-                <refsect3>
-                    <title>Stripchart Pens</title>
-                    <formalpara>
-                        <title>Stripchart Pens</title>
-                        <para>
-                            Stripchart pen components are bundles of attributes that can be
-                            applied to elements (traces).  The construction and manipulation of
-                            pens is an advanced topic refer to the blt::stripchart online manpage
-                            for information about this component.
-                        </para>
-                    </formalpara>
-                </refsect3>
-                <refsect3>
-                    <title>Stripchart Postcript output</title>
-                    <para>
-                        The postscript component support the generation of a postscript file
-                        that allows printing the contents of the plot.  The most commonly
-                        used postcript method is:
-                        <programlisting>
-<command><replaceable>.stripchart</replaceable> postscript output <filename>filename</filename> <replaceable>options...</replaceable></command>
-                        </programlisting>
-                        Where the most common options are:
-                    </para>
-                    <variablelist>
-                        <varlistentry>
-                            <term><option>-colormode <replaceable>mode</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    Specifies how to output color information.
-                                    <parameter>Mode</parameter> must be either
-                                    <literal>color</literal> (for full color output),
-                                    <literal>gray</literal>
-                                    (convert all colors to their gray-scale equivalents) or
-                                    <literal>mono</literal> (convert foreground  colors  to  black
-                                    and background colors to white).
-                                  The default mode is <literal>color</literal>.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><option>-landscape <replaceable>boolean</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    If
-                                    <parameter>boolean</parameter>  is  true, this specifies the
-                                    printed area is to be rotated 90 degrees.  In non-rotated
-                                    output the X-axis of the printed area runs along the short
-                                    dimension of the page (``portrait'' orientation);  in  rotated
-                                    output the X-axis runs along the long dimension of the page
-                                    (``landscape'' orientation).  Defaults to 0.
-                                </para>
-                            </listitem>
-                        </varlistentry>  
-                    </variablelist>
-                </refsect3>
-                <refsect3>
-                    <title>Stripchart Markers</title>
-                    <formalpara>
-                        <title>Stripchart Markers</title>
-                    <para>
-                        Markers are simple drawing procedures used to annotate or highlight
-                        areas of the strip chart.  Markers have various types: text strings,
-                        bitmaps, images, connected lines, windows, or polygons.
-                    </para>
-                    </formalpara>
-                    <para>
-                        While the use of markers can be useful in many application we do not
-                        want to reproduce the entire blt::stripchart manpage about markers here.
-                        We will only show how to create markers of the various sorts and
-                        what each marker type's configuration options are.
-                    </para>
-                    <para>
-                        All markers understand a <option>-coords</option> option that
-                        contains a list of coordinates.  The number of coordinates required
-                        and their meaning depends on the marker type.
-                    </para>
-                    <para>
-                        All markers understand a <option>-name</option> option that provides a
-                        unique name for the marker.  If not provided, the widget will generate a
-                        unique name for you.
-                    </para>
-                    <formalpara>
-                        <title>Creating a bitmap marker</title>
-                        <para>
-                            A bitmap marker displays a bitmap.  The size of the bitmap is
-                            controlled by the number of coordinates  specified.
-                            If  two coordinates, they specify the position of the top-left corner
-                            of the bitmap.  The bitmap retains its normal width and height.
-                            If four coordinates, the first and second pairs of coordinates represent
-                            the  corners  of the bitmap.  The bitmap will be stretched or
-                            reduced as necessary to fit into the bounding rectangle.
-                        </para>
-                    </formalpara>
-                    <para>
-                        Bitmap markers are created with the marker's create operation in the form:
-                        <programlisting>
-<command><replaceable>.stripchart</replaceable> marker create bitmap  <replaceable>?options?</replaceable></command>
-                        </programlisting>
-                        This command returns the name of the marker created.
-                    </para>
-                    <para>
-                        Bitmap specific options of interest are:
-                    </para>
-                    <variablelist>
-                        <varlistentry>
-                            <term><option>-bitmap <replaceable>bitmap</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    Specifies  the bitmap to be displayed.  If
-                                    <parameter>bitmap</parameter> is "", the
-                                    marker will not be displayed.  The default is  "".
-                                    </para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><option>-mask <replaceable>mask</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    Specifies a mask for the bitmap to be displayed. This mask is
-                                    a bitmap itself, denoting  the  pixels  that are transparent.
-                                    If <parameter>mask</parameter> is "", all pixels of the bitmap will be
-                                    drawn.  The default is "".
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><option>-rotate <replaceable>theta</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    The marker is first rotated and then placed according
-                                    to its anchor position.   The  default  rotation  is
-                                    0.0.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                    </variablelist>
-                    <formalpara>
-                        <title>Image markers</title>
-                        <para>
-                             A image marker displays an image.  Image markers are created with the marker's
-                            create operation in the form:
-                        </para>
-                    </formalpara>
-                    <programlisting>
-<command><replaceable>.stripchart</replaceable> marker create image -image <replaceable>image-name</replaceable></command>
-                    </programlisting>
-                    <para>
-                        The coordinates for an image have the same meaning as for a bitmap.
-                    </para>
-                    <formalpara>
-                        <title>Line Markers</title>
-                        <para>
-                            A line marker displays one or more connected line segments.
-                            Line markers are created with marker's create operation in the form:
-                        </para>
-                    </formalpara>
-                    <programlisting>
-<command><replaceable>.stripchart</replaceable> marker create line <replaceable>?options?</replaceable></command>
-                    </programlisting>
-                    <para>
-                        The coordinates in this case are the coordinates of the vertices of the
-                        polyline that make up the marker.  There must be at least four coordinates,
-                        x1,y1, and x2,y2 of a single line segment, however there can be additional
-                        points to add additional line segments to the marker.
-                    </para>
-                    <para>
-                        The commonly used options for the line marker are:
-                    </para>
-                    <variablelist>
-                        <varlistentry>
-                            <term><option>-foreground <replaceable>color</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    Sets the foreground color.  The default foreground color is black.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><option>-linewidth <replaceable>pixels</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    Sets the width of the lines.  The default width is 0.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                    </variablelist>
-                    <formalpara>
-                        <title>Polygon Markers</title>
-                        <para>
-                            These are essentially Line markers with an added line connecting the last
-                            point to the first point, however just to be perverse, some of
-                            the options have different names.
-                        </para>
-                    </formalpara>
-                    <programlisting>
-<command><replaceable>.stripchart</replaceable> marker create polygon <replaceable>options...</replaceable></command>
-                    </programlisting>
-                    <para>
-                        Key options are:
-                    </para>
-                    <variablelist>
-                        <varlistentry>
-                            <term><option>-fill <replaceable>color</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    Sets the fill color of the polygon.  If
-                                    <parameter>color</parameter> is "", then the interior of
-                                    the polygon is transparent.  The
-                                    default is white.
-                                    </para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><option>-outline <replaceable>color</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    Sets the color of the outline of the polygon.  The default is black.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                    </variablelist>
-                    <formalpara>
-                        <title>Text Markers</title>
-                        <para>
-                            A text marker displays a string of characters on one or more lines
-                            of text.  Embedded newlines cause line breaks.
-                            They may be used to annotate regions of the strip chart.   One pair of
-                            coordinates must be supplied with the marker to specify where the
-                            text is modified by the <option>-anchor</option> options.
-                        </para>
-                    </formalpara>
-                    <para>
-                        Text markers are created as follows:
-                        <programlisting>
-<command><replaceable>.stripchart</replaceable> marker create text <replaceable>?option? ...</replaceable></command>
-                        </programlisting>
-                        Where the most commonly used options are:
-                    </para>
-                    <variablelist>
-                        <varlistentry>
-                            <term><option>-anchor <replaceable>anchor</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    <replaceable>Anchor</replaceable>
-                                    tells how to position the text relative to the positioning
-                                    point for  the  text.  For  example,  if
-                                    <replaceable>anchor</replaceable>  is
-                                    <literal>center</literal> then
-                                    the text is
-                                    centered on the point; if
-                                    <replaceable>anchor</replaceable> is <literal></literal>
-                                    then the text
-                                    will be drawn such that the top center point of the rectangular
-                                    region occupied by the text will be at the positioning point.
-                                    This default is <literal>center</literal>.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><option>-foreground <replaceable>color</replaceable></option></term>
-                            <listitem>
-                                <para>Sets the foreground color of the text. The default is black.</para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><option>-justify <replaceable>justify</replaceable></option></term>
-                            <listitem>
-                                <para>Specifies how the text should be justified.
-                                    This matters only when the marker contains more than one line
-                                    of text.
-                                    <replaceable>Justify</replaceable>
-                                    must be <literal>left</literal>, <literal>right</literal>, or
-                                    <literal>center</literal>.  The default is <literal>center</literal>.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><option>-rotate  <replaceable>theta</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    Specifies the number of degrees to rotate the text.
-                                    <parameter>Theta</parameter> is a real  number  representing
-                                    the  angle  of
-                                    rotation.   The  marker  is first rotated along its center and
-                                    is then drawn according to its anchor position. The default is 0.0.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                        <varlistentry>
-                            <term><option>-text <replaceable>text</replaceable></option></term>
-                            <listitem>
-                                <para>
-                                    Specifies the text of the marker.  The exact way the text is
-                                    displayed may be affected  by  other  options such as
-                                    <option>-anchor</option> or
-                                    <option>-rotate</option>.
-                                </para>
-                            </listitem>
-                        </varlistentry>
-                    </variablelist>
-                    <formalpara>
-                        <title>Window markers</title>
-                        <para>
-                            Window markers allow you to place other widgets on the
-                            stripchart.  The idea is that you create a widget that is a
-                            child of the stripchart.  You then add it as a window marker
-                            using the coordinates to specify the position of the widget.
-                            e.g:
-                        </para>
-                    </formalpara>
-                    <programlisting>
-<command><replaceable>.stripchart</replaceable> marker create window -window <replaceable>.stripchart.w</replaceable> ...</command>
-                    </programlisting>
-                </refsect3>
-            </refsect2>
-    </refsect1>
-    <refsect1>
-        <title>EXAMPLES</title>
-        <para>
-        </para>
-    </refsect1>
-    <refsect1>
-        <title>SEE ALSO</title>
-        <para>
 
+
+                        </programlisting>                                                                                  
+
+                    </para>
+
+                    <para>
+
+                        Grids also have methods that are invoked via e.g:
+
+                        <programlisting>
+
+<command><replaceable>.stripchart</replaceable> grid <replaceable>methodname ...</replaceable></command>
+
+                        </programlisting>
+
+                    </para>
+
+                    <para>
+
+                        The key configuration options for the grid are:
+
+                    </para>
+
+                    <variablelist>
+
+                        <varlistentry>
+
+                            <term><option>-color</option> <replaceable>color</replaceable></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Sets the color of the grid lines.  The default is black.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><option>-mapx</option> <replaceable>xAxis</replaceable></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Specifies the X-axis to display grid lines.
+
+                                    <parameter>XAxis</parameter> must be the name of an axis.
+
+                                    The default is  <literal>xaxis</literal>.
+
+                                    </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><option>-mapy</option> <replaceable>yAxis</replaceable></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Specifies the Y-axis to display grid lines.
+
+                                    <parameter>YAxis</parameter> must be the name of an axis.
+
+                                    The default is <literal>y</literal>.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                    </variablelist>
+
+                    <para>
+
+                        In addition to the <command>configure</command> and <command>cget</command>
+
+                        methods that manipulate grid configuration parameters. the two main
+
+                        methods are:
+
+                    </para>
+
+                    <variablelist>
+
+                        <varlistentry>
+
+                            <term><command>off</command></term>
+
+                            <listitem>
+
+                                <para>Turns off the display the grid lines.</para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><command>on</command></term>
+
+                            <listitem>
+
+                                <para>Turns on the display the grid lines.</para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                    </variablelist>
+
+                </refsect3>
+
+                <refsect3>
+
+                    <title>Stripchart legends</title>
+
+                    <formalpara>
+
+                        <title>Stripchart legends</title>
+
+                    <para>
+
+                        The  legend  displays  a  list of the data elements.  Each
+
+                        entry consists of the element's symbol and label.  The
+
+                        legend can appear in any margin (the default location is
+
+                        in the right margin).  It can also  be  positioned  any where within
+
+                        the plotting area.
+
+                    </para>
+
+                    </formalpara>
+
+                    <para>
+
+                        The legend documentation we will provide here are the legend options
+
+                        that can all be configured or queried via e.g.:
+
+                        <programlisting>
+
+<command><replaceable>.stripchart</replaceable> configure <replaceable>options...</replaceable></command>
+
+<command><replaceable>.stripchart</replaceable> cget <replaceable>option-name</replaceable></command>
+
+                        </programlisting>
+
+                        Where the most common options are:
+
+                    </para>
+
+                    <variablelist>
+
+                        <varlistentry>
+
+                            <term><option>-hide <replaceable>boolean</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Indicates  whether the legend should be displayed.
+
+                                    If <parameter>boolean</parameter> is true, the legend
+
+                                    will not be drawn.
+
+                                    The default is false, allowing the legend to be visible.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><option>-postition <replaceable>pos</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Specifies where the legend is drawn.   If <parameter>pos</parameter>
+
+                                    is <literal>left</literal>,
+
+                                    <literal>left</literal>, <literal>top</literal>, or
+
+                                    <literal>bottom</literal>, the legend is drawn in the
+
+                                    specified margin.  If <parameter>pos</parameter>
+
+                                    is <literal>plotarea</literal>, then the legend is drawn
+
+                                    inside the plotting area.  If  <parameter>pos</parameter>  is
+
+                                    in  the  form <literal>"@x,y"</literal>, where
+
+                                    <literal>x</literal> and <literal>y</literal> are
+
+                                    the window coordinates, the legend is drawn in the plotting
+
+                                    area at the specified coordinates.  The default is right.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                    </variablelist>
+
+                </refsect3>
+
+                <refsect3>
+
+                    <title>Stripchart Pens</title>
+
+                    <formalpara>
+
+                        <title>Stripchart Pens</title>
+
+                        <para>
+
+                            Stripchart pen components are bundles of attributes that can be
+
+                            applied to elements (traces).  The construction and manipulation of
+
+                            pens is an advanced topic refer to the blt::stripchart online manpage
+
+                            for information about this component.
+
+                        </para>
+
+                    </formalpara>
+
+                </refsect3>
+
+                <refsect3>
+
+                    <title>Stripchart Postcript output</title>
+
+                    <para>
+
+                        The postscript component support the generation of a postscript file
+
+                        that allows printing the contents of the plot.  The most commonly
+
+                        used postcript method is:
+
+                        <programlisting>
+
+<command><replaceable>.stripchart</replaceable> postscript output <filename>filename</filename> <replaceable>options...</replaceable></command>
+
+                        </programlisting>
+
+                        Where the most common options are:
+
+                    </para>
+
+                    <variablelist>
+
+                        <varlistentry>
+
+                            <term><option>-colormode <replaceable>mode</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Specifies how to output color information.
+
+                                    <parameter>Mode</parameter> must be either
+
+                                    <literal>color</literal> (for full color output),
+
+                                    <literal>gray</literal>
+
+                                    (convert all colors to their gray-scale equivalents) or
+
+                                    <literal>mono</literal> (convert foreground  colors  to  black
+
+                                    and background colors to white).
+
+                                  The default mode is <literal>color</literal>.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><option>-landscape <replaceable>boolean</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    If
+
+                                    <parameter>boolean</parameter>  is  true, this specifies the
+
+                                    printed area is to be rotated 90 degrees.  In non-rotated
+
+                                    output the X-axis of the printed area runs along the short
+
+                                    dimension of the page (``portrait'' orientation);  in  rotated
+
+                                    output the X-axis runs along the long dimension of the page
+
+                                    (``landscape'' orientation).  Defaults to 0.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>  
+
+                    </variablelist>
+
+                </refsect3>
+
+                <refsect3>
+
+                    <title>Stripchart Markers</title>
+
+                    <formalpara>
+
+                        <title>Stripchart Markers</title>
+
+                    <para>
+
+                        Markers are simple drawing procedures used to annotate or highlight
+
+                        areas of the strip chart.  Markers have various types: text strings,
+
+                        bitmaps, images, connected lines, windows, or polygons.
+
+                    </para>
+
+                    </formalpara>
+
+                    <para>
+
+                        While the use of markers can be useful in many application we do not
+
+                        want to reproduce the entire blt::stripchart manpage about markers here.
+
+                        We will only show how to create markers of the various sorts and
+
+                        what each marker type's configuration options are.
+
+                    </para>
+
+                    <para>
+
+                        All markers understand a <option>-coords</option> option that
+
+                        contains a list of coordinates.  The number of coordinates required
+
+                        and their meaning depends on the marker type.
+
+                    </para>
+
+                    <para>
+
+                        All markers understand a <option>-name</option> option that provides a
+
+                        unique name for the marker.  If not provided, the widget will generate a
+
+                        unique name for you.
+
+                    </para>
+
+                    <formalpara>
+
+                        <title>Creating a bitmap marker</title>
+
+                        <para>
+
+                            A bitmap marker displays a bitmap.  The size of the bitmap is
+
+                            controlled by the number of coordinates  specified.
+
+                            If  two coordinates, they specify the position of the top-left corner
+
+                            of the bitmap.  The bitmap retains its normal width and height.
+
+                            If four coordinates, the first and second pairs of coordinates represent
+
+                            the  corners  of the bitmap.  The bitmap will be stretched or
+
+                            reduced as necessary to fit into the bounding rectangle.
+
+                        </para>
+
+                    </formalpara>
+
+                    <para>
+
+                        Bitmap markers are created with the marker's create operation in the form:
+
+                        <programlisting>
+
+<command><replaceable>.stripchart</replaceable> marker create bitmap  <replaceable>?options?</replaceable></command>
+
+                        </programlisting>
+
+                        This command returns the name of the marker created.
+
+                    </para>
+
+                    <para>
+
+                        Bitmap specific options of interest are:
+
+                    </para>
+
+                    <variablelist>
+
+                        <varlistentry>
+
+                            <term><option>-bitmap <replaceable>bitmap</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Specifies  the bitmap to be displayed.  If
+
+                                    <parameter>bitmap</parameter> is "", the
+
+                                    marker will not be displayed.  The default is  "".
+
+                                    </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><option>-mask <replaceable>mask</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Specifies a mask for the bitmap to be displayed. This mask is
+
+                                    a bitmap itself, denoting  the  pixels  that are transparent.
+
+                                    If <parameter>mask</parameter> is "", all pixels of the bitmap will be
+
+                                    drawn.  The default is "".
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><option>-rotate <replaceable>theta</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    The marker is first rotated and then placed according
+
+                                    to its anchor position.   The  default  rotation  is
+
+                                    0.0.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                    </variablelist>
+
+                    <formalpara>
+
+                        <title>Image markers</title>
+
+                        <para>
+
+                             A image marker displays an image.  Image markers are created with the marker's
+
+                            create operation in the form:
+
+                        </para>
+
+                    </formalpara>
+
+                    <programlisting>
+
+<command><replaceable>.stripchart</replaceable> marker create image -image <replaceable>image-name</replaceable></command>
+
+                    </programlisting>
+
+                    <para>
+
+                        The coordinates for an image have the same meaning as for a bitmap.
+
+                    </para>
+
+                    <formalpara>
+
+                        <title>Line Markers</title>
+
+                        <para>
+
+                            A line marker displays one or more connected line segments.
+
+                            Line markers are created with marker's create operation in the form:
+
+                        </para>
+
+                    </formalpara>
+
+                    <programlisting>
+
+<command><replaceable>.stripchart</replaceable> marker create line <replaceable>?options?</replaceable></command>
+
+                    </programlisting>
+
+                    <para>
+
+                        The coordinates in this case are the coordinates of the vertices of the
+
+                        polyline that make up the marker.  There must be at least four coordinates,
+
+                        x1,y1, and x2,y2 of a single line segment, however there can be additional
+
+                        points to add additional line segments to the marker.
+
+                    </para>
+
+                    <para>
+
+                        The commonly used options for the line marker are:
+
+                    </para>
+
+                    <variablelist>
+
+                        <varlistentry>
+
+                            <term><option>-foreground <replaceable>color</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Sets the foreground color.  The default foreground color is black.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><option>-linewidth <replaceable>pixels</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Sets the width of the lines.  The default width is 0.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                    </variablelist>
+
+                    <formalpara>
+
+                        <title>Polygon Markers</title>
+
+                        <para>
+
+                            These are essentially Line markers with an added line connecting the last
+
+                            point to the first point, however just to be perverse, some of
+
+                            the options have different names.
+
+                        </para>
+
+                    </formalpara>
+
+                    <programlisting>
+
+<command><replaceable>.stripchart</replaceable> marker create polygon <replaceable>options...</replaceable></command>
+
+                    </programlisting>
+
+                    <para>
+
+                        Key options are:
+
+                    </para>
+
+                    <variablelist>
+
+                        <varlistentry>
+
+                            <term><option>-fill <replaceable>color</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Sets the fill color of the polygon.  If
+
+                                    <parameter>color</parameter> is "", then the interior of
+
+                                    the polygon is transparent.  The
+
+                                    default is white.
+
+                                    </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><option>-outline <replaceable>color</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Sets the color of the outline of the polygon.  The default is black.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                    </variablelist>
+
+                    <formalpara>
+
+                        <title>Text Markers</title>
+
+                        <para>
+
+                            A text marker displays a string of characters on one or more lines
+
+                            of text.  Embedded newlines cause line breaks.
+
+                            They may be used to annotate regions of the strip chart.   One pair of
+
+                            coordinates must be supplied with the marker to specify where the
+
+                            text is modified by the <option>-anchor</option> options.
+
+                        </para>
+
+                    </formalpara>
+
+                    <para>
+
+                        Text markers are created as follows:
+
+                        <programlisting>
+
+<command><replaceable>.stripchart</replaceable> marker create text <replaceable>?option? ...</replaceable></command>
+
+                        </programlisting>
+
+                        Where the most commonly used options are:
+
+                    </para>
+
+                    <variablelist>
+
+                        <varlistentry>
+
+                            <term><option>-anchor <replaceable>anchor</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    <replaceable>Anchor</replaceable>
+
+                                    tells how to position the text relative to the positioning
+
+                                    point for  the  text.  For  example,  if
+
+                                    <replaceable>anchor</replaceable>  is
+
+                                    <literal>center</literal> then
+
+                                    the text is
+
+                                    centered on the point; if
+
+                                    <replaceable>anchor</replaceable> is <literal></literal>
+
+                                    then the text
+
+                                    will be drawn such that the top center point of the rectangular
+
+                                    region occupied by the text will be at the positioning point.
+
+                                    This default is <literal>center</literal>.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><option>-foreground <replaceable>color</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>Sets the foreground color of the text. The default is black.</para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><option>-justify <replaceable>justify</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>Specifies how the text should be justified.
+
+                                    This matters only when the marker contains more than one line
+
+                                    of text.
+
+                                    <replaceable>Justify</replaceable>
+
+                                    must be <literal>left</literal>, <literal>right</literal>, or
+
+                                    <literal>center</literal>.  The default is <literal>center</literal>.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><option>-rotate  <replaceable>theta</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Specifies the number of degrees to rotate the text.
+
+                                    <parameter>Theta</parameter> is a real  number  representing
+
+                                    the  angle  of
+
+                                    rotation.   The  marker  is first rotated along its center and
+
+                                    is then drawn according to its anchor position. The default is 0.0.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                        <varlistentry>
+
+                            <term><option>-text <replaceable>text</replaceable></option></term>
+
+                            <listitem>
+
+                                <para>
+
+                                    Specifies the text of the marker.  The exact way the text is
+
+                                    displayed may be affected  by  other  options such as
+
+                                    <option>-anchor</option> or
+
+                                    <option>-rotate</option>.
+
+                                </para>
+
+                            </listitem>
+
+                        </varlistentry>
+
+                    </variablelist>
+
+                    <formalpara>
+
+                        <title>Window markers</title>
+
+                        <para>
+
+                            Window markers allow you to place other widgets on the
+
+                            stripchart.  The idea is that you create a widget that is a
+
+                            child of the stripchart.  You then add it as a window marker
+
+                            using the coordinates to specify the position of the widget.
+
+                            e.g:
+
+                        </para>
+
+                    </formalpara>
+
+                    <programlisting>
+
+<command><replaceable>.stripchart</replaceable> marker create window -window <replaceable>.stripchart.w</replaceable> ...</command>
+
+                    </programlisting>
+
+                </refsect3>
+
+            </refsect2>
+
+    </refsect1>
+
+    <refsect1>
+
+        <title>EXAMPLES</title>
+
+        <para>
+            This section will show some simple examples of how to create and use the
+            epicsStripchart widget.
+        </para>
+        <refsect2>
+            <title>Creating a simple stripchart</title>
+            <para>
+                This example shows how to create the simplest stripchart displaying  a
+                single control system parameter.  The stripchart produced will display
+                the time evolution of the parameter K5COILA-I, updated once a second.
+                Each data point will be represented as a circle (default symbol).
+                Black lines will connect the circles (default line color).
+                Both the value and time scales will auto-scale to fit the parameter values
+                and the time range.  This will cause the time range to dynamically shrink to
+                contain the the entire data set:
+            </para>
+            <programlisting>
+package require epicsStripChart
+                
+controlwidget::epicsStripChart .e
+.e addchannel K5COILA-I 1000
+pack .e
+                
+            </programlisting>
+        </refsect2>
+        <refsect2>
+            <title>Setting stripchart trace attributes</title>
+            <para>
+                This example is the same as the previous one, however
+                we will configure the trace so that it has no symbols
+                and is red in color
+            </para>
+            <programlisting>
+package require epicsStripChart
+
+controlwidget::epicsStripChart .e
+set trace [.e addchannel K5COILA-I 1000]
+
+.e element configure $trace -color red -symbol {}
+pack .e
+
+            </programlisting>
+            <para>
+                This example also shows how to capture the name of the element/history object
+                for later manipulation.  We can shorten this example, by using the fact that
+                the <command>addchannel</command> method of epicsStripChart allows you to specify
+                the configuration options for the element when you create it:
+            </para>
+            <programlisting>
+package require epicsStripChart
+
+controlwidget::epicsStripChart .e
+.e addchannel K5COILA-I 1000 -color red -symbol {}
+
+pack .e
+            </programlisting>  
+        </refsect2>
+        <refsect2>
+            <title>Configuring the appearance of the plot.</title>
+            <para>
+                The examples so far have suffered from a continuously
+                shrinking time axis, no grid, a badly positioned legend,
+                and a Y axis that does not really give you an idea of the
+                absolute magnitude of the data.  In this example we'll
+                make the Y axis start at 0, and the X axis dispaly only the
+                last minute of data, shifting by 10 seconds when the trace
+                goes out of range.  We will also turn on a grid, and
+                set the legend at the bottom of the graph.
+            </para>
+            <programlisting>
+package require epicsStripChart
+
+controlwidget::epicsStripChart .e
+.e yaxis configure -min 0.0
+.e xaxis configure -autorange 60.0 -shiftby 10.0
+.e grid on
+.e legend configure -position bottom
+.e addchannel K5COILA-I 1000 -color red -symbol {}
+
+pack .e
+            </programlisting>
+        </refsect2>
+        <refsect2>
+            <title>Adding titles</title>
+            <para>
+                This example builds on the previous example by
+                adding a plot title and axis titles.
+            </para>
+            <programlisting>
+package require epicsStripChart
+
+controlwidget::epicsStripChart .e -title {NSCL Strip Chart}
+.e yaxis configure -min 0.0 -title {Parameter Values}
+.e xaxis configure -autorange 60.0 -shiftby 10.0 -title {Time}
+.e grid on
+.e legend configure -position bottom
+.e addchannel K5COILA-I 1000 -color red -symbol {}
+
+pack .e
+ 
+            </programlisting>
+        </refsect2>
+        <refsect2>
+            <title>A graph with several traces</title>
+            <para>
+                This example shows that you can add several traces to the graph.  We will
+                let the y axis go back to auto ranging, as the K800 B coil current was negative
+                when this was tested:
+                <programlisting>
+package require epicsStripChart
+
+controlwidget::epicsStripChart .e -title {NSCL Strip Chart}
+.e yaxis configure -title {Parameter Values}
+.e xaxis configure -autorange 60.0 -shiftby 10.0 -title {Time}
+.e grid on
+.e legend configure -position bottom
+
+.e addchannel K5COILA-I 1000 -color red -symbol {}
+.e addchannel K5COILB-I 1000 -color blue -symbol {}
+.e addchannel K8COILA-I 1000 -color green -symbol {}
+.e addchannel K8COILB-I 1000 -color black -symbol {}
+
+
+pack .e
+                </programlisting>
+            </para>
+        </refsect2>
+ 
+        <refsect2>
+            <title>Accessing historical data</title>
+            <para>
+                This application adds a File menu.
+                The File menu will have two menu items.
+                The Exit menu item will exit the program.
+                The Save.. menu item will prompt for a filename
+                and save the historical data on the plot.
+            </para>
+            <para>
+                Doing this involves using the channelHistory object
+                created by the addchannel method.  We wil create a file
+                that has a header that consists of a line containing the
+                channel name, and a line containing the time of the first
+                measurement.  We will then provide the historical data as one
+                line per measurement where each line consists of a pair of fields.
+                The first field, is the offset in seconds from the base time, and
+                the second the parameter value at that time. We will also change
+                the update time to once every 0.5 seconds (500 ms).
+            </para>
+            <para>
+                For simplicity, we will go back to a single trace of the K500 A coil current.
+            </para>
+            <programlisting>
+package require epicsStripChart
+
+#   First set up the strip chart:
+
+package require epicsStripChart
+
+controlwidget::epicsStripChart .e -title {NSCL Strip Chart}
+.e yaxis configure -min 0.0 -title {Parameter Values}
+.e xaxis configure -autorange 60.0 -shiftby 10.0 -title {Time}
+.e grid on
+.e legend configure -position bottom
+
+# add the element, save the history object in the
+# global variable 'history'.
+
+set history [.e addchannel K5COILA-I 1000 -color red -symbol {}]
+
+
+pack .e
+
+# proc to save the history data; name of history object is
+# passed in.
+
+proc saveHistory {h} {
+    set filename [tk_getSaveFile  -defaultextension .trace   \
+                                  -title {Save file as...}   \
+                                  -filetypes {        \
+                                    {{Trace files} {.trace} TEXT} \
+                                    {{Text Files}  {.txt}   TEXT}   \
+                                    {{All Files}     *    } }]
+    
+    # Blank filename means the user hit cancel
+    
+    if {$filename eq ""} {
+        return
+    }
+    
+    #  If we can't open the file put up a nice error dialog:
+    
+    if {[catch {open $filename w} fd]} {
+        tk_messageBox   -icon error -type ok -title {Open Failed} \
+            -message "Could not open $filename : $fd"
+        return
+    }
+    # Now we can write the data to file:
+    
+    set channel   [$h cget -channel]
+    set startTime [$h cget -timebase]
+    
+    puts $fd $channel
+    puts $fd [clock format $startTime]
+    
+    set data [$h get]
+    foreach point $data {
+        puts $fd "[lindex $point 0] [lindex $point 1]"
+    }
+    close $fd
+}
+
+#   Proc to exit if the user confirms:
+
+proc Exit {} {
+    set answer [tk_messageBox -icon question -type yesno -title {Exit?} \
+                    -message {Do you really want to exit?}]
+    if {$answer eq "yes"} {
+        exit
+    }
+}
+
+#   Create the file menu 
+
+menu .bar 
+menu .bar.file -tearoff 0
+.bar add cascade -label File -menu .bar.file
+
+.bar.file add command -label {Save Data...} -command [list saveHistory $history]
+.bar.file add separator
+.bar.file add command -label {Exit...} -command Exit
+
+. configure -menu .bar
+
+            </programlisting>
+        </refsect2>
+   </refsect1>
+
+    <refsect1>
+
+        <title>SEE ALSO</title>
+       
+        <para>
+           blt::stripchart(3blt),   epics(3tcl)
         </para>
     </refsect1>
 </refentry>
 
-
-
 </article>
+
 </book>
