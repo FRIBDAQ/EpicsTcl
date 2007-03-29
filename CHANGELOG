@@ -28,4 +28,6 @@ March 28, 2007 - Fix timebase error in stripchart.
                  where the OS-X darwin ports put it.. that's the preferred
                  tcl/tk version for us since it supports a good BLT.
                - Add epicsStripChart documentation.
+March 29, 2007 - Remove last debugging outputs from epicsStripChart.tcl
+               - Add examples to the epicsStripChart docs.
               
