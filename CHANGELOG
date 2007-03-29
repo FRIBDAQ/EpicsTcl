@@ -29,5 +29,8 @@ March 28, 2007 - Fix timebase error in stripchart.
                  tcl/tk version for us since it supports a good BLT.
                - Add epicsStripChart documentation.
 March 29, 2007 - Remove last debugging outputs from epicsStripChart.tcl
-               - Add examples to the epicsStripChart docs.
+               - Add examples to the epicsStripChart docs.  
+   	       - Remove empty doc file ClanguageTraceCallbacks.xml
+               - set configure.in to 1.2-pre1  will be final when
+  		 Skip's shopping list is completely implemented.
               
