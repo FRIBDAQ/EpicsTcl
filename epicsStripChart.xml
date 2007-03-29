@@ -201,31 +201,18 @@ name removechannel <replaceable>channel</replaceable>
             <command>
 
 set <replaceable>object</replaceable> [<replaceable>.stripchart</replaceable> addchannel <replaceable>name millisecondds ?options?</replaceable>
-
-
-
+            </command><command>
 <replaceable>object</replaceable> clear
-
-
-
+            </command><command>
 <replaceable>object</replaceable> clearfirst <replaceable>points</replaceable>
-
-                                        
-
+                      </command><command>
 <replaceable>object</replaceable> keep <replaceable>points</replaceable>
-
-                                    
-
+                        </command><command>
 <replaceable>object</replaceable> updateperiod <replaceable>milliseconds</replaceable>
-
-                                               
-
+                        </command><command>
 <replaceable>object</replaceable> get
-
-
-
+                        </command><command>
 <replaceable>object</replaceable> names
-
             </command>
 
             </programlisting>
@@ -1477,13 +1464,10 @@ set <replaceable>object</replaceable> [<replaceable>.stripchart</replaceable> ad
                         <programlisting>
 
                             <command>
-
-                <replaceable>.stripchart</replaceable> axis create george
-
-                <replaceable>.stripchart</replaceable> xaxis1 use george
-
+<replaceable>.stripchart</replaceable> axis create george</command>
+<command>
+<replaceable>.stripchart</replaceable> xaxis1 use george
                             </command>
-
                         </programlisting>
 
                     </para>
@@ -1599,13 +1583,10 @@ set elementName [<replaceable>.stripchart</replaceable> addchannel <replaceable>
                         <programlisting>
 
                             <command>
-
-<replaceable>.stripchart</replaceable> element configure <replaceable>name options...</replaceable>
-
+<replaceable>.stripchart</replaceable> element configure <replaceable>name options...</replaceable></command>
+<command>
 <replaceable>.stripchart</replaceable> element cget <replaceable>name option-name</replaceable>
-
                             </command>  
-
                         </programlisting>
 
                         A useful subset of the options is:
@@ -1846,67 +1827,37 @@ set elementName [<replaceable>.stripchart</replaceable> addchannel <replaceable>
 
                                     The following option-value pairs are available.
 
-                                    <variablelist>
-
-                                        <varlistentry>
-
-                                            <term><option>-halo <replaceable>distance</replaceable></option></term>
-
-                                            <listitem>
-
-                                                <para>
-
-                                                    Specifies  a  threshold  distance where selected
-
-                                                    data points are ignored.  
-
-                                                    <parameter>distance</parameter> is a valid screen
-
-                                                    distance, such as 2 or 1.2i.  If this option isn't
-
-                                                    specified, then it defaults to the value of  the
-
-                                                    stripchart's <option>-halo</option> option.
-
+                                    <itemizedlist>
+                                            
+                                        <listitem>
+                                            <para>
+                                                <option>-halo <replaceable>distance</replaceable></option>
+                                            </para>
+                                            <para>
+                                                Specifies  a  threshold  distance where selected
+                                                data points are ignored.  
+                                                <parameter>distance</parameter> is a valid screen
+                                                distance, such as 2 or 1.2i.  If this option isn't
+                                                specified, then it defaults to the value of  the
+                                                stripchart's <option>-halo</option> option.
+                                            </para>
+                                        </listitem>
+                                        <listitem>
+                                            <para><option>-interpolate <replaceable>boolean</replaceable></option>
+                                            </para>
+                                            <para>
+                                                Indicates that both the data points and interpolated
+                                                points along the line segment formed should be
+                                                considered.  If
+                                                <parameter>boolean</parameter> is <literal>true</literal>,
+                                                the closest line segment will be selected instead of
+                                                the  closest
+                                                point. If this option isn't specified,
+                                                <parameter>boolean</parameter> defaults to <literal>0</literal>
+                                                which is a Tcl <literal>false</literal> value.
                                                 </para>
-
-                                            </listitem>
-
-                                        </varlistentry>
-
-                                        <varlistentry>
-
-                                            <term><option>-interpolate <replaceable>boolean</replaceable></option></term>
-
-                                            <listitem>
-
-                                                <para>
-
-                                                    Indicates that both the data points and interpolated
-
-                                                    points along the line segment formed should be
-
-                                                    considered.  If
-
-                                                    <parameter>boolean</parameter> is <literal>true</literal>,
-
-                                                    the closest line segment will be selected instead of
-
-                                                    the  closest
-
-                                                    point. If this option isn't specified,
-
-                                                    <parameter>boolean</parameter> defaults to <literal>0</literal>
-
-                                                    which is a Tcl <literal>false</literal> value.
-
-                                                    </para>
-
-                                            </listitem>
-
-                                        </varlistentry>
-
-                                    </variablelist>
+                                        </listitem>
+                                    </itemizedlist>
 
                                 </para>
 

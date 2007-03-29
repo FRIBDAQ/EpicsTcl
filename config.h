@@ -199,7 +199,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "1.2"
+#define VERSION "1.2-pre1"
 
 
 /* Define STD macro according to HAVE_STD_NAMESPACE value */
