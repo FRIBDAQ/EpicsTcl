@@ -108,7 +108,7 @@ XMLFILES = manual.xml meter.xml \
 	$(WEBXMLFILES)
 
 
-MANPAGES =  bcmMeter.1tcl epicsLabel.1tcl \
+MANPAGES =  intro.1tcl bcmMeter.1tcl epicsLabel.1tcl \
 	 epicsEnumeratedControl.1tcl \
 	epicsTypeNGo.1tcl epicsLabelWithUnits.1tcl \
 	epicsLed.1tcl epicsspinbox.1tcl epicsButton.1tcl \

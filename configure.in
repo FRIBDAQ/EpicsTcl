@@ -68,12 +68,11 @@ AC_PROG_LN_S
 
 # Documentation tools (docbook xmlto):
 
-AC_PATH_PROG(HCDOCBOOK,  docbook2div,  echo)
+AC_PATH_PROG(HCDOCBOOK,  docbook2dvi,  echo)
 AC_PATH_PROG(HTMLDOCBOOK, xmlto, echo)
 AC_PATH_PROG(MANDOCBOOK,  xmlto,        echo)
 AC_PATH_PROG(DVIPDF,       dvipdf,        echo)
-MANDOCBOOK="$MANDOCBOOK"
-HCDOCBOOK="$HCDOCBOOK pdf"
+MANDOCBOOK="$MANDOCBOOK man"
 
 #
 

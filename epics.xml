@@ -74,7 +74,7 @@ epicschannel <replaceable>name</replaceable>
             only be processed, however, by entering the Tcl event loop.  Either by running wish,
             or by doing a <command>vwait</command> in a pure Tcl interpreter.
         </para>
-        <para>y
+        <para>
           It is perfectly possible and acceptable to do something like:
           <programlisting>
 epicschannel aaa
