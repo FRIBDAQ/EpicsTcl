@@ -86,14 +86,14 @@ PACKAGES = meter.tcl bcmMeter.tcl epicsLabel.tcl \
 
 # Man pages:
 
-WEBXMLFILES= bcmMeter.xml epicsLabel.xml	\
+WEBXMLFILES= manual.xml bcmMeter.xml epicsLabel.xml	\
 		 epicsEnumeratedControl.xml	\
 		 epicsTypeNGo.xml epicsLabelWithUnits.xml \
 		epicsLed.xml epicsspinbox.xml epicsButton.xml \
 		epics.xml epicsMeter.xml epicsBCMMeter.xml \
 		epicsStripChart.xml
 
-XMLFILES = meter.xml \
+XMLFILES = manual.xml meter.xml \
 	radioMatrix.xml \
 	typeNGo.xml      \
 	led.xml  \
@@ -108,39 +108,24 @@ XMLFILES = meter.xml \
 	$(WEBXMLFILES)
 
 
-MANPAGES = meter.1tcl bcmMeter.1tcl epicsLabel.1tcl \
-	radioMatrix.1tcl epicsEnumeratedControl.1tcl \
-	typeNGo.1tcl epicsTypeNGo.1tcl epicsLabelWithUnits.1tcl \
-	led.1tcl epicsLed.1tcl epicsspinbox.1tcl epicsButton.1tcl \
-	CTCLApplication.3 CTCLInterpreterObject.3 CTCLInterpreter.3 \
-	CTCLVariable.3 CTCLChannel.3 CTCLCommandPackage.3 \
-	CTCLCompatibilityProcessor.3 CTCLException.3 CTCLFileHandler.3 \
-	CTCLHashTable.3 CTCLHashTableItem.3 CTCLHashTableIterator.3 \
-	CTCLIdleProcess.3 \
-	CTCLList.3 CTCLObject.3 CTCLObjectProcessor.3 \
-	CTCLPackagedCommand.3 CTCLProcessor.3 CTCLResult.3 \
-	CTCLString.3 CTCLTimer.3 TclPlus.3  epics.3 epicsMeter.1tcl \
+MANPAGES =  bcmMeter.1tcl epicsLabel.1tcl \
+	 epicsEnumeratedControl.1tcl \
+	epicsTypeNGo.1tcl epicsLabelWithUnits.1tcl \
+	epicsLed.1tcl epicsspinbox.1tcl epicsButton.1tcl \
+	epics.3tcl epicsMeter.1tcl \
 	epicsBCMMeter.1tcl epicsStripChart.1tcl
 
-WEBDOCS = index.html  \
-	bcmMeter.pdf epicsLabel.pdf epicsEnumeratedControl.pdf \
-	epicsTypeNGo.pdf epicsLabelWithUnits.pdf   \
-	epicsLed.pdf epicsspinbox.pdf epicsButton.pdf epics.pdf \
-	epicsMeter.pdf epicsBCMMeter.pdf epicsStripChart.pdf
+WEBDOCS = epics.pdf
+
+$(WEBDOCS): $(WEBXMLFILES)
+	$(HCDOCBOOK) manual.xml
+	$(DVIPDF)     manual.dvi
+	mv manual.pdf epics.pdf
 
 
-# Build rule for manpages:
 
-.xml.1tcl:
-	- $(MANDOCBOOK) man $< 
-	touch $@
-
-.xml.3:
-	- $(MANDOCBOOK) man $< 2>/dev/null
-	touch $@
-.xml.pdf:
-	- $(MANDOCBOOK) pdf $< 2>/dev/null
-	touch $@
+$(MANPAGES): $(WEBXMLFILES)
+	$(MANDOCBOOK) manual.xml
 
 
 man_MANS = $(MANPAGES)

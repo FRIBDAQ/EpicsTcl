@@ -1,14 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
-                      "file:///usr/share/xml/docbook/schema/dtd/4.3/docbookx.dtd"
-[]
->
-<book>
-<article>
+
 <refentry>
     <refmeta>
         <refentrytitle>epics tcl package</refentrytitle>
-        <manvolnum>3</manvolnum>
+        <manvolnum>3tcl</manvolnum>
     </refmeta>
     <refnamediv>
         <refname>epics</refname>
@@ -224,6 +218,3 @@ pack .l
 
 </refentry>
 
-
-</article>
-</book>
