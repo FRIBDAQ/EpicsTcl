@@ -105,7 +105,52 @@ controlwidget::meter <replaceable>path  ?options...?</replaceable>
                         </para>
                     </listitem>
                 </varlistentry>
+		<varlistentry>
+		   <term><command>-log
+		      <replaceable>boolean</replaceable></command></term>
+		   <listitem>
+		      <para>
+		         If the boolean is true, the meter will display in
+                         logscale.  This has several other side effects:
+                       </para>
+                       <itemizedlist>
+		          <listitem>
+			     <para>
+			        The user supplied values of 
+				<command>-majorticks</command> and
+				<command>-minorticks</command> are ignored and
+				        chosen by the meter widget
+			      </para>
+    		          </listitem>
+                          <listitem>
+                              <para>
+                                  The <command>-from</command> and
+                                  <command>-to</command> values are pushed to
+                                  nearest decades below and above respectively, 
+                                  for example <command>-from 55</command>
+                                  and <command>-to 750</command> will be pushed
+                                  to <command>-from 10</command> and 
+                                  <command>-to 1000</command>, resulting in two
+                                  full decades of meter range.  Ranges that
+				  encompass the negative direction are not
+                                  supported and will result in an error.
 
+                              </para>
+                          </listitem>
+                          <listitem>
+                              <para>
+                                  Data values that are zero are treated as
+                                  .0001.
+                              </para>
+                          </listitem>
+                          <listitem>
+                              <para>
+                                  Negative values will display as the lowest 
+				  displayable value on the meter.
+                              </para>
+                          </listitem>
+                       </itemizedlist>
+                   </listitem>
             </variablelist>
         </para>
     </refsect1>

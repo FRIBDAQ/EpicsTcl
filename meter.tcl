@@ -34,6 +34,7 @@
 #    -variable    - Variable the meter will track.                      (dynamic)
 #    -majorticks  - Interval between major (labelled) ticks.            (dynamic)
 #    -minorticks  - Number of minor ticks drawn between major ticks.    (dynamic)
+#    -log         - True if should be log scale                         (dynamic).
 #
 # Methods:
 #    set value    - Set the meter to a specific value (if -variable is defined it is modified).
@@ -55,6 +56,9 @@ snit::widget controlwidget::meter {
     option -variable   {}
     option -majorticks 1.0
     option -minorticks 4
+    option -log        false
+    
+    variable constructing   1
 
     variable needleId       {}
     variable topY           {}
@@ -62,9 +66,13 @@ snit::widget controlwidget::meter {
     variable valueRange     {}
     variable needleLeft     {}
     variable meterLeft      {}
+    variable majorlength
 
     variable tickIds        {}
     variable lastValue       0
+    
+    variable decadeLow       0;       # e.g. 1 -10... this is the low end exponent.
+    variable decadeHigh      1;        # e.g. 10-100.
 
     variable fontList
 
@@ -146,6 +154,7 @@ snit::widget controlwidget::meter {
         }
 	bindDown $win $win
 
+        set constructing 0
     }
 
     #-------------------------------------------------------------------------------
@@ -191,7 +200,45 @@ snit::widget controlwidget::meter {
     # Compute the correct height of the needle given
     # A new coordinate value for it in needle units:
 
-    method  computeHeight needleCoords {
+    method computeHeight needleCoords {
+        if {$options(-log)} {
+            return [$self computeLogHeight  $needleCoords]
+        } else {
+            return [$self computeLinearHeight $needleCoords]
+        }
+    }
+
+    #  Compute the needle height if the scale is log.
+
+    method computeLogHeight needleCoords {
+        $self computeDecades
+        #
+        #  The following protect against range errors as well as
+        #  negative/0 values:
+        #
+        if {$needleCoords < $decadeLow} {
+            set needleCoords $decadeLow
+        }
+        if {$needleCoords > $decadeHigh} {
+            set needleCoords $decadeHigh
+        }
+        
+        #  Now it should be safe to do the logs:
+        #  the scaling is just linear in log coords:
+        
+        set valueRange [expr log10($decadeHigh) - log10($decadeLow)]
+        set value      [expr log10($needleCoords) - log10($decadeLow)]
+        
+        set pixelRange [expr 1.0*($bottomY - $topY)]
+        
+        set height [expr $value*$pixelRange/$valueRange]
+        return [expr $bottomY - $height]
+        
+    }
+
+    #  Compute the needle height if the scale is linear
+    #
+    method  computeLinearHeight needleCoords {
 
         #
         # Peg the needle to the limits:
@@ -217,6 +264,46 @@ snit::widget controlwidget::meter {
     # Tick labels are drawn at x coordinate 0.
     #
     method drawTicks {} {
+	
+	if {!$options(-log)} {
+	    $self drawLinearTicks
+	} else {
+	    $self drawLogTicks
+	}
+    }
+    #
+    #  Draw the ticks for a log scale.
+    #
+    method drawLogTicks {} {
+        set decades     [$self computeDecades];       # Range of meter...
+        set majorRight  [$self getMajorRight];        # Right end coordinate of major tick.
+        set minorRight  [$self getMinorRight];        # Right end coord of minor tick.
+
+        
+        #  Major ticks are easy.. they are at the decades.
+        
+        set range [expr $topY - $bottomY]
+        set interval [expr $range/([llength $decades] -1) ];  # Space decades evenly.
+        
+        set pos   $bottomY
+        set tickIds
+        foreach decade $decades {
+            lappend tickIds [$win.c create text $meterLeft $pos -text $decade -anchor e -font $fontList]
+            lappend tickIds [$win.c create line $meterLeft $pos  $majorRight $pos]
+            #
+            #  Now the minor ticks... we draw for 1-9. of them in log spacing.
+            #
+            foreach mant [list 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0] {
+                set ht [expr $pos + $interval*log10($mant)]
+                lappend tickIds [$win.c create line $meterLeft $ht $minorRight $ht]
+            }
+            set pos [expr $pos + $interval]
+        }
+    }
+    #
+    #  Draw the ticks for a linear scale:
+    #
+    method drawLinearTicks {} {
         set first $options(-from)
         set last  $options(-to)
         set major $options(-majorticks)
@@ -228,11 +315,8 @@ snit::widget controlwidget::meter {
 
         # Figure out the right most coordinates of the tick lines.
 
-        set majorlength [expr ($options(-width) - $meterLeft)/5]
-        set minorlength [expr  $majorlength/2]
-        set majorRight  [expr $meterLeft + $majorlength]
-        set minorRight  [expr $meterLeft + $minorlength]
-
+	set majorRight [$self getMajorRight]
+	set minorRight [$self getMinorRight]
        # the for loop is done the way it is in order to reduce
        # the cumulative roundoff error from repetitive summing.
        #
@@ -262,6 +346,57 @@ snit::widget controlwidget::meter {
         foreach id $tickIds {
             $win.c delete $id
         }
+    }
+    #
+    #     Compute the right x coordinate  of the major ticks:
+    #
+    method getMajorRight {} {
+	set majorlength [expr ($options(-width) - $meterLeft)/5]
+	set majorRight  [expr $meterLeft + $majorlength]
+	
+	return $majorRight
+    }
+    #
+    #    Compute the right x coordinate of the minor ticks:
+    #
+    method getMinorRight {} {
+        set minorlength [expr  $majorlength/2]        
+        set minorRight  [expr $meterLeft + $minorlength]
+	return $minorRight
+    }
+
+    # compute the decades in the plot.  This is also where we will complain if the
+    # range covers 0 or a negative range as for now we only support positive log scales.
+    # Returns a list of the decades e.g. {1.0e-9 1.0e-08 1.0e-7}  that cover the range.
+    # The low decade truncates.  The high one is a ceil.
+    #
+    
+    method computeDecades {} {
+	set low $options(-from)
+        
+	if {$low <= 0.0} {
+	    error "Log scale with negative or zero -from value is not supported"
+	}
+	set high $options(-to)
+	if {$high <= 0.0} {
+	    error "Log scale with negative or zero -to value no"
+        }
+        #
+        set lowDecade  [expr log10($low)]
+        if {$lowDecade < 0} {
+            set lowDecade [expr $lowDecade - 0.5]
+        }
+        set lowDecade [expr int($lowDecade)]
+        
+        set result     [format "1.0e%02d" $lowDecade]
+        set highDecade [expr log10($high)];               # Don't truncate...
+        while {$lowDecade < $highDecade} {
+            incr lowDecade
+            lappend result [format "1.0e%02d" $lowDecade]
+        }
+        set decadeLow  [lindex $result 0]
+        set decadeHigh [lindex $result end]
+        return $result
     }
 
     #------------------------ Configuration handlers for dynamic options  ----
@@ -295,6 +430,32 @@ snit::widget controlwidget::meter {
         set valueRange [expr $value - $options(-from)]
         $self drawTicks
         $self needleTo $lastValue
+    }
+    #
+    #  Handle configure -log
+    #  Set the log flag accordingly and then redraw the ticks and value:
+    #  Note that we must check the -from/-to and figure out the first decade
+    #  and the last decade.
+    #
+    onconfigure -log value {
+	#  No change return.
+        
+	if {$value == $options(-log)}  return;    # short cut exit.
+	
+        # require booleanness.
+	
+	if {![string is boolean $value]} {
+	    error "meter.tcl - value of -log flag must be a boolean"
+	}
+	#  Set the new value and update the meter:
+	
+	set options(-log) $value
+        if {!$constructing} {
+            $self computeDecades
+            $self eraseTicks
+            $self drawTicks
+            $self needleTo $lastValue
+        }
     }
 
     # Handle a change in major ticks.. we just need to set the option and redraw the ticks.
