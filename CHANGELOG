@@ -33,4 +33,6 @@ March 29, 2007 - Remove last debugging outputs from epicsStripChart.tcl
    	       - Remove empty doc file ClanguageTraceCallbacks.xml
                - set configure.in to 1.2-pre1  will be final when
   		 Skip's shopping list is completely implemented.
+April 24, 2007 - Added epicsGraph widget.. This is the x/y plot widget
+                 on Skip's shopping list for epics widgets.
               

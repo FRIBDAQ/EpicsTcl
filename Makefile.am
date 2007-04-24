@@ -82,7 +82,7 @@ PACKAGES = meter.tcl bcmMeter.tcl epicsLabel.tcl \
 	typeNGo.tcl epicsTypeNGo.tcl		\
 	epicsLabelWithUnits.tcl bindDown.tcl led.tcl \
 	epicsLed.tcl epicsspinbox.tcl epicsButton.tcl \
-	epicsMeter.tcl epicsStripChart.tcl
+	epicsMeter.tcl epicsStripChart.tcl epicsgraph.tcl
 
 # Man pages:
 
