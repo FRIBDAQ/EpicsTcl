@@ -276,6 +276,7 @@ DAMAGES.
 		     END OF TERMS AND CONDITIONS '
 */
 // Typically this class should be overridden, but not necessarily.
+
 //  CTCLCommandPackage.h:
 //
 //    This file defines the CTCLCommandPackage class.
@@ -326,12 +327,12 @@ DAMAGES.
 #endif
 
 
-typedef STD(list)<CTCLProcessor*>   CommandList;
+typedef std::list<CTCLProcessor*>   CommandList;
 typedef CommandList::iterator  CommandListIterator;
 
 class CTCLCommandPackage  : public CTCLInterpreterObject        
 {
-  STD(string) m_sSignon;    // Package signon message.  
+  std::string m_sSignon;    // Package signon message.  
   CommandList m_lCommands;  // List of references to command objects
                             // which implement package.
   
@@ -339,7 +340,7 @@ public:
   // Constructors with parameters:
   //
   CTCLCommandPackage (CTCLInterpreter* pInterp, 
-		      const STD(string)& rSignon=STD(string)("Unnamed pkg")) :
+		      const std::string& rSignon=std::string("Unnamed pkg")) :
     CTCLInterpreterObject(pInterp),
     m_sSignon(rSignon)
   {}
@@ -382,7 +383,7 @@ public:
   // Selectors:
 
 public:
-  STD(string) getSignon() const
+  std::string getSignon() const
   {
     return m_sSignon;
   }
@@ -393,7 +394,7 @@ public:
   // Mutators:
 
 protected:                    
-  void setSignon (STD(string) am_sSignon)
+  void setSignon (std::string am_sSignon)
   { 
     m_sSignon = am_sSignon;
   }

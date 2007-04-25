@@ -14,15 +14,15 @@
 	     East Lansing, MI 48824-1321
 */
 
-#include "config.h"
+
 #include "TCLProcessor.h"
 #include "TCLInterpreter.h"
 #include "TCLResult.h"
 #include "TCLCompatibilityProcessor.h"
 
-#ifdef HAVE_STD_NAMESPACE
+
 using namespace std;
-#endif
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////

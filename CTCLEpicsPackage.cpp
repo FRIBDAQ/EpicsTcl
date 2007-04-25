@@ -14,7 +14,7 @@
 	     East Lansing, MI 48824-1321
 */
 
-#include <config.h>
+
 #include "CTCLEpicsCommand.h"
 #include "CTCLChannelCommand.h"
 #include <CChannel.h>
@@ -25,9 +25,9 @@
 #include <string>
 #include <tcl.h>
 #include <tk.h>
-#ifdef HAVE_STD_NAMESPACE
+
 using namespace std;
-#endif
+
 
 
 static char* version= "1.2";
@@ -50,6 +50,9 @@ static void pollEpics(ClientData ignored) {
 
 
 extern "C" {
+#ifdef WIN32
+__declspec(dllexport)
+#endif
   int Epics_Init(Tcl_Interp* pInterp)
   {
 

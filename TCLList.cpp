@@ -296,7 +296,7 @@ DAMAGES.
 // Header Files:
 //
 
-#include "config.h"
+
 #include "TCLVersionHacks.h"
 #include "TCLList.h"                               
 #include "TCLInterpreter.h"
@@ -304,9 +304,9 @@ DAMAGES.
 #include <assert.h>
 #include <stdlib.h>
 
-#ifdef HAVE_STD_NAMESPACE
+
 using namespace std;
-#endif
+
 
 typedef char *pChar;
 

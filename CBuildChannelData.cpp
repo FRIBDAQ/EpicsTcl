@@ -22,7 +22,7 @@
 */
 
 // Headers:
-#include <config.h>
+// #include <config.h>
 #include "CBuildChannelData.h"    				
 #include "CUnitChannel.h"
 

@@ -58,7 +58,7 @@ public:
 			//Constructors with arguments
 
   CException (const char* pszAction  );
-  CException (const STD(string)& rsAction);
+  CException (const std::string& rsAction);
   
 			//Copy constructor
 
@@ -87,7 +87,7 @@ public:
 
 protected:
   void setAction (const char* pszAction);
-  void setAction (const STD(string)& rsAction);
+  void setAction (const std::string& rsAction);
 
   // Selectors which depend on the actual exception type:
 

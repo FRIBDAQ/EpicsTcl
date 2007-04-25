@@ -292,6 +292,9 @@ DAMAGES.
 /*!
     Change Log:
     $Log$
+    Revision 1.2  2007/04/25 21:23:18  fox
+    Add stuff to build windows version
+
     Revision 1.1  2007/03/21 15:24:47  fox
     Initial installation of the epicstcl package into the stripper foil
     CVS repository
@@ -320,6 +323,9 @@ DAMAGES.
 
     Revision 4.2  2003/03/25 12:01:28  ron-fox
     Added Change log comment generated from the CVS $Log$
+    Added Change log comment generated from the CVS Revision 1.2  2007/04/25 21:23:18  fox
+    Added Change log comment generated from the CVS Add stuff to build windows version
+    Added Change log comment generated from the CVS
     Added Change log comment generated from the CVS Revision 1.1  2007/03/21 15:24:47  fox
     Added Change log comment generated from the CVS Initial installation of the epicstcl package into the stripper foil
     Added Change log comment generated from the CVS CVS repository
@@ -368,7 +374,7 @@ DAMAGES.
 #endif
 #endif
 
-typedef STD(vector)<STD(string)> StringArray;
+typedef std::vector<std::string> StringArray;
 typedef StringArray::iterator StringArrayIterator;
 
 class CTCLList  : public CTCLInterpreterObject        
@@ -387,7 +393,7 @@ public:
 			//Constructors with arguments
 
   CTCLList (CTCLInterpreter* pInterp, const  char* am_pList  );       
-  CTCLList (CTCLInterpreter* pInterp, const STD(string)& rList);
+  CTCLList (CTCLInterpreter* pInterp, const std::string& rList);
 	
 			//Copy constructor
 

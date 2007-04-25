@@ -53,7 +53,7 @@ class CChannelVariable : public CTCLVariable
   CChannel*   m_pChannel;	/* Channel we're linked to. */
 public:
   CChannelVariable(CTCLInterpreter& rInterp,
-		   STD(string)      name,
+		   std::string      name,
 		   CChannel*        pChannel);
   CChannelVariable(const CChannelVariable& rhs);
   CChannelVariable& operator=(const CChannelVariable& rhs);
@@ -64,7 +64,7 @@ public:
   void enableTracing();
   void disableTracing();
 
-  void newEpicsValue(STD(string) value);
+  void newEpicsValue(std::string value);
 
   // The function called on trace:
 

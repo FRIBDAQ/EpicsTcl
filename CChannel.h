@@ -54,19 +54,19 @@ class CChannel
 public:
   typedef void (*Slot)(CChannel*, void*);
 private:
-  STD(string)   m_sName;
+  std::string   m_sName;
   bool          m_fConnected;
   chid          m_nChannel;
   bool          m_fUpdateHandlerEstablished;
   bool          m_fConnectionHandlerEstablished;
-  STD(string)   m_sValue;
+  std::string   m_sValue;
   time_t        m_LastUpdateTime;
   CConverter*   m_pConverter;
   Slot          m_pHandler;
   void*         m_pHandlerData;
   
 public:
-  CChannel(STD(string) name);
+  CChannel(std::string name);
   virtual ~CChannel();
 
   // Forbidden operations.
@@ -80,12 +80,12 @@ public:
 
   // Operations on the object:
 
-  STD(string) getName()     const;
+  std::string getName()     const;
   bool        isConnected() const;
 
   virtual void Connect();
   time_t       getLastUpdate() const;
-  STD(string)  getValue()      const;
+  std::string  getValue()      const;
 
   void setSlot(Slot handler, void* data);
 
@@ -93,7 +93,7 @@ public:
   // this is just an overloaded assign to the channel:
   // the return value is the thing assigned:
 
-  STD(string) operator=(STD(string) value);
+  std::string operator=(std::string value);
   int         operator=(int value);
   double      operator=(double value);
 
@@ -112,13 +112,13 @@ protected:
 //////////////////////////////////////////////////////////////////////////////
 /*!
 **   The classes below are used to convert between epics native values
-**   and STD(string)s... this is required becuse epics does not always
+**   and std::strings... this is required becuse epics does not always
 **   choose a good conversion.
 **
 **   In addition a conversion factory is provided.
 **   This is all much simpler than it looks.  There are basically
 **   only the following conversion types that we entertain:
-**    STD(string) : Ask the user to request DBF_STRING and convert that
+**    std::string : Ask the user to request DBF_STRING and convert that
 **             as %s
 **    uint:    Ask the user to request DBF_ULONG and convert that.
 **             as %ul
@@ -140,8 +140,8 @@ protected:
 **    And use the return value as the data type requested when
 **    invoking ca_add_event on the channel.
 **    In the UpdateHandler,
-**       STD(string) value = (*pConverter)(args);
-**    to get a nice STD(string) value returned for the channel.
+**       std::string value = (*pConverter)(args);
+**    to get a nice std::string value returned for the channel.
 **
 */
 
@@ -153,14 +153,14 @@ class CConverter
 {
 public:
   virtual short  requestType() = 0;
-  virtual STD(string) operator()(event_handler_args args) = 0;
+  virtual std::string operator()(event_handler_args args) = 0;
 };
 
 class CStringConverter : public CConverter 
 {
 public:
   virtual short requestType();
-  virtual STD(string) operator()(event_handler_args args);
+  virtual std::string operator()(event_handler_args args);
 
 };
 
@@ -170,14 +170,14 @@ class CIntegerConverter : public CConverter
 {
 public:
   virtual short requestType();
-  virtual STD(string) operator()(event_handler_args args);
+  virtual std::string operator()(event_handler_args args);
 };
 
 class CFloatConverter : public CConverter
 {
 public:
   virtual short requestType();
-  virtual STD(string) operator()(event_handler_args args);
+  virtual std::string operator()(event_handler_args args);
 };
 
 /*!

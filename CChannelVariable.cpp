@@ -14,14 +14,14 @@
 	     East Lansing, MI 48824-1321
 */
 
-#include <config.h>
+
 #include <CChannelVariable.h>
 #include <CChannel.h>
 
 
-#ifdef HAVE_STD_NAMESPACE
+
 using namespace std;
-#endif
+
 
 /*!
     Create a CChannelVariable - this is a Tcl variable that
@@ -129,4 +129,5 @@ char*
 CChannelVariable::operator()(char* name, char* subscript, int flags)
 {
   (*m_pChannel) = Get();
+   return (char*)NULL;
 }

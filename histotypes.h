@@ -369,8 +369,8 @@ typedef enum _Datatype_t {
   keUnknown_dt
 } DataType_t;
 
-inline STD(ostream)&
-operator<<(STD(ostream)& out, DataType_t t)
+inline std::ostream&
+operator<<(std::ostream& out, DataType_t t)
 {
   switch(t) {
   case keByte:
@@ -442,8 +442,8 @@ typedef enum _SpectrumType_t {
 
 // I/O for spectrum types.
 
-inline STD(ostream)& 
-operator<<(STD(ostream)& out, SpectrumType_t t)
+inline std::ostream& 
+operator<<(std::ostream& out, SpectrumType_t t)
 {
   switch(t) {
   case ke1D:
@@ -467,8 +467,8 @@ operator<<(STD(ostream)& out, SpectrumType_t t)
   return out;
 }
 
-inline STD(istream)& 
-operator>>(STD(istream)& in, SpectrumType_t& t)
+inline std::istream& 
+operator>>(std::istream& in, SpectrumType_t& t)
 {
   char c;
   in >> c;

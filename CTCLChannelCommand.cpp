@@ -14,7 +14,7 @@
 	     East Lansing, MI 48824-1321
 */
 
-#include <config.h>
+
 #include <CTCLChannelCommand.h>
 #include <TCLInterpreter.h>
 #include <TCLObject.h>
@@ -28,9 +28,9 @@
 
 
 
-#ifdef HAVE_STD_NAMESPACE 
+
 using namespace std;
-#endif
+
 
 /*!
    Construct a channel command.
@@ -369,7 +369,7 @@ CTCLChannelCommand::Unlink(CTCLInterpreter& interp,
 */
 int
 CTCLChannelCommand::ListLinks(CTCLInterpreter& interp, 
-			      STD(vector)<CTCLObject>& objv)
+			      std::vector<CTCLObject>& objv)
 
 {
 

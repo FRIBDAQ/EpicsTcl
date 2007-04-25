@@ -13,7 +13,7 @@
 	     Michigan State University
 	     East Lansing, MI 48824-1321
 */
-#include "config.h"
+
 #include "TCLCompatibilityProcessor.h"
 #include "TCLProcessor.h"
 #include "TCLObject.h"
@@ -22,9 +22,9 @@
 
 #include <tcl.h>
 
-#ifdef HAVE_STD_NAMESPACE
+
 using namespace std;
-#endif
+
 
 ///////////////////////////////////////////////////////////////////////////////
 /*!

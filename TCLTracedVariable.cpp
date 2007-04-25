@@ -8,14 +8,14 @@
      http://www.gnu.org/licenses/gpl.txt
 
 */
-#include "config.h"
+
 #include "TCLTracedVariable.h"
 #include "VariableTraceCallback.h"
 #include "TCLInterpreter.h"
 
-#ifdef HAVE_STD_NAMESPACE
+
 using namespace std;
-#endif
+
 
 /*!
   Construct a traced variable object.  This involves:

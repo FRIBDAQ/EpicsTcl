@@ -297,7 +297,7 @@ static const char* Copyright= "(C) Copyright Michigan State University 1936, All
 //////////////////////////.cpp file/////////////////////////////////////////////////////
 
 
-#include "config.h"
+
 #include "StreamIOError.h"    				
 #include <string.h>
 

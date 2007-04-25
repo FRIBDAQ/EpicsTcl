@@ -278,7 +278,7 @@ DAMAGES.
 
 
 ////////////////////////// FILE_NAME.cpp /////////////////////////////////////////////////////
-#include <config.h>
+// #include <config.h>
 #include "CApplicationSerializer.h"    				
 
 #ifdef HAVE_STD_NAMESPACE

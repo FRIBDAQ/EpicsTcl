@@ -19,7 +19,7 @@
 ////////////////////////// FILE_NAME.cpp /////////////////////////////////////////////////////
 
 
-#include <config.h>
+// #include <config.h>
 #include "CChannelList.h"    				
 #include "CChannel.h"
 #include "CChannelVisitor.h"

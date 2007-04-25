@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual C++ Express 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "epicstcl", "epicstcl\epicstcl.vcproj", "{A270384A-AD4A-44CF-8C28-E7548784A5BB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A270384A-AD4A-44CF-8C28-E7548784A5BB}.Debug|Win32.ActiveCfg = Release|Win32
+		{A270384A-AD4A-44CF-8C28-E7548784A5BB}.Debug|Win32.Build.0 = Release|Win32
+		{A270384A-AD4A-44CF-8C28-E7548784A5BB}.Release|Win32.ActiveCfg = Release|Win32
+		{A270384A-AD4A-44CF-8C28-E7548784A5BB}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

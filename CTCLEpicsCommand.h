@@ -87,13 +87,13 @@ private:
   // The map type below keeps track of all the channels in a by-name lookup 
   // structure:
 
-  typedef STD(map)<STD(string), RefCountedChannel> KnownChannels;
+  typedef std::map<std::string, RefCountedChannel> KnownChannels;
 
   // class level data:
 
   static KnownChannels  m_channelInfo;
 public:
-  CTCLEpicsCommand(CTCLInterpreter& interp, STD(string) command = STD(string)("epicschannel"));
+  CTCLEpicsCommand(CTCLInterpreter& interp, std::string command = std::string("epicschannel"));
   virtual ~CTCLEpicsCommand();
 private:
   CTCLEpicsCommand(const CTCLEpicsCommand& rhs);
@@ -104,12 +104,12 @@ public:
 
 
   virtual int operator()(CTCLInterpreter& interp,
-			 STD(vector)<CTCLObject>& objv);
+			 std::vector<CTCLObject>& objv);
 
   // class level functions:
 
-  static RefCountedChannel*  haveChannel(STD(string) name);
-  static void                deleteChannel(STD(string) name);
+  static RefCountedChannel*  haveChannel(std::string name);
+  static void                deleteChannel(std::string name);
  
 };
 

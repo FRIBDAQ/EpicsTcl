@@ -14,7 +14,7 @@
 	     East Lansing, MI 48824-1321
 */
 
-#include "config.h"
+
 #include "TCLObjectProcessor.h"
 #include "TCLInterpreter.h"
 #include "TCLException.h"
@@ -23,9 +23,9 @@
 #include <string.h>
 
 
-#ifdef HAVE_STD_NAMESPACE
+
 using namespace std;
-#endif
+
 
 ////////////////////////////////////////////////////////////////////////
 /*!

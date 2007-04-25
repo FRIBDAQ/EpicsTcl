@@ -36,7 +36,7 @@ static const char* Copyright = "(C) Copyright Michigan State University 2015, Al
 // Header Files:
 //
 
-#include "config.h"
+
 #include "TCLResult.h"                               
 #include "TCLString.h"
 #include "TCLInterpreter.h"
@@ -44,9 +44,9 @@ static const char* Copyright = "(C) Copyright Michigan State University 2015, Al
 #include "histotypes.h"
 #include <assert.h>
 
-#ifdef HAVE_STD_NAMESPACE
+
 using namespace std;
-#endif
+
 
 
 ////////////////////////////////////////////////////////////////////////////

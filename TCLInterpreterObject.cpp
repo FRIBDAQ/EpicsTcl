@@ -297,12 +297,12 @@ static const char* Copyright = "(C) Copyright Michigan State University 2015, Al
 // Header Files:
 //
 
-#include "config.h"
+
 #include "TCLInterpreterObject.h"                               
 
-#ifdef HAVE_STD_NAMESPACE
+
 using namespace std;
-#endif
+
 // Functions for class CTCLInterpreterObject
 
 //////////////////////////////////////////////////////////////////////////

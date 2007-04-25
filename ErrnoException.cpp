@@ -298,7 +298,7 @@ DAMAGES.
 
 
 
-#include "config.h"
+
 #include "ErrnoException.h"                               
 #include <errno.h>
 

@@ -80,10 +80,10 @@ private:
   // Info about a linked variable:
 
   typedef struct  {
-    STD(string) varname;
+    std::string varname;
     CChannelVariable* m_pLinkedVar;
   } VariableInfo;
-  typedef STD(list)<VariableInfo>     VariableInfoList;
+  typedef std::list<VariableInfo>     VariableInfoList;
   typedef VariableInfoList::iterator  VariableInfoIterator;
 
   // member variables
@@ -96,7 +96,7 @@ private:
   // Canonicals:
 public:
   CTCLChannelCommand(CTCLInterpreter& interp,
-		     STD(string)      name);
+		     std::string      name);
   virtual ~CTCLChannelCommand();
 private:
   CTCLChannelCommand(const CTCLChannelCommand& rhs);
@@ -106,7 +106,7 @@ private:
 public:
 
   virtual int operator()(CTCLInterpreter& interp,
-			 STD(vector)<CTCLObject>& objv);
+			 std::vector<CTCLObject>& objv);
 
   void UpdateLinkedVariable();
 
@@ -114,13 +114,13 @@ public:
 
 private:
   int Get(CTCLInterpreter& interp);
-  int Set(CTCLInterpreter& interp, STD(vector)<CTCLObject>& objv);
+  int Set(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
   int Updatetime(CTCLInterpreter& interp);
   int Delete(CTCLInterpreter& interp);
-  int Link(CTCLInterpreter& interp, STD(vector)<CTCLObject>& objv);
-  int Unlink(CTCLInterpreter& interp, STD(vector)<CTCLObject>& objv);
-  int ListLinks(CTCLInterpreter& interp, STD(vector)<CTCLObject>& objv);
-  STD(string) Usage();
+  int Link(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
+  int Unlink(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
+  int ListLinks(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
+  std::string Usage();
   static void markChange(CChannel* pChannel, 
 			 void* pObject);        // Called in Epics thread
   static int update(Tcl_Event* pEvent, int flags);      // Called in Tcl thread.

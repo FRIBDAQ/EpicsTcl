@@ -18,15 +18,15 @@
 //
 // Header Files:
 //
-#include "config.h"
+
 #include "TCLVersionHacks.h"
 #include "TCLInterpreter.h"                               
 #include "TCLException.h"
 #include "TCLList.h"
 #include "TCLObject.h"
-#ifdef HAVE_STD_NAMESPACE
+
 using namespace std;
-#endif
+
 // Functions for class CTCLInterpreter
 
 //////////////////////////////////////////////////////////////////////////

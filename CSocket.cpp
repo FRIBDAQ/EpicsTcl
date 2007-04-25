@@ -314,7 +314,7 @@ static const char* Copyright= "(C) Copyright Michigan State University 2002, All
 
 ////////////////////////// FILE_NAME.cpp /////////////////////////////////////////////////////
 
-#include <config.h>
+// #include <config.h>
 #include "CSocket.h"    
 #include <CApplicationSerializer.h>
 

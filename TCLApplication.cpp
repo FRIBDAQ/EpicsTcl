@@ -303,7 +303,6 @@ static const char* Copyright = "(C) Copyright Michigan State University 2015, Al
 ///////////////////////////////////////////////////////////////////////////
 
 
-#include "config.h"
 
 #include "TCLApplication.h"
 #include "TCLInterpreter.h"
@@ -316,9 +315,9 @@ static const char* Copyright = "(C) Copyright Michigan State University 2015, Al
 #include <tk.h>
 #include <iostream>
 
-#ifdef HAVE_STD_NAMESPACE
+
 using namespace std;
-#endif
+
 
 
 //
@@ -404,3 +403,22 @@ extern "C" {
 
   }
 }
+
+#ifdef WIN32
+#ifdef _MANAGED
+#pragma managed(push, off)
+#endif
+#include <windows.h>
+BOOL APIENTRY DllMain( HMODULE hModule,
+                       DWORD  ul_reason_for_call,
+                       LPVOID lpReserved
+					 )
+{
+    return TRUE;
+}
+
+#ifdef _MANAGED
+#pragma managed(pop)
+#endif
+CTCLApplication* gpTCLApplication(0);
+#endif

@@ -296,7 +296,7 @@ DAMAGES.
 // Header Files:
 //
 
-#include "config.h"
+
 #include "Exception.h"                               
 #include <string.h>
 

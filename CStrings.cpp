@@ -276,7 +276,7 @@ DAMAGES.
 		     END OF TERMS AND CONDITIONS '
 */
 
-#include <config.h>
+// #include <config.h>
 #include <CStrings.h>
 #include <string.h>
 

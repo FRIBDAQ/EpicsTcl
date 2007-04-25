@@ -26,7 +26,7 @@ static const char* Copyright = "(C) Copyright Michigan State University 2015, Al
 //
 //
 //////////////////////////.cpp file/////////////////////////////////////////////////////
-#include "config.h"
+
 #include "TCLObject.h"    				
 #include "TCLInterpreter.h"
 #include "TCLList.h"
@@ -34,9 +34,8 @@ static const char* Copyright = "(C) Copyright Michigan State University 2015, Al
 
 #include <string.h>
 
-#ifdef HAVE_STD_NAMESPACE
 using namespace std;
-#endif
+
 
 // Functions for class CTCLObject
 
