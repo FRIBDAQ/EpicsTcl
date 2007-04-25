@@ -35,4 +35,7 @@ March 29, 2007 - Remove last debugging outputs from epicsStripChart.tcl
   		 Skip's shopping list is completely implemented.
 April 24, 2007 - Added epicsGraph widget.. This is the x/y plot widget
                  on Skip's shopping list for epics widgets.
+April 25, 2007 - Add stuff needed to build windows targets.
+               - Added docs for epicsGraph widget.
+
               
