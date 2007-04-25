@@ -1,0 +1,1180 @@
+<refentry>
+    <refmeta>
+        <refentrytitle>epicsGraph</refentrytitle>
+        <manvolnum>1tcl</manvolnum>
+    </refmeta>
+    <refnamediv>
+        <refname>epicsgraph</refname>
+        <refpurpose>
+            Wrap a BLT graph with code for plotting epics channels against each other.
+        </refpurpose>
+    </refnamediv>
+    <refsynopsisdiv>
+    <programlisting>
+<command>
+package require epicsGraph
+controlwidget::epicsStripChart  <replaceable>name ?options?</replaceable>
+<replaceable>name</replaceable> addseries <replaceable>sname x-channel y-channel interval ?options?</replaceable>
+<replaceable>name</replaceable> removeseries <replaceable> sname</replaceable>
+</command>
+    </programlisting>
+    </refsynopsisdiv>
+    <refsect1>
+        <title>DESCRIPTION</title>
+        <para>
+            This widget is a thin wrapping of the BLT Graph widget.  The wrapping allows you
+            to easily create graphs of epics channel pairs (e.g. one channel on the x axis, one on
+            the y axis).  Any number of pairs of channels can be plotted on the same widget if desired
+            with line colors symbol shapes and line types distinguishing between them.
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>OPTIONS</title>
+        <para>
+            All options for the blt::graph widget are supported and passed to that widget without
+            any interpretation.  See the summary (section blt::graph summary) below or alternatively:
+            <ulink url="http://man-wiki.net/index.php/N:blt_graph">http://man-wiki.net/index.php/N:blt_graph</ulink>
+            for a full description of that widget.
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>METHODS</title>
+        <para>
+            All blt::graph widget methods are supported.  See the summary
+            (section blt::graph  summary) below or alternatively,
+            <ulink url="http://man-wiki.net/index.php/N:blt_graph">http://man-wiki.net/index.php/N:blt_graph</ulink>
+            The blt::graph widget methods are passed without any interpretation on to that widget.
+        </para>
+        <para>
+            In addition the following methods are also defined:
+            <variablelist>
+                <varlistentry>
+                    <term><command><replaceable>name</replaceable> addseries <replaceable>sname x-channel y-channel interval ?options?</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Adds a data series to the graph.  A data series consists of a
+                            blt::graph element that displayse the data and
+                            <classname>channnelPairHistory</classname> object to automatically maintain
+                            the element's data.
+                        </para>
+                        <para>
+                            <parameter>sname</parameter> is the name of the series to create.  It must
+                            be unique and will also be used as the blt::graph element name.
+                        </para>
+                        <para>
+                            <parameter>x-channel y-channel</parameter>
+                            are the names of the EPICS process variables that will be the X and Y
+                            parameters of the data series respectively.
+                        </para>
+                        <para>
+                            <parameter>interval</parameter> is the number of milliseconds between
+                            samples on the plot.
+                        </para>
+                        <para>
+                            <parameter>options</parameter> are optional option value pairs that are passed
+                            as is to the blt::graph element add command and can be used to configure the
+                            appearance of the data series e.g.
+                        </para>
+                        <para>
+                            The command returns the name of the channel pair history object which can be saved
+                            and manipulated.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command><replaceable>name</replaceable> removeseries <replaceable> sname</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Removes the series <parameter>sname</parameter> from the graph and
+                            destroys the channel pair history object that was created for it.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>channelPairHistory objects</title>
+            <para>
+                <classname>channelPairHistory</classname> objects are used to keep track of
+                and manage the automatic update of data series.  While intended for use with the
+                epicsGraph widget, you may also find them useful in your applications.  This section
+                therefore summarizes the capabilities of the <classname>channelPairHistory</classname>
+                snit::type.
+            </para>
+            <refsect2>
+                <title>OPTIONS</title>
+                <variablelist>
+                    <varlistentry>
+                        <term><option>-period</option></term>
+                        <listitem>
+                            <para>Specifies the milliseconds between data updates</para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term><option>-xchannel</option></term>
+                        <listitem>
+                            <para> Name of the x channel.  When used with an epicsGraph
+                                to produce a data series, this parameter will be on the x axis.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term><option>-ychanel</option></term>
+                        <listitem>
+                            <para>Name of the y channel.  When used with an epicsGraph to produce
+                                a data series, this parameter will be on the y axis.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term><option>-timebase</option></term>
+                        <listitem>
+                            <para>[clock seconds] at which the data series start.  When the
+                                data are retrieved from the object, the times associated with
+                                each data points are offsets relative to this time.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+            </refsect2>
+            <refsect2>
+                <title>METHODS</title>
+                <variablelist>
+                    <varlistentry>
+                        <term><methodname>clear</methodname></term>
+                        <listitem>
+                            <para>
+                                Clears the entire data series.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term><methodname>clearfirst</methodname> <parameter>n</parameter></term>
+                        <listitem>
+                            <para>
+                                Clears the first <parameter>n</parameter> data points in the series.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term><methodname>keep</methodname> <parameter>n</parameter></term>
+                        <listitem>
+                            <para>
+                                Keeps only the first <parameter>n</parameter> data points in a series.
+                                This restriction is enforced on each update of the series.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term><methodname>names</methodname></term>
+                        <listitem>
+                            <para>
+                                The data series is maintained in a set of three
+                                <classname>blt::vector</classname>
+                                objects.  This returns the names of the three vectors.
+                                The names are returned as a three element list. The first element of
+                                the list is the name of the time vector.  The second element
+                                of th elist is the name of the x parameter vector. The third
+                                element of the list is the name of the y parameter vector.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term><methodname>get</methodname></term>
+                        <listitem>
+                            <para>
+                                Returns the data stored in the series.  The data are returned as
+                                a list of data points. Each data point is a three element list consisting
+                                of (in order), the time relative to the <option>-timebase</option>
+                                time, the x parameter value at that time, and the y parameter value
+                                at that time.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+            </refsect2>
+    </refsect1>
+    <refsect1>
+        <title>blt::graph summary</title>
+        <para>
+            See
+            <ulink url="http://man-wiki.net/index.php/N:blt_graph">http://man-wiki.net/index.php/N:blt_graph</ulink>
+            for a full description of the blt::graph widget.  This section provides a summary of the
+            more useful features of the widget in an attempt to make this manpage close to self contained
+            for most uses of the widget.
+        </para>
+        <para>
+            The blt::graph widget is a graph that plots X-Y data.  The graph widget can be thought
+            of as having many independently configurable components.  Configuring each component can
+            determine how the graph will appear.
+        </para>
+        <refsect2>
+            <title>OPTIONS</title>
+            <variablelist>
+                <varlistentry>
+                    <term><option>-height</option> <parameter>measure</parameter></term>
+                    <listitem>
+                        <para>
+                            sets the requested height of the widget.  This can be any valid
+                            Tk measurement.  The default is 4i
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>-title</option> <parameter>text</parameter></term>
+                    <listitem>
+                        <para>
+                            Sets the title to <parameter>text</parameter>.
+                            If <parameter>text</parameter> is "", no title will be displayed.
+                       </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>-width</option> <parameter>measure</parameter></term>
+                    <listitem>
+                        <para>
+                            Specifies the requested width of the widget.  The default is 5i.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </refsect2>
+        <refsect2>
+            <title>COMPONENTS</title>
+            <para>
+                The graph widget can be thought of as made up of several components.
+                Each component can be indepdendently configured and, in some cases
+                several components of each type can be created.
+                This section summarizes the components and what they do.  Subsequent
+                sections will describe the most useful options of the most used components.
+            </para>
+            <variablelist>
+                <varlistentry>
+                    <term>axis</term>
+                    <listitem>
+                        <para>
+                            The graph has four standard axes (x, x2, y, and y2), but you can create
+                            and display any number of axes.
+                            Axes control what region of data is displayed and how the data is scaled.
+                            Each  axis  consists  of  the
+                            axis  line, title, major and minor ticks, and tick labels.
+                            Tick labels display the value at each major
+                            tick.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>crosshairs</term>
+                    <listitem>
+                        <para>
+                            Cross hairs are used to position the mouse pointer relative
+                            to the X and Y coordinate axes. Two perpendicular  lines,
+                            intersecting  at the current location of the mouse, extend
+                            across the plotting area to
+                            the coordinate axes.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>element</term>
+                    <listitem>
+                        <para>
+                            An element represents a set of data points. Elements can be
+                            plotted with a symbol at  each  data  point
+                            and  lines  connecting  the points.  The appearance of the
+                            element, such as its symbol, line width, and
+                            color is configurable. Data series of epics channels are implemented
+                            as elements.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>grid</term>
+                    <listitem>
+                        <para>
+                            Extends the major and minor ticks of the X-axis and/or
+                            Y-axis across the plotting area.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>legend</term>
+                    <listitem>
+                        <para>
+                            The legend displays the name and symbol of each data
+                            element.  The legend can be drawn in any margin or
+                            in the plotting area.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>marker</term>
+                    <listitem>
+                        <para>
+                            Markers  are used annotate or highlight areas of the
+                            graph. For example, you could use a polygon marker
+                            to fill an area under a curve, or a text marker to
+                            label a particular data point. Markers come in various forms:
+                            text strings, bitmaps, connected line segments, images,
+                            polygons, or embedded widgets.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>pen</term>
+                    <listitem>
+                        <para>
+                            Pens  define  attributes  (both symbol and line style)
+                            for elements.  Data elements use pens to specify
+                            how they should be drawn.  A data element may use many
+                            pens at once.  Here, the particular pen used for
+                            a  data  point  is  determined  from each element's weight
+                            vector (see the element's -weight and -style
+                            options).
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>postscript</term>
+                    <listitem>
+                        <para>
+                            The widget can generate encapsulated PostScript output.
+                            This component has several options to configure
+                            how the PostScript is generated.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </refsect2>
+        <refsect2>
+            <title>axis</title>
+            <para>
+               Four  coordinate  axes  are automatically created: two X-coordinate axes
+               (x and x2) and two Y-coordinate axes (y,
+                and y2).  By default, the axis x is located in the bottom margin, y
+                in the left margin, x2 in the top margin, and
+                y2 in the right margin.
+            </para>
+            <para>
+                An  axis consists of the axis line, title, major and minor
+                ticks, and tick labels.  Major ticks are drawn at uniform intervals
+                along the axis.  Each tick is labeled with its coordinate value.  Minor
+                ticks are drawn at uniform
+                intervals within major ticks.
+            </para>
+            <para>
+                The  range of the axis controls what region of data is plotted.
+                Data points outside the minimum and maximum limits of the axis are
+                not plotted.  By default, the minimum and maximum limits are
+                determined from  the  data,  but
+                you can reset either limit.
+            </para>
+            <para>
+                You can have several axes. To create an axis, invoke the axis
+                component and its create operation.
+                <programlisting>
+# Create a new axis called "tempAxis"
+.g axis create tempAxis
+                </programlisting>
+            </para>
+            <para>
+                You  map  data  elements  to  an axis using the element's -mapy and -mapx
+                configuration options. They specify the
+                coordinate axes an element is mapped onto.
+                <programlisting>
+# Now map the tempAxis data to this axis.
+.g element create "e1" -xdata $x -ydata $y -mapy tempAxis
+                </programlisting>
+            </para>
+            <para>
+                Any number of axes can be displayed simultaneously. They are drawn
+                in the margins surrounding the plotting  area.
+                The  default axes x and y are drawn in the bottom and left
+                margins. The axes x2 and y2 are drawn in top and right
+                margins.  By default, only x and y are shown. Note that the axes
+                can have different scales.
+            </para>
+            <para>
+                To display a different axis or more than one axis, you invoke one of
+                the  following  components:  xaxis,  yaxis,
+                x2axis,  and  y2axis.   Each component has a use operation that designates
+                the axis (or axes) to be drawn in that
+                corresponding margin: xaxis in the bottom, yaxis in the left, x2axis
+                in the top, and y2axis in the right.
+                <programlisting> 
+# Display the axis tempAxis in the left margin.
+.g yaxis use tempAxis
+                </programlisting>
+            </para>
+            <para>
+                The use operation takes a list of axis names as its last argument.  This is
+                the list of axes to be drawn in  this
+                margin.
+            </para>
+            <para>
+                You  can configure axes in many ways. The axis scale can be
+                linear or logarithmic.  The values along the axis can
+                either monotonically increase or decrease.  If you need
+                custom tick labels, you can specify a  Tcl  procedure  to
+                format  the  label any way you wish.  You can control how
+                ticks are drawn, by changing the major tick interval or
+                the number of minor ticks.  You can define non-uniform tick intervals,
+                such as for time-series plots.
+            </para>
+            <para>
+                Axis components are manipulated using an ensemble of widgets commands (methods)
+                of the form:
+                <programlisting>
+<command><replaceable>pathName</replaceable> axis <replaceable>subcommand</replaceable> &hellip;</command>
+                </programlisting>
+                The most useful of the <replaceable>subcommand</replaceable>s  will be described below.
+            </para>
+            <variablelist>
+                <varlistentry>
+                <term>cget <replaceable>axisName option</replaceable></term>
+                <listitem>
+                    <para>
+                        Returns the current value of the option given by option
+                        for axisName.  Option may be any option  described
+                        below for the axis configure operation.
+                    </para>
+                </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>configure <replaceable>axisName option value</replaceable></term>
+                    <listitem>
+                        <para>Sets a new value for a configuration option for the axis
+                            <parameter>axisName</parameter>.  <replaceable>option</replaceable>
+                            and value are described in the 'most useful list of options' below:
+                        </para>
+                            <variablelist>
+                                <varlistentry>
+                                    <term><option>-color</option> <replaceable>color</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                            Sets the color of the axis and tick labels.
+                                            The default is black.
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-descending</option> <replaceable>boolean</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                            Indicates whether the values along the axis
+                                            are monotonically increasing or decreasing.  If boolean
+                                            is true, the axis values will be decreasing.
+                                            The default is 0.
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-logscale</option> <replaceable>boolean</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                            Indicates whether the scale of the axis is
+                                            logarithmic or linear.  If boolean is true, the axis  is
+                                            logarithmic.  The default scale is linear.
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-majorticks</option> <replaceable>majorlist</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                            Specifies where to display major axis ticks.
+                                            You can use this option to display ticks at  nonuniform
+                                            intervals.   <replaceable>majorlist</replaceable> is a list of
+                                            axis coordinates designating the location of major ticks.
+                                            No minor ticks are drawn.  If
+                                            <replaceable>majorList</replaceable> is "", major
+                                            ticks  will  be  automatically  computed.  The
+                                            default is "".
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-max</option> <replaceable>value</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                            Sets  the maximum limit of axisName.
+                                            Any data point greater than value is not displayed.
+                                            If value
+                                            is "", the maximum limit is calculated using the largest
+                                            data value.  The default is "".  Note that this calculation
+                                            is performed again as data elements change in time.
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-min</option> <replaceable>value</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                            Sets the minimum limit of axisName.
+                                            Any data point less than value is not displayed.
+                                            If  value  is
+                                            "", the minimum limit is calculated using the
+                                            smallest data value.  The default is "".
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-minorticks</option> <replaceable>minorList</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                            Specifies  where  to  display  minor axis ticks.
+                                            You can use this option to display minor ticks at
+                                            non-uniform intervals. <replaceable>MinorList</replaceable>
+                                            is a list of real values, ranging from 0.0 to 1.0,
+                                            designating the
+                                            placement  of  a  minor  tick.   No minor ticks are
+                                            drawn if the -majortick option is also set.  If
+                                            minorList is "", minor ticks will be automatically
+                                            computed. The default is "".
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-stepsize</option> <replaceable>value</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                            Specifies  the  interval  between  major axis ticks.
+                                            If value isn't a valid interval (must be less
+                                            than the axis range), the request is ignored and the
+                                            step size is automatically calculated.
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-subdivisions</option> <replaceable>number</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                            Indicates how many minor axis ticks are to be drawn.
+                                            For example, if <replaceable>number</replaceable> is two,
+                                            only one minor
+                                            tick is drawn.  If <replaceable>number</replaceable>
+                                            is one, no minor ticks are displayed.  The default is 2.
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-title</option> <replaceable>text</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                            Sets the title of the axis. If
+                                            <replaceable>text</replaceable>
+                                            is "", no axis title will be displayed.
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                            </variablelist>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>create</command> <replaceable>axisName ?options...?</replaceable></term>
+                    <listitem>
+                        <para>
+                            Creates a new axis by the name <replaceable>axisName</replaceable>.
+                            No axis by the same name can already exist. 
+                            <replaceable>?options...?</replaceable> are option value pairs described
+                            above under the <command>configure</command> subcommand.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>delete</command> <replaceable>axisName</replaceable></term>
+                    <listitem>
+                        <para>
+                            Deletes  the  named  axes.  An  axis  is not really
+                            deleted until it is not longer in use, so it's safe to
+                            delete axes mapped to elements.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>names</command> <replaceable>?pattern?</replaceable></term>
+                    <listitem>
+                        <para>
+                            Returns  a  list of axes matching zero or more patterns.
+                            If no <replaceable>pattern</replaceable> argument is give,
+                            the names of all axes are returned.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>  
+        </refsect2>
+        <refsect2>
+            <title>element</title>
+            <para>
+                An element is what we refer to as a data series.  Elements are displayed as
+                a set of X/Y points on the surface of the graph, limited by the axes they are
+                associated with.  The points can be connected by lines that have various line
+                styles an doclors (see pen components as well).
+            </para>
+            <para>
+                When new data elements are created, they are automatically added
+                to a list of displayed elements.    The  display
+                list controls what elements are drawn and in what order.
+            </para>
+            <para>
+                The following operations are the most useful ones available for elements.
+                All are of the form:
+                <programlisting>
+<command><replaceable>pathName</replaceable> element <replaceable>subcommand ...</replaceable></command>
+                </programlisting>
+            </para>
+            <variablelist>
+                <varlistentry>
+                    <term><command>cget <replaceable>elemNamme option</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Returns  the  current value of the element configuration
+                            option given by <replaceable>option</replaceable>.
+                            <replaceable>Option</replaceable> may be any of the
+                            options described below for the element configure operation.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>configure <replaceable>elemName ... ?option...</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Queries  or modifies the configuration options for elements.
+                            Several elements can be modified at the same
+                            time. If <replaceable>option</replaceable> isn't specified,
+                            a list describing all the current options for
+                            <replaceable>elemName</replaceable> is  returned.   If an
+                            <replaceable>option</replaceable>  is specified, but not its value,
+                            then a list describing the option
+                            <replaceable>option</replaceable> is returned.  If one or more
+                            option and value pairs are specified, then for each pair, the
+                            element option <replaceable>option</replaceable> is set to
+                            <replaceable>value</replaceable>.   The
+                            following options are are the most commonly used ones valid for elements.
+                            <variablelist>
+                                <varlistentry>
+                                    <term><option>-color</option> <replaceable>color</replaceable></term>
+                                    <listitem>
+                                        <para>Sets the color of the traces connecting the data points.
+                                            </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-dashes</option> <replaceable>dashlist</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                            Sets the dash style of element line.
+                                            <replaceable>DashList</replaceable>
+                                            is a list of up to 11 numbers that alternately represent
+                                            the lengths of the dashes and gaps on the element line.
+                                            Each number must  be  between  1  and
+                                            255.  If <replaceable>dashList</replaceable> is "",
+                                            the lines will be solid.
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-label</option> <replaceable>text</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                            Sets the element's label in the legend.
+                                            If text is "", the element will have no entry
+                                            in the  legend.  The default label is the element's name.
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-pen</option> <replaceable>penname</replaceable></term>
+                                    <listitem>
+                                        <para>Set the pen to use for this element.  For more information
+                                            about pens, see the pen component described later in this
+                                            document.
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                                <varlistentry>
+                                    <term><option>-symbol</option> <replaceable>symbol</replaceable></term>
+                                    <listitem>
+                                        <para>
+                                           Specifies  the  symbol for data points.
+                                           <replaceable>Symbol</replaceable> can be either
+                                            <literal>square</literal>,
+                                            <literal>circle</literal>, <literal>diamond</literal>,
+                                            <literal>plus</literal>, <literal>cross</literal>,
+                                            <literal>splus</literal>, <literal>scross</literal>,
+                                            <literal>triangle</literal>,
+                                            <literal>""</literal> (where no symbol is drawn),
+                                            or a  bitmap.   Bitmaps  are  specified  as
+                                           "source  ?mask?",  where
+                                           <replaceable>source</replaceable> is the name of
+                                            the bitmap, and <replaceable>mask</replaceable> is
+                                            the bitmap's optional mask.
+                                            The default is <literal>circle</literal>. 
+                                        </para>
+                                    </listitem>
+                                </varlistentry>
+                            </variablelist>
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>exists <replaceable>elemName</replaceable></command></term>
+                    <listitem>
+                        <para>Returns 1 if an element
+                            <replaceable>elemName</replaceable> currently exists and 0 otherwise.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>element names <replaceable>?pattern?...</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Returns  the  elements matching one or more pattern.
+                            If no pattern is given, the names of all elements is
+                            returned.
+                        </para>
+                    </listitem>
+                </varlistentry>   
+            </variablelist>
+        </refsect2>
+        <refsect2>
+            <title>grid</title>
+            <para>
+                Grid  lines  extend  from  the  major and minor ticks of
+                each axis horizontally or vertically across the plotting
+                area.  While there are many options and operations associated with
+                grid lines, the most common ones are:
+            </para>
+            <variablelist>
+                <varlistentry>
+                <term><command>grid on</command></term>
+                <listitem>
+                    <para>Turns on the display the grid lines.
+                    </para>
+                  </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>grid off</command></term>
+                    <listitem>
+                        <para>Turns off the display the grid lines.</para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </refsect2>
+        <refsect2>
+            <title>legend</title>
+            <para>
+               The  legend  displays  a  list of the data elements.  Each 
+               entry consists of the element's symbol and label.  The
+               legend can appear in any margin (the default location is in the
+               right margin). 
+               It can also  be  positioned  anywhere within the plotting area.
+            </para>
+            <para>
+               Legend operations are of the form:
+               <programlisting>
+<command><replaceable>pathName</replaceable> legend <replaceable>operation ...</replaceable></command>
+               </programlisting>
+               The most frequently used legend operations are:
+            </para>
+            <variablelist>
+                <varlistentry>
+                    <term><command>cget
+                    <replaceable>option</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Returns  the  current value of a legend
+                            configuration option.  
+                            <replaceable>Option</replaceable> may be any option described below in
+                            the legend configure operation.
+                         </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>configure
+                    <replaceable>?option...?</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Queries or modifies the configuration options for
+                           the legend.  
+                           If <replaceable>option</replaceable> isn't
+                           specified, 
+                           a list  describing  the  current  legend options 
+                           for <replaceable>pathName</replaceable> is returned.  
+                           If <replaceable>option</replaceable> is specified, 
+                           but not <replaceable>value</replaceable>, then a
+                           list describing <replaceable>option</replaceable> 
+                           is returned.  If one or more option and value pairs 
+                           are specified,  then  for  each
+                           pair, the legend option 
+                           <replaceable>option</replaceable> is set to 
+                           <replaceable>value</replaceable>.  The following 
+                           options (and others) are valid for the legend.
+                       </para>
+                       <variablelist>
+                           <varlistentry>
+                               <term><option>-hide
+                               <replaceable>boolean</replaceable></option></term>
+                               <listitem>
+                                  <para>
+                                       Indicates whether the legend should be 
+                                       displayed. If 
+                                       <replaceable>boolean</replaceable> is 
+                                       <literal>true</literal>, the legend will 
+                                       not be  drawn. The default is
+                                       <literal>no</literal>. 
+                                  </para>
+                               </listitem>
+                           </varlistentry>
+                           <varlistentry>
+                              <term><option>-position
+                              <replaceable>pos</replaceable></option></term>
+                              <listitem>
+                                  <para>
+                                       Specifies  where  the  legend  is
+                                       drawn.  The 
+                                       <option>-anchor</option> option also
+                                       affects 
+                                       where the legend is positioned.  
+                                       If <replaceable>pos</replaceable> is 
+                                       <literal>left</literal>,
+                                       <literal>left</literal>, 
+                                       <literal>top</literal>, 
+                                       or <literal>bottom</literal>, the legend 
+                                       is drawn in the specified margin.  
+                                       If <replaceable>pos</replaceable>
+                                       is  <literal>plotarea</literal>,  
+                                       then the legend is drawn inside the
+                                       plotting 
+                                       area at a particular anchor.  If 
+                                       <replaceable>pos</replaceable> is
+                                       in the form "@x,y", where x and y are 
+                                       the window coordinates, the legend is 
+                                       drawn in  the  plotting area at the 
+                                       specified coordinates.  The default is right.
+                                 </para>
+                             </listitem>
+                         </varlistentry>
+                     </variablelist>
+                   </listitem>
+                </varlistentry>
+             </variablelist>
+        </refsect2>
+        <refsect2>
+           <title>Pen</title>
+           <para>
+               Pens  define attributes (both symbol and line style) for
+               elements. Pens mirror the configuration options of data
+               elements that pertain to how symbols and lines are drawn. 
+               Data elements use  pens  to  determine  how  they  are
+               drawn.   A  data element may use several pens at once.  
+               In this case, the pen used for a particular data point is
+               determined from each element's weight vector (see the element's 
+               -weight and -style options).
+           </para>
+           <para>
+              One pen, called activeLine, is automatically created.  It's
+               used as the default active pen for elements.  So  you
+               can change the active attributes for all elements by simply reconfiguring this pen.
+               <programlisting>
+<command>.g pen configure "activeLine" -color green</command>
+               </programlisting>
+            </para>
+            <para>
+                 You can create and use several pens. To create a pen, 
+                 invoke the pen component and its create operation.
+                 <programlisting>
+<command>.g pen create myPen</command>
+                 </programlisting>
+             </para>
+             <para> 
+                You map pens to a data element using either the element's 
+                -pen or -activepen options.
+                <programlisting>
+<command>.g element create "line1" -xdata $x -ydata $tempData \
+                 -pen myPen</command>
+                </programlisting>
+             </para>
+             <para>
+                An  element  can  use several pens at once. This is done by
+                specifying the name of the pen in the element's style
+                list (see the -styles option).
+                <programlisting>
+<command>.g element configure "line1" -styles { myPen 2.0 3.0 }</command>
+                </programlisting>
+             </para>
+             <para>
+                 This says that any data point with a weight between 
+                 2.0 and 3.0 is to be drawn using the pen  myPen.   All  other
+                 points are drawn with the element's default attributes.
+             </para>
+             <para>
+               The following operations are available for pen components, and are of the
+               form:
+               <programlisting>
+<command><replaceable>pathName</replaceable> pen <replaceable>operation ...</replaceable></command>
+               </programlisting>
+               Descriptions start with the <replaceable>operation</replaceable>.
+             </para>
+             <variablelist>
+                <varlistentry>
+                    <term><command>cget <replaceable>penName option</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Returns  the  current value of the option
+                            given by <replaceable>option</replaceable> for
+                            <replaceable>penName</replaceable>.
+                            <replaceable>Option</replaceable> may be any
+                            option described
+                            below for the pen configure operation.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>configure <replaceable>penName ?penName... ?option...?</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Queries or modifies the configuration options
+                            of penName. Several pens can be modified at once.  If
+                            <replaceable>option</replaceable>
+                            isn't  specified,  a list describing the current
+                            options for penName is returned.  If
+                            <replaceable>option</replaceable> is specified,
+                            but not <replaceable>value</replaceable>,
+                            then a list describing
+                            <replaceable>option</replaceable> is returned.
+                            If one or more option and value pairs are specified,
+                            then  for  each  pair, the pen option
+                            <replaceable>option</replaceable> is set to
+                            <replaceable>value</replaceable>.  The following options
+                            are valid for pens.
+                        </para>
+                        <variablelist>
+                            <varlistentry>
+                                <term><option>-color <replaceable>color</replaceable></option></term>
+                                <listitem>
+                                    <para>
+                                        Sets the color of the traces connecting the data points.
+                                    </para>
+                                </listitem>
+                            </varlistentry>
+                            <varlistentry>
+                                <term><option>-dashes <replaceable>dashList</replaceable></option></term>
+                                <listitem>
+                                    <para>
+                                        Sets the dash style of element line.
+                                        <replaceable>DashList</replaceable> is
+                                        a list of up to 11 numbers that alternately
+                                        represent  the  lengths  of  the dashes and
+                                        gaps on the element line.  Each number must
+                                        be between 1 and
+                                        255.  If
+                                        <replaceable>dashList</replaceable> is "", the
+                                        lines will be solid.
+                                    </para>
+                                </listitem>
+                            </varlistentry>
+                            <varlistentry>
+                                <term><option>-symbol <replaceable>symbol</replaceable></option></term>
+                                <listitem>
+                                    <para>
+                                        Specifies the symbol for data points.
+                                        Symbol can be either
+                                        <literal>square</literal>,
+                                        <literal>circle</literal>,
+                                        <literal>diamond</literal>,
+                                        <literal>plus</literal>,
+                                        <literal>cross</literal>,
+                                        <literal>splus</literal>,
+                                        <literal>scross</literal>,
+                                        <literal>triangle</literal>,
+                                        <literal>""</literal>  (where  no symbol is drawn),
+                                        or a bitmap.  Bitmaps are specified as
+                                        "source ?mask?", where
+                                        <replaceable>source</replaceable> is the name of
+                                        the bitmap, and <replaceable>mask</replaceable>
+                                        is the  bitmap's  optional  mask.
+                                        The default is <literal>circle</literal>.
+                                    </para>
+                                </listitem>
+                            </varlistentry>
+                        </variablelist>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>create <replaceable>penName ?option value?...</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Creates a new pen by the name
+                            <replaceable>penName</replaceable>.
+                            No pen by the same name can already exist.
+                            <replaceable>Option</replaceable>  and
+                            <replaceable>value</replaceable>  are
+                            described in above in the pen configure operation.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>delete <replaceable>?penName?...</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Deletes  the named pens. A pen is not really
+                            deleted until it is not longer in use, so it's
+                            safe to delete
+                            pens mapped to elements.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>names <replaceable>?pattern?...</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Returns a list of pens matching zero or more patterns.  If no
+                            pattern argument is give, the names  of  all
+                            pens are returned.
+                        </para>
+                    </listitem>
+                </varlistentry>         
+             </variablelist>
+       </refsect2>
+       <refsect2>
+           <title>postscript</title>
+           <para>
+                The  graph  can generate encapsulated PostScript output.
+                There are several configuration options you can specify
+                to control how the plot will be generated.  You can change
+                the page dimensions and borders.  The plot itself  can
+                be  scaled,  centered,  or  rotated  to  landscape.   The
+                PostScript output can be written directly to a file or
+                returned through the interpreter.
+           </para>
+           <para>
+                Postscript operations all have the form:
+                <programlisting>
+<command><replaceable>pathName</replaceable> postscript <replaceable>operation ...</replaceable></command>
+                </programlisting>
+                The following postscript operations are available.
+           </para>
+            <variablelist>
+                <varlistentry>
+                    <term><command>cget <replaceable>option</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Returns the current value of the postscript
+                            option given by
+                            <replaceable>option</replaceable>.
+                            <replaceable>Option</replaceable> may be
+                            any  option  described
+                            below for the postscript <command>configure</command> operation.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>configure <replaceable>?option value?...</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Queries  or  modifies  the  configuration options
+                            for PostScript generation.  If
+                            <replaceable>option</replaceable> isn't specified, a
+                            list describing the current postscript options for
+                            <replaceable>pathName</replaceable> is returned.
+                            If <replaceable>option</replaceable> is specified, but  not
+                            <replaceable>value</replaceable>,  then  a
+                            list describing
+                            <replaceable>option</replaceable> is returned.
+                            If one or more option and value pairs are specified,
+                            then for each pair, the postscript option
+                            <replaceable>option</replaceable> is set to
+                            <replaceable>value</replaceable>.  The following  postscript  options  are
+                            available.
+                        </para>
+                        <variablelist>
+                            <varlistentry>
+                                <term><option>-center <replaceable>boolean</replaceable></option></term>
+                                <listitem>
+                                    <para>
+                                        Indicates  whether  the  plot
+                                        should be centered on the PostScript page.
+                                        If <replaceable>boolean</replaceable> is
+                                        false, the
+                                        plot will be placed in the upper left corner
+                                        of the page.  The default is 1 (true), which centers
+                                        the plot on the postscript page.
+                                    </para>
+                                </listitem>
+                            </varlistentry>
+                            <varlistentry>
+                                <term><option>-colormode <replaceable>mode</replaceable></option></term>
+                                <listitem>
+                                    <para>
+                                        Specifies how to output color information.
+                                        <replaceable>Mode</replaceable> must be either
+                                        <literal>color</literal> (for full color output),
+                                        <literal>gray</literal>
+                                        (convert  all  colors  to their gray-scale equivalents) or
+                                        <literal>mono</literal> (
+                                        convert foreground colors to black
+                                        and background colors to white).
+                                        The default mode is color.
+                                    </para>
+                                </listitem>
+                            </varlistentry>
+                            <varlistentry>
+                                <term><option>-landscape <replaceable>boolean</replaceable></option></term>
+                                <listitem>
+                                    <para>
+                                        If <replaceable>boolean</replaceable> is
+                                        <literal>true</literal>, this specifies
+                                        the printed area is to be rotated 90  degrees.
+                                        In  non-rotated
+                                        output the X-axis of the printed area runs
+                                        along the short dimension of the page (``portrait
+                                        orientation); in rotated output the X-axis runs
+                                        along the long dimension of  the  page
+                                        (``landscape
+                                        orientation).  Defaults to 0.
+                                    </para>
+                                </listitem>
+                            </varlistentry>
+                            <varlistentry>
+                                <term><option>-maxpect <replaceable>boolean</replaceable></option></term>
+                                <listitem>
+                                    <para>
+                                        Indicates to scale the plot so that it
+                                        fills the PostScript page.  The aspect ratio
+                                        of the graph is
+                                        still retained.  The default is 0.
+                                    </para>
+                                </listitem>
+                            </varlistentry>
+                        </variablelist>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>output <replaceable>?fileName? ?option value?...</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Outputs a file of encapsulated PostScript.
+                            If a <replaceable>fileName</replaceable> argument isn't present,
+                            the command returns
+                            the
+                            PostScript.  If  any  option-value  pairs  are
+                            present, they set configuration options controlling how the
+                            PostScript is generated.  Option and value can be anything
+                            accepted by the postscript configure  operation
+                            above.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+       </refsect2>
+    </refsect1>
+    <refsect1>
+        <title>EXAMPLES</title>
+        <para>
+        </para>
+    </refsect1>
+    
+            
+</refentry>
