@@ -1173,7 +1173,62 @@ controlwidget::epicsStripChart  <replaceable>name ?options?</replaceable>
     <refsect1>
         <title>EXAMPLES</title>
         <para>
+            The following simple application prompts for two channels and then
+            builds/displays a plot of the two channels updated every 100ms.
+            The plot will have axes that autorange, with a grid and axis titles
+            that reflect the channels plotted as well as a title that reflects
+            the plot.
         </para>
+        <programlisting>
+package require epicsGraph
+
+#  Build the prompt for the channels:
+
+frame .prompt
+label .prompt.cxlbl  -text {X Channel} 
+entry .prompt.cx
+label .prompt.cylbl  -text {Y Channel}
+entry .prompt.cy
+
+button .prompt.ok -text Ok -command createPlot
+
+grid .prompt.cxlbl .prompt.cx
+grid .prompt.cylbl .prompt.cy
+grid .prompt.ok
+
+pack .prompt
+
+
+# Called when the OK button is clicked.
+# get the x/y channel names and create the
+# plot.   A lot of error checking has been
+# omitted for the sake of brevity (e.g. what
+# if the user does not fill in a channel?
+
+proc createPlot {} {
+    set xName [.prompt.cx get]
+    set yName [.prompt.cy get]
+    destroy .prompt;              # Now the top level is clear.
+
+    set seriesName "${xName}_v_{$yName}"
+    set title      "$xName vs. $yName"
+
+    # Set up the plot:
+
+    controlwidget::epicsGraph .eg -title $title
+    .eg grid on
+    .eg legend configure -position bottom
+    .eg addseries $seriesName $xName $yName 100 -color black -symbol {} \
+	                                        -label $title
+    .eg xaxis configure -title $xName
+    .eg yaxis configure -title $yName
+
+
+    pack .eg -fill both -expand 1
+
+
+}
+        </programlisting>
     </refsect1>
     
             
