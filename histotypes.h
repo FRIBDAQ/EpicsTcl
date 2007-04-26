@@ -396,8 +396,8 @@ operator<<(std::ostream& out, DataType_t t)
   return out;
 }
 #ifndef WIN32                // KLUDGE KLUDGE KLUDGE
-inline STD(istream)&
-operator>>(STD(istream)& in, DataType_t& t)
+inline std::istream&
+operator>>(std::istream& in, DataType_t& t)
 {
   std::string value;
   t = keUnknown_dt;

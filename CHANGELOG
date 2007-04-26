@@ -37,5 +37,7 @@ April 24, 2007 - Added epicsGraph widget.. This is the x/y plot widget
                  on Skip's shopping list for epics widgets.
 April 25, 2007 - Add stuff needed to build windows targets.
                - Added docs for epicsGraph widget.
-
+April 26, 2007 - Ensure that the windows port still compiles/works
+                 on linux
+	       - Add a sample application to the epicsgraph manpage.
               
