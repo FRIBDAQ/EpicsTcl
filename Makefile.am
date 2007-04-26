@@ -126,6 +126,7 @@ $(WEBDOCS): $(WEBXMLFILES)
 
 $(MANPAGES): $(WEBXMLFILES)
 	$(MANDOCBOOK) manual.xml
+	touch $(MANPAGES)
 
 
 man_MANS = $(MANPAGES)
