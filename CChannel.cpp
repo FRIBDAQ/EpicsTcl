@@ -1,11 +1,39 @@
 
 #include "CChannel.h"
+#include <pthread.h>
+
+
 
 
 using namespace std;
 
 
+// Local class to manage synchronization.
+// Synchronization is handled by constructing this
+// object on a mutex that is used to manage the monitor.
+// destruction releases.  The safe way for example is:
+//  {         // Start of critical region...
+//   CCriticalRegion monitor(mutex);  // Mutex locked.
+//    ...
+//  }         // mutex unlocked.
 
+class CCriticalRegion {
+private:
+  pthread_mutex_t*   m_pMutex;
+public:
+  CCriticalRegion(pthread_mutex_t& mutex) :
+    m_pMutex(&mutex) {
+    pthread_mutex_lock(m_pMutex);
+  }
+  ~CCriticalRegion() {
+    pthread_mutex_unlock(m_pMutex);
+  }
+  // It is important to define the following as private to
+  // ensure this mutex is not duplicated:
+private:
+  CCriticalRegion(const CCriticalRegion& rhs);
+  CCriticalRegion& operator=(const CCriticalRegion& rhs);
+};
 
 
 
@@ -31,17 +59,40 @@ CChannel::CChannel(string name) :
   m_pConverter(0),
   m_pHandler(0),
   m_pHandlerData(0)
+
 {
+  pthread_mutexattr_t   attributes;
+  
+  int status = pthread_mutexattr_init(&attributes);
+  status     = pthread_mutexattr_settype(&attributes, PTHREAD_MUTEX_RECURSIVE_NP);
+  if (status) {
+    throw string("BUG - could not set mutex attribute type in CChannel initializer");
+  }
+  status = pthread_mutex_init(&m_Monitor, &attributes);
+
+  status     = pthread_mutexattr_destroy(&attributes);
 }
 /**
  *  Destroys a channel, must cancel all events etc.
  */
 CChannel::~CChannel()
 {
-  if (m_fConnected || (m_fUpdateHandlerEstablished)) {
-    ca_clear_channel(m_nChannel);
+  // This holds the lock...
+  {
+    CCriticalRegion enter(m_Monitor);
+    if (m_fConnected || (m_fUpdateHandlerEstablished)) {
+      ca_clear_channel(m_nChannel);
+    }
+    delete m_pConverter;
+    m_pConverter = 0;
   }
-  delete m_pConverter;
+  doEvents(0.1);		// Let the events run down.
+
+  // but the mutex must be unlocked to release ...there's a tiny
+  // timing hole here.
+
+  pthread_mutex_destroy(&m_Monitor);
+
 }
 
 /**
@@ -97,7 +148,9 @@ CChannel::getLastUpdate() const
 string
 CChannel::getValue() const
 {
-  return m_sValue;
+  CCriticalRegion Monitor(m_Monitor);    // Lock value of the string until 
+  string value =  m_sValue;              // it's copied for return.
+  return value;
 }
 
 
@@ -124,6 +177,7 @@ CChannel::setSlot(CChannel::Slot handler, void* data)
 string
 CChannel::operator=(string value)
 {
+  CCriticalRegion Monitor(m_Monitor);   // Probably don't have to but...
   if(m_fConnected) {
     ca_put(DBF_STRING, m_nChannel, const_cast<char*>(value.c_str()));
     ca_flush_io();
@@ -137,6 +191,7 @@ CChannel::operator=(string value)
 int
 CChannel::operator=(int value)
 {
+  CCriticalRegion Monitor(m_Monitor);   // Just in case...
   if (m_fConnected) {
     ca_put(DBF_INT, m_nChannel, &value);
     ca_flush_io();
@@ -150,6 +205,7 @@ CChannel::operator=(int value)
 double
 CChannel::operator=(double value)
 {
+  CCriticalRegion Monitor(m_Monitor);   // just in case.
   if (m_fConnected) {
     ca_put(DBF_DOUBLE, m_nChannel, &value);
     ca_flush_io();
@@ -183,6 +239,7 @@ CChannel::StateHandler(connection_handler_args args)
   chid            id = args.chid;
   long            op = args.op;
   CChannel* pChannel = (CChannel*)ca_puser(id);
+  CCriticalRegion Monitor(pChannel->m_Monitor);   // Ensure the world is ours...
 
   // What we do now depends on the what's happened:
 
@@ -217,6 +274,9 @@ CChannel::UpdateHandler(event_handler_args args)
 {
   if(args.status == ECA_NORMAL) {
     CChannel* pChannel = (CChannel*)args.usr;
+    CCriticalRegion Monitor(pChannel->m_Monitor);   // Ensure the world is ours.
+
+
     if(pChannel->m_pConverter) {
       time_t    now      = time(NULL); // Last update time.
       pChannel->m_LastUpdateTime = now;

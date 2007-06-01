@@ -37,6 +37,13 @@
 #endif
 #endif
 
+#ifndef _PTHREAD_H
+#include <pthread.h>
+#ifndef _PTHREAD_H
+#define _PTHREAD_H
+#endif
+#endif
+
 #include <typeinfo>
 
 class CConverter;
@@ -64,12 +71,13 @@ private:
   CConverter*   m_pConverter;
   Slot          m_pHandler;
   void*         m_pHandlerData;
+  mutable pthread_mutex_t m_Monitor;
   
 public:
   CChannel(std::string name);
   virtual ~CChannel();
 
-  // Forbidden operations.
+  // Forbidden operations
 
 private:
   CChannel(const CChannel&);
