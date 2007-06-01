@@ -1,1 +1,1 @@
-pkg_mkIndex /opt/epicstcl/TclLibs/widgets *.tcl
+pkg_mkIndex /scratch/fox/epics/TclLibs/widgets *.tcl

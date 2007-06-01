@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = libException.la libtclPlus.la libepics.la
 
-INCLUDES= @TCL_FLAGS@ @X11INCS@ @EPICS_BIN@ @EPICS_INCLUDES@
+INCLUDES= -pthread @TCL_FLAGS@ @X11INCS@ @EPICS_BIN@ @EPICS_INCLUDES@
 ### libException
 
 libException_la_SOURCES = ErrnoException.cpp Exception.cpp \
@@ -20,14 +20,14 @@ include_HEADERS = ErrnoException.h Exception.h  StreamIOError.h \
 	CTCLEpicsPackage.h	\
 	CChannel.h CChannelVariable.h
 
-libException_la_LDFLAGS = -version-info 1:0:0 \
+libException_la_LDFLAGS = -pthread -version-info 1:0:0 \
 	$(OSLDFLAGS)
 
 
 
 # libtclPlus:
 
-libtclPlus_la_LDFLAGS = -version-info 1:0:0 \
+libtclPlus_la_LDFLAGS = -pthread -version-info 1:0:0 \
 	$(OSLDFLAGS)
 
 libtclPlus_la_LIBADD = @top_srcdir@/libException.la 
@@ -68,7 +68,7 @@ libepics_la_LIBADD  = @top_srcdir@/libtclPlus.la  \
 			@top_srcdir@/libException.la \
 			$(TCL_LDFLAGS) $(EPICS_LDFLAGS)		
 
-libepics_la_LDFLAGS = 	-version-info 1:0:0 $(OSLDFLAGS)
+libepics_la_LDFLAGS = 	-pthread -version-info 1:0:0 $(OSLDFLAGS)
 
 
 
@@ -82,7 +82,8 @@ PACKAGES = meter.tcl bcmMeter.tcl epicsLabel.tcl \
 	typeNGo.tcl epicsTypeNGo.tcl		\
 	epicsLabelWithUnits.tcl bindDown.tcl led.tcl \
 	epicsLed.tcl epicsspinbox.tcl epicsButton.tcl \
-	epicsMeter.tcl epicsStripChart.tcl epicsgraph.tcl
+	epicsMeter.tcl epicsStripChart.tcl epicsgraph.tcl \
+	pollmanager.tcl
 
 # Man pages:
 
@@ -171,7 +172,8 @@ noinst_PROGRAMS = unittests tracetests interptests
 unittests_SOURCES = TestRunner.cpp testException.cpp testErrnoException.cpp \
 	testStreamIOError.cpp testRangeError.cpp
 
-unittests_LDADD   = $(CPPUNIT_LDFLAGS) -lException
+unittests_LDFLAGS = -pthread
+unittests_LDADD   =  $(CPPUNIT_LDFLAGS) -lException
 
 noinst_HEADERS = Asserts.h
 
@@ -181,10 +183,11 @@ tracetests_SOURCES = TestRunner.cpp \
 
 tracetests_DEPENDENCIES = $(testableObjects)
 
-TestLdflags = $(testableObjects) $(CPPUNIT_LDFLAGS) $(X11EXTRA_LDFLAGS) \
+TestLdflags =  $(testableObjects) $(CPPUNIT_LDFLAGS) $(X11EXTRA_LDFLAGS) \
 	-L@top_srcdir@/Exception -lException
 
 
+tracetests_LDFLAGS= -pthread
 tracetests_LDADD = $(TestLdflags)
 
 interptests_SOURCES=interpretertest.cpp objecttest.cpp resulttest.cpp \
@@ -192,7 +195,7 @@ interptests_SOURCES=interpretertest.cpp objecttest.cpp resulttest.cpp \
 
 
 interptests_LDADD = TestRunner.o $(TestLdflags)
-
+interptests_LDFLAGS=-pthread
 
 interptests_DEPENDENCIES = $(testableObjects) TestRunner.o
 
