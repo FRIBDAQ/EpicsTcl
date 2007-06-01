@@ -91,6 +91,10 @@ snit::type controlwidget::channelHistory {
     variable   maxKept
     variable   afterId  0
 
+    variable   tZeroMs
+    variable   startSeconds
+
+
     # Construct the line.
 
     constructor args {
@@ -115,6 +119,10 @@ snit::type controlwidget::channelHistory {
 	set maxKept 0
 	set lastPeriod $options(-period)
 	set lastTime  [expr 1.0*[clock seconds]]
+
+	set tZeroMs   [clock clicks -milliseconds]
+	set startSeconds [expr [clock seconds] - $options(-timebase)]
+
 
 	#  Construct the two vectors...and the epics channel data.
 
@@ -155,10 +163,12 @@ snit::type controlwidget::channelHistory {
 	# if not, we don't update:
 	#
 
-	set time     [expr $lastTime + $lastPeriod/1000.0]
-	set lastTime $time
+	set now [clock clicks -milliseconds]
+	set elapsedMs [expr 1.0*($now - $tZeroMs)]
+	set time [expr 1.0*$startSeconds + $elapsedMs/1000.0]
+
 	set lastPeriod $options(-period)
-	set time     [expr $time - $options(-timebase)]
+
 
 	if {![catch {$options(-channel) get} value]} {
 	    
