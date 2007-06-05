@@ -104,6 +104,8 @@ CChannel::~CChannel()
 string
 CChannel::getName() const
 {
+  CCriticalRegion Monitor(m_Monitor);   // Just in case...
+
   return m_sName;
 }
 
@@ -116,6 +118,7 @@ CChannel::getName() const
 bool
 CChannel::isConnected() const
 {
+  CCriticalRegion Monitor(m_Monitor);   // Just in case...
   return m_fConnected;
 }
 
@@ -127,6 +130,8 @@ CChannel::isConnected() const
 void
 CChannel::Connect()
 {
+  CCriticalRegion Monitor(m_Monitor);   // Just in case...
+
   if(!m_fConnectionHandlerEstablished) {
     ca_search_and_connect(m_sName.c_str(), &m_nChannel, StateHandler, (void*)this);
   }
@@ -139,6 +144,8 @@ CChannel::Connect()
 time_t
 CChannel::getLastUpdate() const
 {
+  CCriticalRegion Monitor(m_Monitor);   // Just in case...
+
   return m_LastUpdateTime;
 }
 
@@ -167,6 +174,8 @@ CChannel::getValue() const
 void
 CChannel::setSlot(CChannel::Slot handler, void* data)
 {
+  CCriticalRegion Monitor(m_Monitor);   // Just in case...
+
   m_pHandler     = handler;
   m_pHandlerData = data;
 }
@@ -222,6 +231,7 @@ CChannel::operator=(double value)
 void
 CChannel::doEvents(float seconds)
 {
+
   ca_pend_event(seconds);
 }
 
