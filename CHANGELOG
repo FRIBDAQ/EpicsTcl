@@ -54,5 +54,5 @@ June 5, 2007   - Use a per channel semaphore to ensure that data structures
                    start time and timebase rather than accumulating times and
                    hence errors in the offsets.
 
-
+Release 1.3
               
