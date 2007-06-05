@@ -2,7 +2,11 @@
 #include "CChannel.h"
 #include <pthread.h>
 
-
+#ifdef Linux
+#define MUTEX_TYPE PTHREAD_MUTEX_RECURSIVE_NP
+#else
+#define MUTEX_TYPE PTHREAD_MUTEX_RECURSIVE
+#endif
 
 
 using namespace std;
@@ -64,7 +68,7 @@ CChannel::CChannel(string name) :
   pthread_mutexattr_t   attributes;
   
   int status = pthread_mutexattr_init(&attributes);
-  status     = pthread_mutexattr_settype(&attributes, PTHREAD_MUTEX_RECURSIVE_NP);
+  status     = pthread_mutexattr_settype(&attributes, MUTEX_TYPE);
   if (status) {
     throw string("BUG - could not set mutex attribute type in CChannel initializer");
   }
