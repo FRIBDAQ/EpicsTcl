@@ -182,10 +182,18 @@ snit::type controlwidget::channelHistory {
 	    # very dirty.
 	    
 	    if {$maxKept > 0} {
-		while {[${selfns}::time length] > $maxKept} {
-		    ${selfns}::time delete 0
-		    ${selfns}::data delete 0
+		#
+		#  Trim back to a 10% margin on maxkept --
+		#  So that we won't be trimming every iteration.
+		# 
+		set length [${selfns}::time length]
+
+		if {$length > $maxKept} {
+		    set toKeep [expr 0.9*$maxKept]
+		    set clearCount [expr int($length - $toKeep)]
+		    $self clearfirst $clearCount
 		}
+		    
 	    }
 	    
 	}
@@ -217,9 +225,10 @@ snit::type controlwidget::channelHistory {
 	    set n [${selfns}::time length]
 	}
 	for {set i 0} {$i < $n} {incr i} {
-	    ${selfns}::time delete 0
-	    ${selfns}::data delete 0
+	    lappend indexlist $i
 	}
+	eval ${selfns}::time delete $indexlist
+	eval ${selfns}::data delete $indexlist
     }
     # Sets the maxKept value to n
     # Next time the vector is updated, the 
