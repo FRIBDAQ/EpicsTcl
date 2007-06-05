@@ -68,7 +68,9 @@ __declspec(dllexport)
     pollEpics((ClientData)NULL);
 
 
-    return TCL_OK;
+
+    return TCL_OK;		// Don't start deadlock killer.
+
   }
   void* gpTCLApplication(0);
 
