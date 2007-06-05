@@ -40,4 +40,19 @@ April 25, 2007 - Add stuff needed to build windows targets.
 April 26, 2007 - Ensure that the windows port still compiles/works
                  on linux
 	       - Add a sample application to the epicsgraph manpage.
+June 5, 2007   - Use a per channel semaphore to ensure that data structures
+                 in the channel are appropriately synchonized between 
+                 epics and application threads (notifications can be
+                 in an arbitrary thread).
+               - Ensure that Tcl calls triggered by a notification
+                 are done by posting events to the Tcl interpreter so that
+                 they get done in the contex of the Tcl thread rather than
+                 violating the Tcl apartment model of threading.
+               - In epicsStripChart.tcl:
+                 o Use a more efficient way to trim back the history lists.
+                 o Do timing based on an absolute time offset relative to the
+                   start time and timebase rather than accumulating times and
+                   hence errors in the offsets.
+
+
               
