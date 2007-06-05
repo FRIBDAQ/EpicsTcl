@@ -24,6 +24,8 @@
 #include "CTCLEpicsPackage.h"
 #include "CTCLEpicsCommand.h"
 
+#include <iostream>
+
 #include <set>
 
 
@@ -458,13 +460,23 @@ CTCLChannelCommand::UpdateLinkedVariable()
 void
 CTCLChannelCommand::markChange(CChannel* pChannel, void* pObject)
 {
+
   CTCLChannelCommand* command = static_cast<CTCLChannelCommand*>(pObject);
 
   ChangeEvent* pEvent     = (ChangeEvent*)Tcl_Alloc(sizeof(ChangeEvent));
   pEvent->rawEvent.proc   = CTCLChannelCommand::update;
   pEvent->pChangedChannel = command;
-  Tcl_ThreadQueueEvent(command->m_interpreterThread, (Tcl_Event*)pEvent, TCL_QUEUE_TAIL);
-  Tcl_ThreadAlert(command->m_interpreterThread);
+
+  if (Tcl_GetCurrentThread() == command->m_interpreterThread) {
+    cerr << "Same thread!!\n";
+    update((Tcl_Event*)pEvent, 0);
+    Tcl_Free((char*)pEvent);
+  } 
+  else {
+    Tcl_ThreadQueueEvent(command->m_interpreterThread, (Tcl_Event*)pEvent,
+			 TCL_QUEUE_TAIL);
+    Tcl_ThreadAlert(command->m_interpreterThread);
+  }
 }
 
 /*
