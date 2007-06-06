@@ -1,11 +1,12 @@
 
 #include "CChannel.h"
-#include <pthread.h>
 
+#ifndef _WINDOWS
 #ifdef Linux
 #define MUTEX_TYPE PTHREAD_MUTEX_RECURSIVE_NP
 #else
 #define MUTEX_TYPE PTHREAD_MUTEX_RECURSIVE
+#endif
 #endif
 
 
@@ -21,6 +22,25 @@ using namespace std;
 //    ...
 //  }         // mutex unlocked.
 
+#ifdef _WINDOWS
+class CCriticalRegion {
+private:
+CRITICAL_SECTION*   m_pMutex;
+public:
+  CCriticalRegion(CRITICAL_SECTION& mutex) :
+    m_pMutex(&mutex) {
+    EnterCriticalSection(m_pMutex);
+  }
+  ~CCriticalRegion() {
+    LeaveCriticalSection(m_pMutex);
+  }
+  // It is important to define the following as private to
+  // ensure this mutex is not duplicated:
+private:
+  CCriticalRegion(const CCriticalRegion& rhs);
+  CCriticalRegion& operator=(const CCriticalRegion& rhs);
+};
+#else
 class CCriticalRegion {
 private:
   pthread_mutex_t*   m_pMutex;
@@ -38,7 +58,7 @@ private:
   CCriticalRegion(const CCriticalRegion& rhs);
   CCriticalRegion& operator=(const CCriticalRegion& rhs);
 };
-
+#endif
 
 
 /**
@@ -65,6 +85,9 @@ CChannel::CChannel(string name) :
   m_pHandlerData(0)
 
 {
+#ifdef _WINDOWS
+	InitializeCriticalSection(&m_Monitor);
+#else
   pthread_mutexattr_t   attributes;
   
   int status = pthread_mutexattr_init(&attributes);
@@ -75,6 +98,7 @@ CChannel::CChannel(string name) :
   status = pthread_mutex_init(&m_Monitor, &attributes);
 
   status     = pthread_mutexattr_destroy(&attributes);
+#endif
 }
 /**
  *  Destroys a channel, must cancel all events etc.
@@ -95,7 +119,11 @@ CChannel::~CChannel()
   // but the mutex must be unlocked to release ...there's a tiny
   // timing hole here.
 
+#ifdef _WINDOWS
+  DeleteCriticalSection(&m_Monitor);
+#else
   pthread_mutex_destroy(&m_Monitor);
+#endif
 
 }
 

@@ -220,7 +220,6 @@ CTCLObject::operator int()
 
   //
 
-  int len;
 
   return CTCLList(getInterpreter(), (string)*this);  
 }
