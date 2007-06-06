@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="\\expdc01\ctldev\Source\Win32\EpicsBase\3_14\include\os\WIN32;\\expdc01\ctldev\Source\Win32\EpicsBase\3_14\include;&quot;C:\Documents and Settings\fox\Desktop\stripperfoil\console\epicstcl&quot;;C:\tcl\include"
+				AdditionalIncludeDirectories="h:\test\stripper\console\epicstcl;\\expdc01\ctldev\Source\Win32\EpicsBase\3_14\include\os\WIN32;\\expdc01\ctldev\Source\Win32\EpicsBase\3_14\include;&quot;C:\Documents and Settings\fox\Desktop\stripperfoil\console\epicstcl&quot;;C:\tcl\include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;USE_TCL_STUBS;WIN32;NDEBUG;_WINDOWS;_USRDLL;EPICSTCL_EXPORTS"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
@@ -308,147 +308,207 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\CChannel.h"
+				RelativePath="H:\test\stripper\console\epicstcl\Asserts.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\CChannelVariable.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CApplication.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ClanguageTraceCallbacks.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CApplicationSerializer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\CTCLChannelCommand.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CBuildChannelData.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\CTCLEpicsCommand.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CChannel.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\CTCLEpicsPackage.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CChannelList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ErrnoException.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CChannelVariable.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Exception.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CChannelVisitor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\histotypes.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CLanguageTraceCallbacks.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\RangeError.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CLookupVisitor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\StateException.h"
+				RelativePath="H:\test\stripper\console\epicstcl\cmdline.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\StreamIOError.h"
+				RelativePath="H:\test\stripper\console\epicstcl\config.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLApplication.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CSocket.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLChannel.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CStrings.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLCommandPackage.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CTCLChannelCommand.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLCompatibilityProcessor.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CTCLEpicsCommand.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLException.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CTCLEpicsPackage.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLFileHandler.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CTCPBadSocketState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLHashTable.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CTCPConnectionFailed.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLHashTableItem.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CTCPConnectionLost.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLHashTableIterator.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CTCPNoSuchHost.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLIdleProcess.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CTCPNoSuchService.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLInterpreter.h"
+				RelativePath="H:\test\stripper\console\epicstcl\CUnitChannel.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLInterpreterObject.h"
+				RelativePath="H:\test\stripper\console\epicstcl\ErrnoException.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLList.h"
+				RelativePath="H:\test\stripper\console\epicstcl\Exception.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLObject.h"
+				RelativePath="H:\test\stripper\console\epicstcl\histotypes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLObjectProcessor.h"
+				RelativePath="H:\test\stripper\console\epicstcl\RangeError.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLPackagedCommand.h"
+				RelativePath="H:\test\stripper\console\epicstcl\StateException.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLProcessor.h"
+				RelativePath="H:\test\stripper\console\epicstcl\StreamIOError.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLResult.h"
+				RelativePath="H:\test\stripper\console\epicstcl\TCLApplication.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLString.h"
+				RelativePath="H:\test\stripper\console\epicstcl\TCLChannel.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLTimer.h"
+				RelativePath="H:\test\stripper\console\epicstcl\TCLCommandPackage.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLTracedVariable.h"
+				RelativePath="H:\test\stripper\console\epicstcl\TCLCompatibilityProcessor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLVariable.h"
+				RelativePath="H:\test\stripper\console\epicstcl\TCLException.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLVersionHacks.h"
+				RelativePath="H:\test\stripper\console\epicstcl\TCLFileHandler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\VariableTraceCallback.h"
+				RelativePath="H:\test\stripper\console\epicstcl\TCLHashTable.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLHashTableItem.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLHashTableIterator.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLIdleProcess.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLInterpreter.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLInterpreterObject.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLList.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLObject.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLObjectProcessor.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLProcessor.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLResult.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLString.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLTimer.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLVariable.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\TCLVersionHacks.h"
+				>
+			</File>
+			<File
+				RelativePath="H:\test\stripper\console\epicstcl\VariableTraceCallback.h"
 				>
 			</File>
 		</Filter>
