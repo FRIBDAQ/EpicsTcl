@@ -53,6 +53,7 @@ June 5, 2007   - Use a per channel semaphore to ensure that data structures
                  o Do timing based on an absolute time offset relative to the
                    start time and timebase rather than accumulating times and
                    hence errors in the offsets.
-
+               - Document the need to define LD_ASSUME_KERNEL=2.4.9
+                 for some linux systems.
 Release 1.3
               
