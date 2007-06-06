@@ -120,8 +120,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\fox\Desktop\stripperfoil\console\epicstcl&quot;;C:\tcl\include"
-				PreprocessorDefinitions="USE_TCL_STUBS;WIN32;NDEBUG;_WINDOWS;_USRDLL;EPICSTCL_EXPORTS"
+				AdditionalIncludeDirectories="\\expdc01\ctldev\Source\Win32\EpicsBase\3_14\include\os\WIN32;\\expdc01\ctldev\Source\Win32\EpicsBase\3_14\include;&quot;C:\Documents and Settings\fox\Desktop\stripperfoil\console\epicstcl&quot;;C:\tcl\include"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;USE_TCL_STUBS;WIN32;NDEBUG;_WINDOWS;_USRDLL;EPICSTCL_EXPORTS"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
 				UsePrecompiledHeader="0"
@@ -144,7 +144,7 @@
 				AdditionalDependencies="tkstub84.lib  tclstub84.lib tk84.lib tcl84.lib ca.lib"
 				OutputFile="$(OutDir)\epics.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\tcl\lib"
+				AdditionalLibraryDirectories="&quot;\\expdc01\ctldev\Source\Win32\EpicsBase\3_14\lib\win32-x86&quot;;C:\tcl\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
