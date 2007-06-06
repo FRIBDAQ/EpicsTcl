@@ -63,5 +63,5 @@ June 5, 2007   - Use a per channel semaphore to ensure that data structures
                    null so that update handlers won't get established if they
                    get connected in the timing hole between object deletion
                    and epics channel run-down.
-Release 1.3
+Release 1.3   Released June 6, 2007
               
