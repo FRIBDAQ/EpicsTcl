@@ -109,9 +109,10 @@ CTCLEpicsCommand::deleteChannel(string name)
     if(!pInfo->s_refcount) {
       // Delete the channel; remove from the map.
 
-      delete pInfo->s_pChannel;
       KnownChannels::iterator i = m_channelInfo.find(name);
       m_channelInfo.erase(i);
+      delete pInfo->s_pChannel;
+
     }
   }
 }

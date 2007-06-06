@@ -52,6 +52,14 @@ CChannelVariable::CChannelVariable(const CChannelVariable& rhs) :
   m_pChannel = rhs.m_pChannel;
 }
 /*!
+  Destruction should ensure tracing is off else writes to the channel
+  will cause segfaults most likely.
+*/
+CChannelVariable::~CChannelVariable()
+{
+  disableTracing();
+}
+/*!
    Assignment.. this is really re-defining the object to be a different
    variable, not assigning a value to it:
 */

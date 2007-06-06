@@ -73,6 +73,7 @@ public:
   struct ChangeEvent {
     Tcl_Event            rawEvent;
     CTCLChannelCommand*  pChangedChannel;
+    char*                channelName;
   }; 
 private:
   // Data types

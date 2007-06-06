@@ -56,6 +56,7 @@ public:
 		   std::string      name,
 		   CChannel*        pChannel);
   CChannelVariable(const CChannelVariable& rhs);
+  ~CChannelVariable();
   CChannelVariable& operator=(const CChannelVariable& rhs);
   int operator==(const CChannelVariable& rhs) const;
   int operator!=(const CChannelVariable& rhs) const;

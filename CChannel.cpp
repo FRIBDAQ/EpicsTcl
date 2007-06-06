@@ -1,5 +1,6 @@
 
 #include "CChannel.h"
+#include <iostream>
 
 #ifndef _WINDOWS
 #ifdef Linux
@@ -60,6 +61,11 @@ private:
 };
 #endif
 
+static void
+nullConnectionHandler(connection_handler_args arg)
+{
+  
+}
 
 /**
  * Construct a channel.  This member function 
@@ -105,16 +111,32 @@ CChannel::CChannel(string name) :
  */
 CChannel::~CChannel()
 {
+  CConverter* converter = m_pConverter;
+  m_pConverter = 0;		// No update handler is now noop.
+
   // This holds the lock...
   {
     CCriticalRegion enter(m_Monitor);
+
     if (m_fConnected || (m_fUpdateHandlerEstablished)) {
-      ca_clear_channel(m_nChannel);
+      ca_clear_event(m_updateEventId);	// Stop event update event dispatching.
     }
-    delete m_pConverter;
-    m_pConverter = 0;
+    else {
+      // Need to establish a 'null' connection event as it may yet connect:
+      // We'll establish something that just returns:
+
+      ca_change_connection_event(m_nChannel, nullConnectionHandler);
+    }
+    ca_clear_channel(m_nChannel);
+
   }
   doEvents(0.1);		// Let the events run down.
+  // Now kill off the converter and the rest of our stuff.
+  {
+    CCriticalRegion enter(m_Monitor);
+    delete converter;
+  }
+
 
   // but the mutex must be unlocked to release ...there's a tiny
   // timing hole here.
@@ -290,7 +312,7 @@ CChannel::StateHandler(connection_handler_args args)
     if(!pChannel->m_fUpdateHandlerEstablished) {
       pChannel->m_pConverter = CConversionFactory::Converter(ca_field_type(id));
       ca_add_event(pChannel->m_pConverter->requestType(), 
-		   id, UpdateHandler, (void*)pChannel, NULL);
+		   id, UpdateHandler, (void*)pChannel, &(pChannel->m_updateEventId));
       pChannel->m_fUpdateHandlerEstablished;
     }
   }
@@ -426,4 +448,6 @@ CFloatConverter::operator()(event_handler_args args)
   return string(buffer);
 }
 
+// Update handler for channels being destroyed:
+//
 

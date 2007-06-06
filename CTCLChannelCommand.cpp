@@ -27,7 +27,7 @@
 #include <iostream>
 
 #include <set>
-
+#include <string.h>
 
 
 
@@ -60,6 +60,7 @@ CTCLChannelCommand::~CTCLChannelCommand()
 {
 
   delete m_pChannel;
+  m_pChannel = 0;
 
   // Empty out the list of linked variables...deleting the variable objects.
 
@@ -68,7 +69,6 @@ CTCLChannelCommand::~CTCLChannelCommand()
     delete       info.m_pLinkedVar;
     m_linkedVariables.pop_front();
   }
-  m_pChannel = 0;
   
 }
 
@@ -445,6 +445,7 @@ CTCLChannelCommand::Usage()
 void
 CTCLChannelCommand::UpdateLinkedVariable()
 {
+
   for (VariableInfoIterator i = m_linkedVariables.begin();
        i != m_linkedVariables.end(); i++) {
     CChannelVariable* pVar = i->m_pLinkedVar;
@@ -466,10 +467,14 @@ CTCLChannelCommand::markChange(CChannel* pChannel, void* pObject)
   ChangeEvent* pEvent     = (ChangeEvent*)Tcl_Alloc(sizeof(ChangeEvent));
   pEvent->rawEvent.proc   = CTCLChannelCommand::update;
   pEvent->pChangedChannel = command;
+  const char* name        = command->getName().c_str();
+  pEvent->channelName     = Tcl_Alloc(strlen(name) + 1);
+  strcpy(pEvent->channelName, name);
 
   if (Tcl_GetCurrentThread() == command->m_interpreterThread) {
     cerr << "Same thread!!\n";
     update((Tcl_Event*)pEvent, 0);
+    Tcl_Free(pEvent->channelName);
     Tcl_Free((char*)pEvent);
   } 
   else {
@@ -486,8 +491,21 @@ CTCLChannelCommand::markChange(CChannel* pChannel, void* pObject)
 int
 CTCLChannelCommand::update(Tcl_Event* p, int flags)
 {
+
+
   CTCLChannelCommand::ChangeEvent* pEvent = (CTCLChannelCommand::ChangeEvent*)p;
-  pEvent->pChangedChannel->UpdateLinkedVariable();
+
+  // If the command is no longer registered, then it was deleted between
+  // the event being queued to us and dispatched to us.. so we just
+  // ignore the event.. otherwise
+  // process it.
+  
+  if (CTCLEpicsCommand::haveChannel(string(pEvent->channelName))) {
+    pEvent->pChangedChannel->UpdateLinkedVariable();
+  }
+  // Need to release the command name storage:
+
+  Tcl_Free(pEvent->channelName);
 
   return 1;
   

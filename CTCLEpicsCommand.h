@@ -100,6 +100,7 @@ private:
   CTCLEpicsCommand& operator=(const CTCLEpicsCommand& rhs);
   int operator==(const CTCLEpicsCommand& rhs) const;
   int operator!=(const CTCLEpicsCommand& rhs) const;
+
 public:
 
 
@@ -108,8 +109,8 @@ public:
 
   // class level functions:
 
-  static RefCountedChannel*  haveChannel(std::string name);
   static void                deleteChannel(std::string name);
+  static RefCountedChannel*  haveChannel(std::string name);
  
 };
 

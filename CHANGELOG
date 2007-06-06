@@ -55,5 +55,13 @@ June 5, 2007   - Use a per channel semaphore to ensure that data structures
                    hence errors in the offsets.
                - Document the need to define LD_ASSUME_KERNEL=2.4.9
                  for some linux systems.
+  	       - Deal with some timing holes revolving around channel deletion:
+                 o Don't allow channel command update handlers to run on 
+                   channel commands that were destroyed.
+                 o When channels are deleted prior to being connected, 
+                   change their connection handlers to something safe and
+                   null so that update handlers won't get established if they
+                   get connected in the timing hole between object deletion
+                   and epics channel run-down.
 Release 1.3
               

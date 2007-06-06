@@ -81,6 +81,7 @@ private:
   mutable pthread_mutex_t m_Monitor;
 #endif
   
+  evid          m_updateEventId;
 public:
   CChannel(std::string name);
   virtual ~CChannel();
