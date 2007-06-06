@@ -215,6 +215,22 @@ pack .l
            updating as the value updates in Epics.
         </para>
     </refsect1>
-
+    <refsect1>
+        <title>OPEN ISSUES</title>
+        <para>
+            On some linux systems a broken implementation of the Linux
+            Native Posix Thread Library (NPTL) causes the tcl shell extended with
+            the epics package to deadlock (hang).  This is a known issue with Linux.
+            If this is observed then prior to starting tcl/wish applications, select
+            the LinuxThreads implementation of the threading library by (bash):
+            <programlisting>
+export LD_ASSUME_KERNEL=2.4.19
+            </programlisting>
+            For the C shell:
+            <programlisting>
+setenv LD_ASSUME_KERNEL 2.4.19
+            </programlisting>
+        </para>
+    </refsect1>
 </refentry>
 

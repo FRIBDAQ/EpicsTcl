@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+                      "file:///usr/share/xml/docbook/schema/dtd/4.3/docbookx.dtd"
+
+[
+<!ENTITY epics             SYSTEM "epics.xml">
+<!ENTITY epicsBCMMeter     SYSTEM "epicsBCMMeter.xml">
+<!ENTITY epicsButton       SYSTEM "epicsButton.xml">
+<!ENTITY epicsEnumeratedControl SYSTEM "epicsEnumeratedControl.xml">
+<!ENTITY epicsGraph        SYSTEM   "epicsgraph.xml">
+<!ENTITY epicsLabel        SYSTEM   "epicsLabel.xml">
+<!ENTITY epicsLabelWithUnits SYSTEM "epicsLabelWithUnits.xml">
+<!ENTITY epicsLed          SYSTEM   "epicsLed.xml">
+<!ENTITY epicsMeter        SYSTEM   "epicsMeter.xml">
+<!ENTITY epicsStripChart   SYSTEM   "epicsStripChart.xml">
+<!ENTITY epicsTypeNGo      SYSTEM   "epicsTypeNGo.xml">
+<!ENTITY epicsspinbox      SYSTEM   "epicsspinbox.xml">
+
+]
+>
+
+<book>
+   <bookinfo>
+      <title>NSCL Epics support software</title>
+      <author><firstname>Ron</firstname><surname>Fox</surname></author>
+      <revhistory>
+          <revision>
+	     <revnumber>1.0</revnumber>
+	     <date>March 28, 2007</date>
+	     <authorinitials>RF</authorinitials>
+	     <revremark>Original Release</revremark>
+	  </revision>
+      </revhistory>
+   </bookinfo>
+<reference>
+<title>NSCL Epics support for Tcl/Tk (1tcl)</title>
+<refentry>
+<refmeta>
+  <refentrytitle>NSCL Epics support</refentrytitle>
+  <manvolnum>1tcl</manvolnum>
+</refmeta>
+<refnamediv>
+   <refname>intro</refname>
+   <refpurpose>Overview of Epics support for Tcl/Tk at the NSCL</refpurpose>
+</refnamediv>
+<refsect1>
+<title>DESCRIPTION</title>
+   <para>
+      NSCL has developed base support for epics access from within Tk programs
+      or Tcl programs that are based around the Tcl event loop.  The base support
+      consists of a package called <emphasis>epics</emphasis>.   You can use
+      this package to directly access EPICS channels.  In  many cases, however, when
+      building pure control panel applications, you will be able to accomplish your
+      objectives by writing your application using the NSCL epics widget set.
+   </para>
+    <para>
+       NSCL has developed several Tcl/Tk widgets that understand
+       how to directly interface with the EPICS control system.
+       these widgets are built to directly understand  EPICS channels,
+       record fields and how to display them.
+    </para>
+    <para>
+       The Widget set consists of the following:
+    </para>
+	<variablelist>
+	  <varlistentry>
+	    <term>epicsBCMMeter</term>
+	    <listitem>
+	      <para>
+                   A meter with range controls that knows how to
+                   display NSCL Beam Current meters and control their
+                   ranges.  This widget requires an EPICS record of a
+                   specific subset of types.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsButton</term>
+	    <listitem>
+	      <para>
+                    A pushbutton that is connected to an epics
+                    field.  This normally is used to control
+                    binary I/O records.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsEnumeratedControl</term>
+	    <listitem>
+	      <para>
+                   Controls an epics field that can have
+                   a value from a set of discrete pre-defined values.
+                </para>
+	    </listitem>
+	  </varlistentry>
+          <varlistentry>
+            <term>epicsGraph.xml</term>
+            <listitem>
+             <para>
+                Creates 2-d plots of epics channels vs. each other.
+             </para>
+            </listitem>
+          </varlistentry>
+	  <varlistentry>
+	    <term>epicsLabel.</term>
+	    <listitem>
+	      <para>
+                    Displays the value of an epics record field
+                    in a Tk label widget.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsLabelWithUnits</term>
+	    <listitem>
+	      <para>
+                    Displays the value of an epics record primary
+                    field in a Tk label widget along with the value of
+                    the record's engineering unit's field.
+                </para>
+	      </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsLed</term>
+	    <listitem>
+	      <para> 
+                   Displays an indicator which is lit when the epics
+                   field is nonzero and not when it isn't  the
+                   on and off colors of the LED can be configured.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsMeter</term>
+	    <listitem>
+	      <para>Displays the value of an arbitrary
+                      EPICS record field in a meter.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsStripChart</term>
+	    <listitem>
+	      <para>
+                    Wraps the very flexible BLT Stripchart widget in some
+                    code that allows it to produce strip charts of the time
+                    evolution of an arbitrary number of epics fields.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsTypeNGo</term>
+	    <listitem>
+	      <para>
+                    Provides a simple type-in entry field that allows users
+                    to control the value of an arbitrary epics field. New
+                    values are comitted by pressing a button.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsspinbox</term>
+	    <listitem>
+	      <para>
+                  Provides a spinbox that can control an arbitrary EPICS record
+                  field.
+              </para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+</refsect1>
+</refentry>
+	       
+
+
+&epics;
+&epicsBCMMeter;
+&epicsButton;
+&epicsEnumeratedControl;
+&epicsGraph;
+&epicsLabel;
+&epicsLabelWithUnits;
+&epicsLed;
+&epicsMeter;
+&epicsStripChart;
+&epicsTypeNGo;
+&epicsspinbox;
+
+</reference>
+</book>
