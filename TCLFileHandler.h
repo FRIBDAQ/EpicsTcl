@@ -334,7 +334,11 @@ public:
   CTCLFileHandler(CTCLInterpreterObject* pInterp,
 		  FILE* pFile) :
     CTCLInterpreterObject(pInterp->getInterpreter()),
+#ifdef _WINDOWS
+	m_nFid(_fileno(pFile))
+#else
     m_nFid(fileno(pFile))
+#endif
   { }
   CTCLFileHandler(CTCLInterpreter* pInterp,
 		   UInt_t am_nFid 
@@ -348,7 +352,11 @@ public:
   CTCLFileHandler(CTCLInterpreter* pInterp,
 		  FILE* pFile) :
     CTCLInterpreterObject(pInterp),
+#ifdef _WINDOWS
+	m_nFid(_fileno(pFile))
+#else
     m_nFid(fileno(pFile))
+#endif
   { }
   ~CTCLFileHandler ( ) {Clear(); }       //Destructor	
 			//Copy constructor

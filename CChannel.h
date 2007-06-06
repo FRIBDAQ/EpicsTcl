@@ -37,10 +37,14 @@
 #endif
 #endif
 
+#ifdef _WINDOWS
+#include <windows.h>
+#else
 #ifndef _PTHREAD_H
 #include <pthread.h>
 #ifndef _PTHREAD_H
 #define _PTHREAD_H
+#endif
 #endif
 #endif
 
@@ -71,7 +75,11 @@ private:
   CConverter*   m_pConverter;
   Slot          m_pHandler;
   void*         m_pHandlerData;
+#ifdef _WINDOWS
+  mutable CRITICAL_SECTION m_Monitor;
+#else
   mutable pthread_mutex_t m_Monitor;
+#endif
   
 public:
   CChannel(std::string name);
