@@ -495,14 +495,25 @@ CTCLChannelCommand::markChange(CChannel* pChannel, void* pObject)
   string name             = command->getName();
   pEvent->channelName     = Tcl_Alloc(strlen(name.c_str()) + 1);
   strcpy(pEvent->channelName, name.c_str());
-
  
+
   if (Tcl_GetCurrentThread() == command->m_interpreterThread) {
+    // If we are the Tcl thread already, we don't really need to
+    // go through the overhead of declaring an event.. so just
+    // call the event processor.
+
     update((Tcl_Event*)pEvent, 0);
-    Tcl_Free(pEvent->channelName);
-    Tcl_Free((char*)pEvent);
+    Tcl_Free((char*)pEvent);	// The event proc frees the string, but
+                                // we need to free the event itself, as 
+                                // Tcl's event dispatching would. 
   } 
   else {
+    // If we are called in a different thread, in order to
+    // match the 'apartment' model of tcl threading we need to 
+    // execute the update handler in the context of the Tcl thread...
+    // and therefore must let the Tcl event loop schedule the
+    // execution of update.
+    // 
     Tcl_ThreadQueueEvent(command->m_interpreterThread, (Tcl_Event*)pEvent,
 			 TCL_QUEUE_TAIL);
     Tcl_ThreadAlert(command->m_interpreterThread);
