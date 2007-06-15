@@ -291,6 +291,8 @@ int
 CTCLChannelCommand::Link(CTCLInterpreter& interp,
 			 vector<CTCLObject>& objv)
 {
+
+
   // Need a variable name:
 
   if (objv.size() != 3) {
@@ -490,12 +492,12 @@ CTCLChannelCommand::markChange(CChannel* pChannel, void* pObject)
   ChangeEvent* pEvent     = (ChangeEvent*)Tcl_Alloc(sizeof(ChangeEvent));
   pEvent->rawEvent.proc   = CTCLChannelCommand::update;
   pEvent->pChangedChannel = command;
-  const char* name        = command->getName().c_str();
-  pEvent->channelName     = Tcl_Alloc(strlen(name) + 1);
-  strcpy(pEvent->channelName, name);
+  string name             = command->getName();
+  pEvent->channelName     = Tcl_Alloc(strlen(name.c_str()) + 1);
+  strcpy(pEvent->channelName, name.c_str());
 
+ 
   if (Tcl_GetCurrentThread() == command->m_interpreterThread) {
-    cerr << "Same thread!!\n";
     update((Tcl_Event*)pEvent, 0);
     Tcl_Free(pEvent->channelName);
     Tcl_Free((char*)pEvent);
@@ -515,7 +517,6 @@ int
 CTCLChannelCommand::update(Tcl_Event* p, int flags)
 {
 
-
   CTCLChannelCommand::ChangeEvent* pEvent = (CTCLChannelCommand::ChangeEvent*)p;
 
   // If the command is no longer registered, then it was deleted between
@@ -523,6 +524,7 @@ CTCLChannelCommand::update(Tcl_Event* p, int flags)
   // ignore the event.. otherwise
   // process it.
   
+
   if (CTCLEpicsCommand::haveChannel(string(pEvent->channelName))) {
     pEvent->pChangedChannel->UpdateLinkedVariable();
   }

@@ -30,7 +30,7 @@ using namespace std;
 
 
 
-static char* version= "1.2";
+static char* version= "1.3";
 
 static const int caPollInterval(16); // ms per epics poll.
 
