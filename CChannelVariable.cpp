@@ -19,7 +19,6 @@
 #include <CChannel.h>
 
 
-
 using namespace std;
 
 
@@ -35,7 +34,8 @@ CChannelVariable::CChannelVariable(CTCLInterpreter& rInterp,
 				   string           name,
 				   CChannel*        pChannel) :
   CTCLVariable(&rInterp, name, false),
-  m_pChannel(pChannel)
+  m_pChannel(pChannel),
+  m_referenceCount(1)		// Start referenced after all...
 {
   // now turn on tracing the way we want it:
 
@@ -58,6 +58,9 @@ CChannelVariable::CChannelVariable(const CChannelVariable& rhs) :
 CChannelVariable::~CChannelVariable()
 {
   disableTracing();
+  // Debugging:
+
+
 }
 /*!
    Assignment.. this is really re-defining the object to be a different
@@ -138,4 +141,22 @@ CChannelVariable::operator()(char* name, char* subscript, int flags)
 {
   (*m_pChannel) = Get();
    return (char*)NULL;
+}
+
+
+/*!
+   Add another reference to the object:
+*/
+void
+CChannelVariable::Reference()
+{
+  m_referenceCount++;
+}
+/*!
+   Remove a reference and return the resulting reference count.
+*/
+unsigned int
+CChannelVariable::Dereference()
+{
+  return --m_referenceCount;
 }

@@ -64,4 +64,11 @@ June 5, 2007   - Use a per channel semaphore to ensure that data structures
                    get connected in the timing hole between object deletion
                    and epics channel run-down.
 Release 1.3   Released June 6, 2007
+
+Release 1.3-001
+	- Fix potential compute bound deadlock with circular traces when the
+          same tcl variable is bound more than once to a channel >and<
+          that channel shows a high rate of change.
+
+
               

@@ -50,7 +50,8 @@ class CChannel;
 
 class CChannelVariable : public CTCLVariable
 {
-  CChannel*   m_pChannel;	/* Channel we're linked to. */
+  CChannel*     m_pChannel;	  /* Channel we're linked to. */
+  unsigned int  m_referenceCount; /* Number of links.         */
 public:
   CChannelVariable(CTCLInterpreter& rInterp,
 		   std::string      name,
@@ -72,6 +73,8 @@ public:
   virtual char* operator()(char* pName,
 			   char* pSubscript,
 			   int   flags);
+  void Reference();
+  unsigned int Dereference();
 			   
 
 };

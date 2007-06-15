@@ -127,6 +127,7 @@ private:
   static int update(Tcl_Event* pEvent, int flags);      // Called in Tcl thread.
 
 
+  VariableInfoIterator find(std::string variableName);
 };
 
 #endif

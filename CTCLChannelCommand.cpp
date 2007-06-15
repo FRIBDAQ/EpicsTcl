@@ -303,15 +303,30 @@ CTCLChannelCommand::Link(CTCLInterpreter& interp,
   }
   string tclVarName = objv[2];
 
+  // If a variable with the same name already exists, simply
+  // add another reference to it...otherwise, make a new one
+  // and register it... ensure that we have a trace handler established
+  // for this channel as well so we can queue update events to 
+  // the tcl interpreter thread:
 
-  CChannelVariable* pLinkedVar = new CChannelVariable(interp, tclVarName, m_pChannel);
-  pLinkedVar->newEpicsValue(m_pChannel->getValue().c_str());
-  VariableInfo vinfo = {tclVarName, pLinkedVar};
-  m_linkedVariables.push_back(vinfo);
+  VariableInfoIterator i = find(tclVarName);
+  if (i != m_linkedVariables.end()) {
+    CChannelVariable* pLinkedVariable = i->m_pLinkedVar;
+    pLinkedVariable->Reference();
+  }
+  else {
 
+    // Variable does not yet have a link
+
+    CChannelVariable* pLinkedVar = new CChannelVariable(interp, tclVarName, m_pChannel);
+    pLinkedVar->newEpicsValue(m_pChannel->getValue().c_str());
+    VariableInfo vinfo = {tclVarName, pLinkedVar};
+    m_linkedVariables.push_back(vinfo);
+
+  }    
   // This may be redundant.. maybe not.. but it does not hurt to do this
   // more than once..
-
+  
   m_pChannel->setSlot(CTCLChannelCommand::markChange, this);
   
   return TCL_OK;
@@ -334,31 +349,39 @@ CTCLChannelCommand::Unlink(CTCLInterpreter& interp,
   }
   string tclVarName = objv[2];
 
-  // Locate and erase the selected linked variable.
-  // We keep the slot set... unless we've emptied the list:
-  //
+  // Locate the named variable in the list and dereference it.
+  // if the reference count is zero.. then delete and remove it...
+  // if that results in an empty list of liniks... turn off
+  // our trace handler:
 
-  for (VariableInfoIterator i= m_linkedVariables.begin();
-       i != m_linkedVariables.end(); i++) {
-     if(i->varname == tclVarName) {
-       delete i->m_pLinkedVar;
-       m_linkedVariables.erase(i);
-       if (m_linkedVariables.empty()) {
-	 m_pChannel->setSlot(NULL,NULL);
-       }
-       return TCL_OK;
-     }
+  VariableInfoIterator i = find(tclVarName);
+
+  if (i != m_linkedVariables.end()) {
+    CChannelVariable*  pLinkedVariable = i->m_pLinkedVar;
+    if (pLinkedVariable->Dereference() == 0) {
+      // Last link deleted:
+
+      delete pLinkedVariable;
+      m_linkedVariables.erase(i);
+      if (m_linkedVariables.empty()) {
+	m_pChannel->setSlot(NULL,NULL);
+      }
+    }
+    return TCL_OK;
   }
-  // Could not find linked variable:
+  else {
+    // Could not find linked variable:
+    
+    string result = "The variable ";
+    result  += tclVarName;
+    result  += " is not linked to ";
+    result  += getName();
+    result  += "\n";
+    result  += Usage();
+    interp.setResult(result);
+    return TCL_ERROR;
+  }
 
-  string result = "The variable ";
-  result  += tclVarName;
-  result  += " is not linked to ";
-  result  += getName();
-  result  += "\n";
-  result  += Usage();
-  interp.setResult(result);
-  return TCL_ERROR;
 
 }
 
@@ -509,4 +532,26 @@ CTCLChannelCommand::update(Tcl_Event* p, int flags)
 
   return 1;
   
+}
+
+/*
+  Locate a variable named in the linked variable list.
+  Parameters:
+     variableName - Name of the variable to find.
+ 
+  returns m_linkedVariables.end() if no match.
+
+
+*/
+CTCLChannelCommand::VariableInfoIterator
+CTCLChannelCommand::find(string variableName)
+{
+  VariableInfoIterator i = m_linkedVariables.begin();
+  while (i != m_linkedVariables.end()) {
+     if(i->varname == variableName) {
+       return i;
+     }
+     i++;
+  }
+  return i;			// It's end() now.
 }
