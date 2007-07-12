@@ -74,5 +74,10 @@ Release 1.3-001
 Release 1.3.002
 - BZ302 - Ensure that label options can propagate to the underlying label
           widgets for both epicsLabel and epicsLabelWithUnits.
-
-              
+- BZ304 - Ensure that the led widget gets initialized with the current value
+          of the variable once all the widgets are made.
+- Make the typengo widget restore the prior type-in value on
+  focus out or validation failures.
+- Add new layout options to typengo:
+   -orient vertical | horizontal
+   -showlabel true  | false
