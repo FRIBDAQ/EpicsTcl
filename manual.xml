@@ -216,7 +216,37 @@ csh:
 lappend auto_path /usr/opt/epicstcl/TclLibs
       </programlisting>
    </example>
-   
+   <para>
+      On windows, no environment variables are needed.  Simply
+      <orderedlist>
+        <listitem>
+            <para> 
+                If not already installed, install the NCSAPPS package
+                on your PC.  This makes the EPICS channel access layer
+                required by the epics package available.
+            </para>
+         </listitem>
+         <listitem>
+            <para>
+               Download and install the ActiveTcl package available at
+               no charge from http://www.activestate.com
+               Install this package in its default location.
+            </para>
+         </listitem>
+         <listitem>
+            <para>
+                Download the epics installer from the NSCL anonymous
+                FTP site.  At the time this is being written it is:
+                ftp://ftp.nscl.msu.edu/pub/epicstcl13-001.exe
+            </para>
+         </listitem>
+         <listitem>
+            <para>
+                Run the epics installer you downloaded.
+            </para>
+         </listitem>
+      </orderedlist>
+   </para>
 </refsect1>
 </refentry>
 	       
