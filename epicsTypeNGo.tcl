@@ -48,8 +48,25 @@ snit::widget controlwidget::epicsTypeNGo {
 
     constructor args {
 
-	install basewidget as controlwidget::typeNGo $win.tng -command [mymethod onChanged]
-	$self configurelist $args
+	# We need to figure out which are our options
+	# and which are the base widget's We're going to 
+	# take -channel and -command:
+
+	set myargs [list]
+	set baseargs [list]
+	foreach {option value} $args {
+	    if {[lsearch -exact $option "-channel"] != -1} {
+		lappend myargs $option $value
+	    } else {
+		lappend baseargs $option $value
+	    }
+	}
+
+
+        eval install basewidget as controlwidget::typeNGo $win.tng \
+	    -command {[mymethod onChanged]} $baseargs
+
+	$self configurelist $myargs
 
 	#  Now deal with getting/binding the channel to the widget.
 	#
