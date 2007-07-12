@@ -63,8 +63,11 @@ snit::widget  ::controlwidget::onoffSingleButton {
 	    -background $options(-offcolor)       \
 	    -activebackground $options(-offcolor) \
 	    -command [mymethod onClick]
-	pack $win.b 
+	pack $win.b -expand 1 -fill both
+
+
     }
+
     # Process the button click (this is just toggle):
 
     method onClick {} {
@@ -152,7 +155,7 @@ snit::widget  controlwidget::onoffButtonPair {
 	    -state disabled                        \
 	    -command [mymethod onOff]
 	
-	grid $win.on $win.off
+	grid $win.on $win.off -sticky nsew
 
     }
     # Turn the state on
@@ -353,14 +356,16 @@ snit::widget controlwidget::epicsButton {
 
     method layout {} {
 	if {!$constructing} {
-	    grid forget $win.button
-	    catch {grid forget $win.label}
+	    pack forget $win.button
+	    catch {pack forget $win.label}
 	}
 	
 	if {$options(-showlabel)} {
-	    grid $win.label
+	    pack $win.label -fill both -expand 1
 	}
-	grid $win.button
+	pack $win.button -fill both -expand 1
+
+
     }
 
     # on/off/get/toggle/invoke get delegated to the button
