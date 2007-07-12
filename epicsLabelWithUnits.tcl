@@ -14,8 +14,9 @@
 
 #
 #  Provide a widget that displays an epics channel along with its
-#  .EGU field.  These are really two epics labels that
-#  are side by side.
+#  .EGU field.  In order to support all the options and
+#   methods of a label this is now a single label with
+#   traces doing the update of the text.
 #
 package provide epicsLabelWithUnits 1.0
 
@@ -31,9 +32,21 @@ namespace eval controlwidget {
 
 snit::widget ::controlwidget::epicsLabelWithUnits {
     option -channel {}
-    delegate option * to hull
+    delegate option * to label
+    delegate method * to label
 
     constructor args {
+
+	# first set up the widgets so we have something to configure
+
+	install label using label $win.label
+
+	pack $win.label -fill both -expand 1
+
+	bindDown $win $win
+	
+	# Configure the widgets and connect them to epics.
+
 	$self configurelist $args
 	set channel $options(-channel)
 	if {$channel eq ""} {
@@ -45,13 +58,52 @@ snit::widget ::controlwidget::epicsLabelWithUnits {
 	$channel link       ::controlwidget::$channel
 	${channel}.EGU link ::controlwidget::${channel}.EGU
 
-	label $win.value -textvariable ::controlwidget::${channel}
-	label $win.units -textvariable ::controlwidget::${channel}.EGU
+	$win.label config \
+	    -text "[set ::controlwidget::$channel] [set ::controlwidget::${channel}.EGU]"
 
+	trace add variable ::controlwidget::$channel       write \
+	    [mymethod updateLabel]
+	trace add variable ::controlwidget::${channel}.EGU write \
+	    [mymethod updateLabel]
 
-	grid $win.value -column 0 -row 0 -sticky e
-	grid $win.units -column 1 -row 0 -sticky w
-
-	bindDown $win $win
     }
+    #  The destructor will
+    #   - unset the traces.
+    #   - unlink the variables taking advantage of ref counts to know
+    #     this is safe.
+    #   - destroy the channel again secure in the knowledge that
+    #     refcounts will make this safe.
+    #
+    destructor {
+	set channel $options(-channel)
+	if {$channel eq ""} {
+	    return 
+	}
+
+	trace remove variable ::controlwidget::$channel       write \
+	    [mymethod updateLabel]
+	trace remove variable ::controlwidget::${channel}.EGU write \
+	    [mymethod updateLabel]
+
+	$channel unlink ::controlwidget::$channel
+	${channel}.EGU unlink ::controlwidget::${channel}.EGU
+
+	${channel}     delete
+	${channel}.EGU delete
+	
+    }
+    #  Trace function. We must build up the label text from the
+    #  values of the variables linked to the channel and the units:
+    #
+    method updateLabel {name1 name2 op} {
+	set channel $options(-channel)
+	if {$channel eq ""} {
+	    return
+	}
+
+	$win.label config \
+	    -text "[set ::controlwidget::$channel] [set ::controlwidget::${channel}.EGU]"
+
+    }
+
 }
