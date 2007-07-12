@@ -128,7 +128,7 @@ controlwidget::epicsButton <replaceable>path ?options...?</replaceable>
                     </listitem>
                 </varlistentry>
                 <varlistentry>
-                    <term><command>modality</command> <replaceable>keyword</replaceable></term>
+                    <term><command>-modality</command> <replaceable>keyword</replaceable></term>
                     <listitem>
                         <para>
                             Selects the type of button presentation desired.  The keyword can
@@ -149,6 +149,25 @@ controlwidget::epicsButton <replaceable>path ?options...?</replaceable>
                     </listitem>
                 </varlistentry>
             </variablelist>
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>EXAMPLES</title>
+        <para>
+            The example below (to the best of my knowledge), creates a pair of buttons
+            that can turn the D125DV power supply on and off:
+            <example>
+                <title>Using a button pair to turn on/off D125DV</title>
+                <programlisting>
+package require epicsButton
+controlwidget::epicsButton .d125dvonoff -channel D125DV.ONL -statechannel D125DV.SONL \
+                                        -modality double \
+                                        -onlabel {Turn On} \
+                                        -offlabel {Turn Off} \
+                                        -oncolor  green -offcolor red
+pack .d125dvonoff
+                </programlisting>
+            </example>
         </para>
     </refsect1>
 </refentry>

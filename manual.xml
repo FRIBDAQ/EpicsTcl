@@ -40,7 +40,7 @@
   <manvolnum>1tcl</manvolnum>
 </refmeta>
 <refnamediv>
-   <refname>intro</refname>
+   <refname>Intro</refname>
    <refpurpose>Overview of Epics support for Tcl/Tk at the NSCL</refpurpose>
 </refnamediv>
 <refsect1>
@@ -168,6 +168,55 @@
 	    </listitem>
 	  </varlistentry>
 	</variablelist>
+</refsect1>
+<refsect1>
+   <title>Getting started</title>
+   <para>
+      The NSCL epics software is made up of several packages.  A base epics package
+      provides raw support to the channel access layer.  Each widget provides a separate
+      package as well.  In Tcl, packages are loaded using the:
+      <programlisting>
+<command>package require <replaceable>package-name</replaceable></command>
+      </programlisting>
+      command.
+   </para>
+   <para>
+      The
+      <command>package require</command> searches a list of library directories
+      for matching packages.  In general it will be necessary to add the directory in which
+      the epics packages are installed to this list of directories.  This can be done either
+      by setting the <varname>TCLLIBPATH</varname> environment variable prior to running your
+      scripts, or by adding that directory to the Tcl <varname>auto_path</varname> variable
+      in your script.
+   </para>
+   <para>
+      I cannot anticipate where the NSCL epics software will be installed on all systems,
+      however when I (Ron Fox) install this package, I install it in
+      <filename>/usr/opt/epicstcl</filename> which
+      will put the packages in <filename>/usr/opt/epicstcl/TclLibs</filename>.
+   </para>
+   <example>
+      <title>Setting TCLLIBPATH to /usr/opt/epicstcl/TclLibs</title>
+      <para>
+sh, bash shells:
+      <programlisting>
+<command>export TCLLIBPATH=/usr/opt/epicstcl/TclLibs</command>
+      </programlisting>
+      </para>
+      <para>
+csh:
+      <programlisting>
+<command>setenv TCLLIBPATH /usr/opt/epicstcl/TclLibs</command>
+      </programlisting>
+      </para>
+   </example>
+   <example>
+      <title>Adding /usr/opt/epicstcl/TclLibs to auto_path in a Tcl Script:</title>
+      <programlisting>
+lappend auto_path /usr/opt/epicstcl/TclLibs
+      </programlisting>
+   </example>
+   
 </refsect1>
 </refentry>
 	       

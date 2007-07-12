@@ -194,6 +194,8 @@ aaa delete;       # refcount becomes 0 so aaa is deleted.
         <para>
             The code below creates a label widget that follows the value of the epics channel
             SOMECHANNEL:
+            <example>
+                <title>Linking an epics channel to a Tcl variable</title>
             <programlisting>
 package require epics
 epicschannel SOMECHANNEL
@@ -201,6 +203,7 @@ SOMECHANNEL link SOMECHANNELvar
 label .l -textvariable SOMECHANNELvar
 pack .l
             </programlisting>
+            </example>
         </para>
 	<para>
            Note that this can be done much more simply using the epics Tcl
@@ -223,6 +226,9 @@ pack .l
             the epics package to deadlock (hang).  This is a known issue with Linux.
             If this is observed then prior to starting tcl/wish applications, select
             the LinuxThreads implementation of the threading library by (bash):
+            <example>
+                <title>Selecting the LinuxThreads thread library to prevent hangs</title>
+            <para>
             <programlisting>
 export LD_ASSUME_KERNEL=2.4.19
             </programlisting>
@@ -230,6 +236,8 @@ export LD_ASSUME_KERNEL=2.4.19
             <programlisting>
 setenv LD_ASSUME_KERNEL 2.4.19
             </programlisting>
+            </para>
+            </example>
         </para>
     </refsect1>
 </refentry>

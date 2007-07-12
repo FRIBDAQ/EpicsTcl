@@ -116,6 +116,23 @@ controlwidget::epicsBCMMeter <replaceable>path ?options...?</replaceable>
         </para>
     </refsect1>
     <refsect1>
+        <title>EXAMPLES</title>
+        <para>
+            The example below displays a BCM Meter that monitors the current on
+            <literal>Z001F-C</literal>
+            <example>
+                <title>Monitoring Z001F-C with a BCM Meter</title>
+                <programlisting>
+package require epicsBCMMeter
+
+controlwidget::epicsBCMMeter .meter -channel Z001F-C
+pack .meter
+
+                </programlisting>
+            </example>
+        </para>
+    </refsect1>
+    <refsect1>
         <title>SEE ALSO</title>
         <para>
             meter
