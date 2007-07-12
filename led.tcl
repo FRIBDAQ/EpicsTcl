@@ -68,13 +68,22 @@ snit::widget controlwidget::led {
 	}
 	trace add variable ::$name  write [mymethod varTrace]
 	set options(-variable) $name
+	
+	# set our initial state to the current value of the var:
+	# the after is because we could be constructing an need to give
+	# the widgets a chance to get built:
+
+	after 10 [list $self varTrace $name "" write]
+
     }
     # Trace for the led variable..
     #
     method varTrace {name index op} {
 	set name ::$name
 	set value [set $name]
-	$self setstate $value
+	if {[string is boolean -strict $value]} {
+	    $self setstate $value
+	}
     }
     #
     # Set the led on.
