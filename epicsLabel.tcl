@@ -40,8 +40,8 @@ namespace eval controlwidget {
 
 snit::widget  controlwidget::epicsLabel {
     delegate method * to label
-
     option   -channel {}
+    delegate option * to label
 
     constructor args {
 	install label using label $win.label 
