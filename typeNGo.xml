@@ -1,11 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD Docbook XML 4.3//EN"
-                      "file:///usr/share/xml/docbook/schema/dtd/4.3/docbookx.dtd"
- [ <!ENTITY manpage SYSTEM "ph7106Control.xml"> ]
- >
-<book>
-<article>
-
 <refentry>
     <refmeta>
         <refentrytitle>typeNGo compound widget   </refentrytitle>
@@ -42,9 +34,15 @@ controlwidget::typeNGo <replaceable>path ?options...?</replaceable>
             applications e.g.
         </para>
         <para>
-            The typeNGo widge provides explicit control over when the entry widget is a correct
+            The typeNGo widget provides explicit control over when the entry widget is a correct
             value worth propagating to the application.  This is done either by clicking the
             button or by hitting the enter/return key while the focus in in the entry widget.
+        </para>
+        <para>
+            Validation scripts are also supported (see <command>-validate</command> in the
+            OPTIONS secion).  Validation scripts are invoked when the button is clicked and
+            must return a true or false value.  If false is returned, the <command>-command</command>
+            script is not invoked and the entry field is returned to its prior value.
         </para>
     </refsect1>
     <refsect1>
@@ -54,6 +52,31 @@ controlwidget::typeNGo <replaceable>path ?options...?</replaceable>
             tothe label widget contained by the megawidget.  See, however the
             <command>-label</command> option.
             <variablelist>
+                <varlistentry>
+                    <term><command>-orient <replaceable>vertical | horizontal</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Only processed at widget creation time.  This option determines the
+                            layout of the widget.  If the value is <literal>vertical</literal>
+                            (the default), the label, entry and button are laid out vertically in
+                            that order.  If the value is <literal>horizontal</literal>,
+                            the label, entry and button are laid out horizontally in that order.
+                            See however, <command>-showlabel</command>.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-showlabel <replaceable>bool</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Only processed at widget creation time.  This option determines
+                            if the label widget is actually displayed. If the value is
+                            <literal>true</literal> (default), the label widget is displayed.
+                            If the value is <literal>false</literal>, the label widget is
+                            created but not displayed.
+                        </para>
+                    </listitem>
+                </varlistentry>  
                 <varlistentry>
                     <term><command>-text  <replaceable>labelstring</replaceable></command></term>
                     <listitem>
@@ -89,7 +112,8 @@ controlwidget::typeNGo <replaceable>path ?options...?</replaceable>
                             described in <command>-command</command> are supported.  If the script
                             does not return a true value,
                             the <command>-command</command> script will not
-                            be executed.
+                            be executed, and the entry field value will be returned to its prior
+                            value.
                         </para>
                     </listitem>
                 </varlistentry>
@@ -143,18 +167,43 @@ controlwidget::typeNGo <replaceable>path ?options...?</replaceable>
                         </para>
                     </listitem>
                 </varlistentry>
+                <varlistentry>
+                    <term>&lt;FocusOut&gt; - With focus in the entry widget</term>
+                    <listitem>
+                        <para>
+                        restores the prior value to the widget.
+                        </para>
+                    </listitem>
+                </varlistentry>
             </variablelist>
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>EXAMPLES</title>
+        <para>
+            This example shows how to use the -validate switch to ensure that
+            the entry field has a  legal floating point value when the -command
+            script would be invoked.  If the entry field is not a floating point
+            value, the prior value of the field is restored.
+        </para>
+        <programlisting>
+            
+package require typeNGo
+controlwidget::typeNGo .tng -validate [list string is double -strict %V]
+pack .tng
+
+        </programlisting>
+        <para>
+            This example uses the Tcl <command>string is double</command> command
+            to determine if the new value (%V) is a double.  If not, the validation fails,
+            <command>-command</command> won't be executed, and the prior value of the
+            entry field will be restored.
         </para>
     </refsect1>
     <refsect1>
         <title>SEE ALSO</title>
         <para>
-
+            epicsTypeNGo(1tcl)
         </para>
     </refsect1>
 </refentry>
-
-
-
-</article>
-</book>

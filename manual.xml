@@ -15,7 +15,9 @@
 <!ENTITY epicsStripChart   SYSTEM   "epicsStripChart.xml">
 <!ENTITY epicsTypeNGo      SYSTEM   "epicsTypeNGo.xml">
 <!ENTITY epicsspinbox      SYSTEM   "epicsspinbox.xml">
-
+<!ENTITY led               SYSTEM   "led.xml">
+<!ENTITY meter             SYSTEM   "meter.xml">
+<!ENTITY typeNGo           SYSTEM   "typeNGo.xml">
 ]
 >
 
@@ -264,6 +266,12 @@ lappend auto_path /usr/opt/epicstcl/TclLibs
 &epicsStripChart;
 &epicsTypeNGo;
 &epicsspinbox;
+
+<!-- put in the non epics documentation here -->
+
+&meter;
+&led;
+&typeNGo;
 
 </reference>
 </book>

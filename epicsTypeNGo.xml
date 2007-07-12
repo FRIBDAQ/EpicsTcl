@@ -35,7 +35,7 @@ controlwidget::epicsTypeNGo <replaceable>path ?options?...</replaceable>
     <refsect1>
         <title>OPTIONS</title>
         <para>
-            All options except
+            All typeNGo options except
             <command>-command</command> are supported by this, however the use of the
             <command>-textvariable</command> option will break the binding of the label
             to the epics channel.  There may or may not be good reasons to do this.
@@ -47,6 +47,26 @@ controlwidget::epicsTypeNGo <replaceable>path ?options?...</replaceable>
         <title>METHODS</title>
         <para>
             All typeNGo methods are supported.
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>EXAMPLES</title>
+        <para>
+            This example shows how to create a horizontally laid out epics type and go
+            widget, that only allows floating point channel values to be entered.
+            See the typeNGo widget's <command>-validate</command>, <command>-orient</command>
+            switches to understand this example.
+        </para>
+        <programlisting>
+package require epicsTypeNGo
+
+controlwidget::epicsTypNGo .tng -channel Z001F-C -orient horizontal \
+    -validate [list string is double -strict %V%]
+
+pack .tng
+
+        </programlisting>
+        <para>
         </para>
     </refsect1>
     <refsect1>
