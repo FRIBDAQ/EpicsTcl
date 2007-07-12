@@ -36,6 +36,20 @@
 #              result of the script is 0, the entry
 #              is assumed to be invalid and the
 #              -command script will not be invoked.
+#   -orient    can take vertical or horizontal keywords.
+#              and can only be specified at initial creation time.
+#              If vertical, (default), the widget will look like this:
+#               label
+#               type-in
+#               button
+#              If horizontal, the widget will look like this:
+#               label type-in button
+#  -showlabel  Takes a boolean value, and is only processed at creation time.
+#              If true (the default), the label widget is shown, otherwise
+#              the label widget is not shown.  The label widget is always
+#              created so that subclassed widgets can be simplified.
+#
+#
 # Substitutions:
 #   For both -command and -validate the following substitutions
 #   are defined:
@@ -48,7 +62,8 @@
 #   Invoke- Simulates a push of the buttons.
 #
 # Bindings:
-#  <Enter>  - invokes the pushbutton, when detected in the entry widget.
+#  <Enter>     - invokes the pushbutton, when detected in the entry widget.
+#  <FocusOut>  - Restores the prior value of the text field.
 #
 #
 package provide typeNGo  1.0
@@ -60,12 +75,18 @@ namespace eval controlwidget {
 }
 
 snit::widget controlwidget::typeNGo {
+
+    option -orient  vertical
+    option -showlabel true
+
     delegate option -text    to button
     delegate option -label   to label as -text
     delegate option  *        to label
 
     option   -command  [list]
     option   -validate [list]
+
+    variable lastValue [list]
 
     constructor args {
 	install label  as label $win.label
@@ -80,13 +101,36 @@ snit::widget controlwidget::typeNGo {
 	    $win.button configure -text "Go"
 	}
 
-	grid $win.label  -sticky w
-	grid $win.entry  -sticky w
-	grid $win.button -sticky w
+	# Validate the -orient and -showlabel options:
+
+	if {![string is boolean -strict $options(-showlabel)]} {
+	    error "typeNGo -showlabel  must have a boolean value has $options(-showlabel)"
+	}
+	if {[lsearch -exact "horizontal vertical" $options(-orient)] == -1} {
+	    error "typenGo -orient must have a value 'vertical' or 'horizontal' had: $options(-orient)"
+	}
+	puts "$options(-orient)"
+
+	if {$options(-orient) eq "vertical"} {
+	    if {$options(-showlabel)} {
+		grid $win.label  -sticky w
+	    }
+	    grid $win.entry  -sticky w
+	    grid $win.button -sticky w
+	} else {
+	    if {$options(-showlabel)} {
+		set labelgrid $win.label
+	    } else {
+		set labelgrid x
+	    }
+	    grid $labelgrid $win.entry $win.button
+	}
 
 	# bind <Enter> in the entry so that it calls invoke:
 
 	bind $win.entry <Return> [mymethod Invoke]
+	bind $win.entry <FocusOut> [mymethod restoreLast]
+
 	bindDown $win $win
 
     }
@@ -102,6 +146,8 @@ snit::widget controlwidget::typeNGo {
     method Set {value} {
 	$win.entry delete 0 end
 	$win.entry insert end $value
+
+	set lastValue $value
     }
     #
     # Invokes the button.  This fires any command script
@@ -129,6 +175,9 @@ snit::widget controlwidget::typeNGo {
 	}
 	if {$ok} {
 	    $self dispatch -command
+	    set lastValue [$self Get]
+	} else {
+	    $self restoreLast;   # Restore prior valid? value.
 	}
     }
     # dispatch - dispatches a script, doing appropriate substitutions.
@@ -143,6 +192,13 @@ snit::widget controlwidget::typeNGo {
 	    set script [string map [list %W $win %V [list $value]] $script]
 	    return [eval $script]
 	}
+    }
+    #
+    #  Restore the prior value of the widget.. This is done e.g. on
+    # focus out events, validation failures etc.
+    #
+    method restoreLast {} {
+	$self Set $lastValue
     }
 
 }
