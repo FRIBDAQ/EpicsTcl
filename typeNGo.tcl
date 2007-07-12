@@ -109,7 +109,6 @@ snit::widget controlwidget::typeNGo {
 	if {[lsearch -exact "horizontal vertical" $options(-orient)] == -1} {
 	    error "typenGo -orient must have a value 'vertical' or 'horizontal' had: $options(-orient)"
 	}
-	puts "$options(-orient)"
 
 	if {$options(-orient) eq "vertical"} {
 	    if {$options(-showlabel)} {
