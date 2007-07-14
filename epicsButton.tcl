@@ -339,7 +339,7 @@ snit::widget controlwidget::epicsButton {
 	# we can update the button boxe's status too:
 
 	trace add variable  ::controlwidget::$statechannel write [mymethod update]
-
+	after 10 [list $self update ::controlwidget::$statechannel ""  write]
 	set constructing false
 	
     }
@@ -389,7 +389,7 @@ snit::widget controlwidget::epicsButton {
     #  The status channel just changed:
 
     method update {name index op} {
-	set value [$statechannel get]
+	if {[catch {$statechannel get} value]} return
 	if {$value} {
 	    $self on
 	} else {
