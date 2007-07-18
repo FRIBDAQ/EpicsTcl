@@ -291,7 +291,7 @@ snit::type controlwidget::channelHistory {
 #  BLT widget.
 #
 
-snit::widget controlwidget::epicsStripChart {
+snit::widgetadaptor controlwidget::epicsStripChart {
     delegate option * to stripchart
     delegate method * to stripchart
 
@@ -299,8 +299,8 @@ snit::widget controlwidget::epicsStripChart {
     variable channelLines;	# Array of channelHistoryObject names by channel
 
     constructor args {
-	eval install stripchart as blt::stripchart $win.stripchart $args
-	pack $win.stripchart -expand 1 -fill both
+	eval installhull using blt::stripchart $args
+	
 
 	set timeBase [clock seconds]
     }
@@ -317,7 +317,7 @@ snit::widget controlwidget::epicsStripChart {
 				     -channel $name                    \
 				     -timebase $timeBase]
 	set vecs [$channelLines($name) names]
-	eval $win.stripchart element  create $channelLines($name)    \
+	eval $win element  create $channelLines($name)    \
 	    -xdata [lindex $vecs 0]                         \
 	    -ydata [lindex $vecs 1]                         \
 	    -label $name                                    \
@@ -336,7 +336,7 @@ snit::widget controlwidget::epicsStripChart {
 	}
 	set elementName $channelLines($name)
 	unset channelLines($name)
-	$win.stripchart element delete $elementName
+	$win element delete $elementName
 	$elementName destroy
     }
 }
