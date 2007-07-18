@@ -416,7 +416,7 @@ snit::widgetadaptor controlwidget::epicsCommandButton {
 		installhull using button -command [mymethod sendValue] 
 		$self configurelist $args
 		
-		if {$options(-channel) ne ""} {
+		if {$options(-channel) eq ""} {
 			error "controlwidget::epicsCommandButton requires a -channel argument"
 		}
 		
