@@ -92,7 +92,7 @@ controlwidget::epicsPulldown <replaceable>path ?options...?</replaceable>
 						this item. When the menu item created is selected, the
 						process variable will be set to <replaceable>labelvalue</replaceable>.
 						When the process variable is <replaceable>labelvalue</replaceable>
-						the menu button will be labelled <replaceable>labelvalue</replaceable>.
+						the menu button will be labeled <replaceable>labelvalue</replaceable>.
 					</para>
 				</listitem>
 				<listitem>
@@ -134,11 +134,12 @@ controlwidget::epicsPulldown <replaceable>path ?options...?</replaceable>
      <title>METHODS</title>
  	 <para>
  	 	All of the widget commands of the Tk menubutton widget are supported.
+ 	</para>
   </refsect1>
   <refsect1>
      <title>EXAMPLES</title>
      <para>
-     	The example below creates an epics pulldown menu connected to 
+     	The example below creates an epics pull down menu connected to 
      	IGLI0.  The first three menu items are values.  The fourth a
      	separator.  The final two are label value pairs:
      </para>
@@ -170,7 +171,6 @@ controlwidget::epicsPullDown .pd -channel IGLI0 \
 pack .pd
    	
    	</programlisting> 
-     </para>
   </refsect1>
 
 </refentry>
