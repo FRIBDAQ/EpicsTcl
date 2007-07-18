@@ -12,7 +12,7 @@
 #            Michigan State University
 #            East Lansing, MI 48824-1321
 
-package provide epicsPulldown 1.0
+package provide epicsPullDown 1.0
 package require epics
 package require Tk
 
