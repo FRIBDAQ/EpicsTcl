@@ -18,6 +18,7 @@
 <!ENTITY led               SYSTEM   "led.xml">
 <!ENTITY meter             SYSTEM   "meter.xml">
 <!ENTITY typeNGo           SYSTEM   "typeNGo.xml">
+<!ENTITY epicsPullDown     SYSTEM   "epicsPullDown.xml">
 ]
 >
 
@@ -263,6 +264,7 @@ lappend auto_path /usr/opt/epicstcl/TclLibs
 &epicsLabelWithUnits;
 &epicsLed;
 &epicsMeter;
+&epicsPullDown;
 &epicsStripChart;
 &epicsTypeNGo;
 &epicsspinbox;

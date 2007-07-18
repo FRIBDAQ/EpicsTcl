@@ -188,7 +188,7 @@ snit::widgetadaptor controlwidget::epicsPullDown {
 				    set label   [lindex $item 0]
 				    set matchTo [lindex $item 1]
 				}
-				if {$value eq $matchTo} {
+				if {$value == $matchTo} {
 					return $label
 				}
 			}

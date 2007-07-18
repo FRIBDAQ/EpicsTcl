@@ -94,7 +94,7 @@ WEBXMLFILES= manual.xml bcmMeter.xml epicsLabel.xml	\
 		 epicsTypeNGo.xml epicsLabelWithUnits.xml \
 		epicsLed.xml epicsspinbox.xml epicsButton.xml \
 		epics.xml epicsMeter.xml epicsBCMMeter.xml \
-		epicsStripChart.xml epicsgraph.xml
+		epicsStripChart.xml epicsgraph.xml epicsPullDown.xml
 
 XMLFILES = manual.xml meter.xml \
 	radioMatrix.xml \
