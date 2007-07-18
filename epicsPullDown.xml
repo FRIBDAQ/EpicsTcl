@@ -78,7 +78,7 @@ controlwidget::epicsPulldown <replaceable>path ?options...?</replaceable>
 			Each item in the list can have one of the following forms:
 			<itemizedlist>
 				<listitem>
-					<para><litearl>-</litearl>  Inserts a separator in the menu.
+					<para><literal>-</literal>  Inserts a separator in the menu.
 						A separator is a horizontal line that is used to visually
 						group related sets of items.
 					</para>
@@ -133,7 +133,9 @@ controlwidget::epicsPulldown <replaceable>path ?options...?</replaceable>
   <refsect1>
      <title>METHODS</title>
  	 <para>
- 	 	All of the widget commands of the Tk menubutton widget are supported.
+ 	 	All of the widget commands of the Tk menubutton widget are
+ 	 	supported.
+
  	</para>
   </refsect1>
   <refsect1>
