@@ -12,7 +12,7 @@
 #	     Michigan State University
 #	     East Lansing, MI 48824-1321
 
-package provide epicsButton 1.0
+package provide epicsButton 1.1
 
 package require Tk
 package require epics
@@ -398,4 +398,36 @@ snit::widget controlwidget::epicsButton {
     }
 }
 
-              
+#  Provides an epics command button.  This is just
+#  a widget adaptor for a plain old epics button however:
+#  -command is reserved to us
+#  -channel connects the button to a channel
+#  -value   describes what the button writes to the channel
+# All other options are delegated to the button widget.
+#
+snit::widgetadaptor controlwidget::epicsCommandButton {
+	option  -channel {}
+	option  -value   {}
+	
+	delegate option * to hull except -command
+	delegate method * to hull
+	
+	constructor {args} {
+		installhull using button -command [mymethod sendValue] 
+		$self configurelist $args
+		
+		if {$options(-channel) ne ""} {
+			error "controlwidget::epicsCommandButton requires a -channel argument"
+		}
+		
+		epicschannel $options(-channel)
+	}
+	#-------------------------------------------------------------------------
+	#
+	#  sendValue is invoked when the button is clicked. All we need to do
+	#  is send $options(-value) to the channel.
+	#
+	method sendValue {} {
+		$options(-channel) set $options(-value)
+	}
+}
