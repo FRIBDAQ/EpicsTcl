@@ -13,8 +13,8 @@
 #            East Lansing, MI 48824-1321
 
 package provide epicsPullDown 1.0
-package require epics
 package require Tk
+package require epics
 package require snit
 
 
@@ -50,51 +50,43 @@ package require snit
 #
 namespace eval controlwidget { }
 
-snit::widgetadaptor controlwidget::epicsPullDown
-{
+snit::widgetadaptor controlwidget::epicsPullDown {
 	option -channel  {}
 	option -items    {}
-	option -menu     {}
-	option -tearoff  false
+
 	
 	variable channelValue
 	variable radioButtonValue
-	
+
+        delegate option -tearoff to menu
 	delegate option * to hull
 	delegate method * to hull
 	
 	constructor args {
-		installhull using menubutton
-		
-		$self confgigurelist $args
-		
-		$win configure -menu $win.menu
-		
-		if {$options(-channel) eq ""} {
-			error "controlwidget::epicsPullDown must specify a -channel when created."
-		}
-		epicschannel $options(-channel)
+	    installhull using menubutton
+	    install menu as menu $win.menu
+	    
+	    $self configurelist $args
 
-		trace  add variable ${selfns}::channelValue write [mymethod updateButton]
-		$options(-channel) link ${selfns}::channelValue
-		
-		# May not need this given the order of the code above....
-		
-		after 100 [mymethod updateButton \
-		 					${selfns}::channelValue \
-		 					"" write];                    # get initial value right.
-		
+	    $win configure -menu $win.menu
+	    
+	    
+	    if {$options(-channel) eq ""} {
+		error "controlwidget::epicsPullDown must specify a -channel when created."
+	    }
+	    epicschannel $options(-channel)
+	    
+	    trace  add variable ${selfns}::channelValue write [mymethod updateButton]
+	    $options(-channel) link ${selfns}::channelValue
+	    
+	    # May not need this given the order of the code above....
+	    
+	    after 100 [mymethod updateButton \
+			   ${selfns}::channelValue \
+			   "" write];                    # get initial value right.
+	    
 	}
-	#-------------------------------------------------------------------------
-	#
-	#  Disable the -menu option:
-	#
-	onconfigure -menu value {
-		error {The -menu option is not legal for an epicsPullDown widget}
-	}
-	oncget -menu value {
-		error {The -menu option is not legal for an epicsPullDown widget}
-	}
+
 	#-------------------------------------------------------------------------
 	#
 	#  process the -items configuration  See the top level comments for a 
@@ -102,10 +94,9 @@ snit::widgetadaptor controlwidget::epicsPullDown
 	#
 	onconfigure -items itemlist {
 		$win.menu delete 0 end
-		$win.menu configure -tearoff $options(tearoff)
 		
 		foreach item $itemlist {
-			if {$item eq '-'} {
+			if {$item eq "-"} {
 				#
 				# Add a separator:
 				#
@@ -155,9 +146,9 @@ snit::widgetadaptor controlwidget::epicsPullDown
 	#   We are ensured at this point that the widgets have been made.
 	#
 	method updateButton {name index op} {
+	    set label [getMatchingLabel $channelValue $options(-items)]
 
-		set label [getMatchingLabel $channelValue $options(-items)]
-		$win configure -text $label
+	    $win configure -text $label
 	}
 	#------------------------------------------------------------------
 	# 
@@ -191,11 +182,11 @@ snit::widgetadaptor controlwidget::epicsPullDown
 		foreach item $itemList {
 			if {$item ne "-"} {
 				if {[llength $itemList] == 1} {
-					set label    $item
-					set matchTo  $item
+				    set label    $item
+				    set matchTo  $item
 				} else {
-					set label   [lindex $item 0]
-					set matchTo [lindex $item 1
+				    set label   [lindex $item 0]
+				    set matchTo [lindex $item 1]
 				}
 				if {$value eq $matchTo} {
 					return $label
