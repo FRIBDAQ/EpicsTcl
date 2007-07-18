@@ -292,8 +292,8 @@ snit::type controlwidget::channelHistory {
 #
 
 snit::widgetadaptor controlwidget::epicsStripChart {
-    delegate option * to stripchart
-    delegate method * to stripchart
+    delegate option * to hull
+    delegate method * to hull
 
     variable timeBase;		# T=0.
     variable channelLines;	# Array of channelHistoryObject names by channel
