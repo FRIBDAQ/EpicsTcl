@@ -15,6 +15,7 @@
 package provide epicsPullDown 1.0
 package require epics
 package require Tk
+package require snit
 
 
 # epicsPulldown is an epics aware pull down menu.
