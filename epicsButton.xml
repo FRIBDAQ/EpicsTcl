@@ -29,7 +29,7 @@ controlwidget::epicsButton <replaceable>path ?options...?</replaceable>
             This widget provides a mechanism for controlling binary output
             style devices with the ability to monitor an optional associated
             input status channel.  Two control styles are supported, a single button
-            and a pair of buttons.   The widget can also be labelled.
+            and a pair of buttons.   The widget can also be labeled.
         </para>
     </refsect1>
     <refsect1>
@@ -49,7 +49,7 @@ controlwidget::epicsButton <replaceable>path ?options...?</replaceable>
                     </listitem>
                 </varlistentry>
                 <varlistentry>
-                    <term><command>-statechannel</command> <replaceable>chanel-name</replaceable></term>
+                    <term><command>-statechannel</command> <replaceable>channel-name</replaceable></term>
                     <listitem>
                         <para>
                             Specifies the name of the channel that reflects the state of the
@@ -170,4 +170,85 @@ pack .d125dvonoff
             </example>
         </para>
     </refsect1>
+
 </refentry>
+<refentry id="epicsCommandButton">
+      <refmeta>
+         <refentrytitle>epicsCommandButton</refentrytitle>
+         <manvolnum>1tcl</manvolnum>
+      </refmeta>
+      <refnamediv>
+         <refname>epicsCommandButton</refname>
+	 <refpurpose>Button that sends a value to a channel</refpurpose>
+      </refnamediv>
+      
+      <refsynopsisdiv>
+        <cmdsynopsis>
+        <command>
+package require epicsButton
+		</command>
+		</cmdsynopsis>	
+        <cmdsynopsis>
+            <command>
+controlwidget::epicsCommandButton <replaceable>path ?options?...</replaceable>            
+            </command>
+        </cmdsynopsis>
+      </refsynopsisdiv>
+      <refsect1>
+         <title>DESCRIPTION</title>
+         <para>
+            The <command>epicsCommandButton</command> is wraps the Tk 
+            button widget so that clicking the button sends a specific value
+            to an associated epics process variable.  The appearance defaults
+            for the widget are the same as ordinary Tk buttons, in contrast
+            with <command>epicsButton</command> widgets.
+         </para>
+      </refsect1>
+      <refsect1>
+         <title>
+            OPTIONS
+         </title>
+         <para>
+         	The epicsCommandButton inherits all options and methods from the
+         	Tk button widget.  The <command>-command</command> option is, however
+         	disabled to prevent interference with the epicsCommandButton's use
+         	of this feature in the underlying button.
+         </para>
+         <variablelist>
+            <varlistentry>
+                <term><command>-channel</command> <replaceable>epicschannel</replaceable></term>
+                <listitem>
+                    <para>
+                      	<replaceable>epicschannel</replaceable> is the channel controlled by
+                      	this widget.  This must be supplied when constructing the widget and
+                      	cannot be dynamically modified (attempts to do so are silently ignored).
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+            	<term><command>-value</command> <replaceable>value</replaceable></term>
+            	<listitem>
+            		<para>
+            			<replaceable>value</replaceable> is the value that will be written to
+            			the channel when the button is clicked.  This defaults to an empty 
+            			string, and can be dynamically modified after the widget is created.
+           			</para>
+       			</listitem>
+    		</varlistentry>
+         </variablelist>
+      </refsect1>
+      <refsect1>
+         <title>EXAMPLES</title>
+         <para>
+         	The example below creates a button that, when pressed 
+         	sets the channel <literal>IGAI0</literal> to zero.
+         </para>
+         <programlisting>
+package require epicsButton
+controlwidget::epicsCommandButton .eb -channel IGAI0 -value 0
+pack .eb
+         </programlisting>
+      </refsect1>
+ 
+   </refentry>
+
