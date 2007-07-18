@@ -293,17 +293,16 @@ snit::type controlwidget::channelPairHistory {
 #      Removes the series name created with addseries, and destroys all resources associated with it.
 #
 #
-snit::widget  controlwidget::epicsGraph {
-    delegate option * to graph
-    delegate method * to graph
+snit::widgetadaptor  controlwidget::epicsGraph {
+    delegate option * to hull
+    delegate method * to hull
     
     variable timebase;               # T=0 time.
     variable series;                 # Array of channelPairHistories by series name.
 
     constructor args {
-        eval install graph as blt::graph $win.graph $args
+        eval installnull using  blt::graph  $args
         
-        pack $win.graph -expand 1 -fill both
         
         set timebase [clock seconds]
     }
@@ -324,7 +323,7 @@ snit::widget  controlwidget::epicsGraph {
 	}
 	set history $series($name)
 	unset series($name)
-	$win.graph element delete $name
+	$win element delete $name
 	$history destroy
     }
 
@@ -349,7 +348,7 @@ snit::widget  controlwidget::epicsGraph {
 			       -xchannel $x -ychannel $y              \
 			       -timebase $timebase]
 	set vecs [$series($name) names]
-	eval $win.graph element create $name                 \
+	eval $win element create $name                 \
 	    -xdata [lindex $vecs 1]                               \
 	    -ydata [lindex $vecs 2]                               \
 	    -label $name $args
