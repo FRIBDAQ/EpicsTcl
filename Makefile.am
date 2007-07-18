@@ -85,7 +85,7 @@ PACKAGES = meter.tcl bcmMeter.tcl epicsLabel.tcl \
 	epicsLabelWithUnits.tcl bindDown.tcl led.tcl \
 	epicsLed.tcl epicsspinbox.tcl epicsButton.tcl \
 	epicsMeter.tcl epicsStripChart.tcl epicsgraph.tcl \
-	pollmanager.tcl
+	pollmanager.tcl epicsPulldown.tcl
 
 # Man pages:
 
