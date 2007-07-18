@@ -99,7 +99,7 @@ controlwidget::epicsButton <replaceable>path ?options...?</replaceable>
                             Specifies a string to use to label the button that turns the
                             device off.  If a single button representation is selected, this
                             string will label the button when the device is on (the button
-                            turns the device off in that case), and the button will dispaly the
+                            turns the device off in that case), and the button will display the
                             on color.  In a double button representation, this label will
                             label the right button which turns the device off.
                         </para>
@@ -245,7 +245,7 @@ controlwidget::epicsCommandButton <replaceable>path ?options?...</replaceable>
          </para>
          <programlisting>
 package require epicsButton
-controlwidget::epicsCommandButton .eb -channel IGAI0 -value 0
+controlwidget::epicsCommandButton .eb -channel IGAI0 -value 0 -text IGAI0=>0
 pack .eb
          </programlisting>
       </refsect1>
