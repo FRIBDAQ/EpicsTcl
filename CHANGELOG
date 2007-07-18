@@ -85,3 +85,13 @@ Release 1.3.002
 
 Release 1.3-003
 - BZ 310 - Capture initial state of epicsbuttons.
+
+Release 1.4
+- BZ 308 - Add a widget adaptor (and documentation) for an epicsCommandButton.
+           This is a tk button that sets a channel to a value and makes
+           not assumptions about the rendering of the button.
+- BZ 312 - Make the blt graphical widgets (epicsStripChart and
+           epicsGraph widget adaptors so that bindings work better.
+- BZ 309 - Added epicsPullDown widget; configurable popup menu attached
+           to a channel
+           
