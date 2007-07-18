@@ -301,7 +301,7 @@ snit::widgetadaptor  controlwidget::epicsGraph {
     variable series;                 # Array of channelPairHistories by series name.
 
     constructor args {
-        eval installnull using  blt::graph  $args
+        eval installhull using  blt::graph  $args
         
         
         set timebase [clock seconds]
