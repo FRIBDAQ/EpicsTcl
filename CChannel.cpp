@@ -463,7 +463,7 @@ CIntegerConverter::allowedValues() const
 {
 	vector<string> result;
 	result.push_back(string("int"));
-	return return result;
+	return result;
 }
 
 ////////////////////////////////////////////////////////////
@@ -497,5 +497,5 @@ CFloatConverter::allowedValues() const
 {
 	vector<string> result;
 	result.push_back(string("float"));
-	return return result;
+	return result;
 }

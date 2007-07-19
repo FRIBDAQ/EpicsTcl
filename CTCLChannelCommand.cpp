@@ -480,7 +480,7 @@ CTCLChannelCommand::ValueList(CTCLInterpreter& interp, std::vector<CTCLObject>& 
 	if (objv.size() != 2) {
 		string result("Too many command line parameters\n");
 		result += Usage();
-		setResult(result);
+		interp.setResult(result);
 		return TCL_ERROR;
 	}
 	// At this point we can't fail:
@@ -488,11 +488,11 @@ CTCLChannelCommand::ValueList(CTCLInterpreter& interp, std::vector<CTCLObject>& 
 	vector<string> allowedValues = m_pChannel->getAllowedValues();
 	
 	CTCLObject result;
-	result.Bind(interp)
-	for (int =0; i < allowedValues.size()) {
+	result.Bind(interp);
+	for (int i =0; i < allowedValues.size(); i++) {
 		result += allowedValues[i];
 	}
-	setResult(result);
+	interp.setResult(result);
 	return TCL_OK;
 	
 }
