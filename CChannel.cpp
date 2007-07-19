@@ -414,7 +414,7 @@ CConversionFactory::Converter(short type) {
 short
 CStringConverter::requestType()
 {
-  return DBF_STRING;
+  return DBR_STRING;
 }
 /*!
    Convert a string data type to a string... basically
@@ -444,7 +444,7 @@ CStringConverter::allowedValues() const
 short
 CIntegerConverter::requestType()
 {
-  return DBF_LONG;
+  return DBR_LONG;
 }
 /*!
    Return the stringified version of an integer value.
@@ -478,7 +478,7 @@ CIntegerConverter::allowedValues() const
 short
 CFloatConverter::requestType()
 {
-  return DBF_DOUBLE;
+  return DBR_DOUBLE;
 }
 /*!
    Return the stringified version of a double channel
@@ -508,7 +508,7 @@ CFloatConverter::allowedValues() const
 short
 CEnumConverter::requestType()
 {
-	return DBF_ENUM;               // Get the whole enum record.
+	return DBR_CTRL_ENUM;               // Get the whole enum record.
 }
 /*!
  *   Convert the event into a value.
@@ -522,13 +522,13 @@ CEnumConverter::requestType()
 string
 CEnumConverter::operator()(event_handler_args args)
 {
-	struct dbr_gr_enum* pValue = static_cast<struct dbr_gr_enum*>(args.dbr);
+        const struct dbr_gr_enum* pValue = static_cast<const struct dbr_gr_enum*>(args.dbr);
 	
 	// If needed build up the allowed values string.
 	
 	if (m_allowedValues.size() == 0) {
-		for (int i=0; i < pValue->no_str) {
-			string  value = p_Value->strs[i];
+		for (int i=0; i < pValue->no_str; i++) {
+			string  value = pValue->strs[i];
 			m_allowedValues.push_back(value);
 		}
 	}

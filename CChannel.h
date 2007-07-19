@@ -209,7 +209,7 @@ public:
   virtual std::vector<std::string>  allowedValues() const;
 };
 
-class CEnumConverter
+class CEnumConverter : public CConverter
 {
 	std::vector<std::string> m_allowedValues;
 public:
