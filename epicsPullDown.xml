@@ -173,6 +173,47 @@ controlwidget::epicsPullDown .pd -channel IGLI0 \
 pack .pd
    	
    	</programlisting> 
+        <para>
+          The next example shows how to build the item list automatically
+          for an epics enumerated channel.  There are two complications.
+          <itemizedlist>
+               <listitem>
+                   <para>Individual strings may have spaces in them and not
+                         be interpreted as single item entries.
+                   </para>
+                </listitem>
+                <listitem>
+                   <para>The channel may not connect immediately so you
+                         can't build up the item list until the
+                         connection completes.
+                   </para>
+                </listitem>
+          </itemizedlist>
+          The example below deals with all of these issues:
+       </para>
+       <programlisting>
+package require epicsPullDown
+
+proc configureItems {widget channel} {
+    if {[llength [K5RGA_M_O2.SCAN values]] != 0} {
+	foreach value [K5RGA_M_O2.SCAN values] {
+	    lappend itemlist [list $value]
+	}
+	$widget configure -items $itemlist
+    } else {
+	# Not connected yet reschedule.
+
+	after 100 [list configureItems $widget $channel]
+    }
+}
+
+controlwidget::epicsPullDown .pd -channel K5RGA_M_O2.SCAN
+
+configureItems .pd K5RGA_M_O2.SCAN
+
+pack .pd
+
+       </programlisting>
   </refsect1>
 
 </refentry>
