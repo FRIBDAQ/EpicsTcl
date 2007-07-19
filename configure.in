@@ -41,7 +41,7 @@ then
    OSLDFLAGS="-Wl,\"-rpath=$libdir\""
    SLIBEXT=".so"
    THREADFLAGS="-pthread -D_REENTRANT=1 -D_THREAD_SAFE=1"
-elif test "$host_os" == "darwin8.9.0" 
+elif echo $host_os |grep -s darwin 
 then
    # God help me when the version changes:
 
@@ -284,7 +284,7 @@ fi
 
 #  Tcl libraries:
 #     We look for the following:
-#      /opt/local/lib/tclstub.a    - stubs lib for OS-X with darwin port install.
+#      /opt/local/lib/tclstub.a    - stubs lib for OS-X with darwin. port install.
 #      /usr/lib/lib/tclstub.a      -  Stubs library is there.
 #      /usr/lib/libtcl.a           - Usually a link to a default lib.
 #      /usr/lib/libtcl<version>.a  - version of tcl from tcl_versions
