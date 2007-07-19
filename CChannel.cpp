@@ -391,9 +391,11 @@ CConversionFactory::Converter(short type) {
   case DBF_CHAR:
   case DBF_SHORT:
   case DBF_LONG:
-  case DBF_ENUM:
     return new CIntegerConverter;
     break;
+  case DBF_ENUM:
+	return new CEnumConverter;
+	break;
   case DBF_FLOAT:
   case DBF_DOUBLE:
     return new CFloatConverter;
@@ -499,3 +501,60 @@ CFloatConverter::allowedValues() const
 	result.push_back(string("float"));
 	return result;
 }
+///////////////////////////////////////////////////////////////
+/*!
+ *   Return the request type for an enumerated value
+ */
+short
+CEnumConverter::requestType()
+{
+	return DBF_ENUM;               // Get the whole enum record.
+}
+/*!
+ *   Convert the event into a value.
+ *   If we don't have a list of strings yet, these are extracted
+ *   from the event. 
+ *   Conversion works as follows.  If 'value' is in the range of
+ *   the string vector the string is looked up and returned.
+ *   If, however, the string is empty or the value is outside of
+ *   the range of array indices, the value is turned into an integer
+ */
+string
+CEnumConverter::operator()(event_handler_args args)
+{
+	struct dbr_gr_enum* pValue = static_cast<struct dbr_gr_enum*>(args.dbr);
+	
+	// If needed build up the allowed values string.
+	
+	if (m_allowedValues.size() == 0) {
+		for (int i=0; i < pValue->no_str) {
+			string  value = p_Value->strs[i];
+			m_allowedValues.push_back(value);
+		}
+	}
+	// Convert the int value to a string:
+	
+	dbr_enum_t value = pValue->value;
+	if (value < m_allowedValues.size()) {
+		string result = m_allowedValues[value];
+		if (result != "") {
+			return result;
+		}
+	}
+	// Either there's a blank string or the index is bad:
+	
+	char cszResult[1000];
+	sprintf(cszResult, "%i", value);
+	return string(cszResult);
+}
+/*!
+ *   Return the set of allowed values
+ *   For us, this is just the m_allowedValue vector
+ *   (or rather a copy of it).
+ */
+vector<string>
+CEnumConverter::allowedValues() const
+{
+	return m_allowedValues;
+}
+

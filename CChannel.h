@@ -209,6 +209,15 @@ public:
   virtual std::vector<std::string>  allowedValues() const;
 };
 
+class CEnumConverter
+{
+	std::vector<std::string> m_allowedValues;
+public:
+	virtual short requestType();
+	virtual std::string operator()(event_handler_args args);
+	virtual std::vector<std::string> allowedValues() const;
+	
+};
 /*!
    Provides the correct converter type for the
    particular epics data type.
