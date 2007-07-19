@@ -106,11 +106,12 @@ snit::widgetadaptor controlwidget::epicsPullDown {
 				#
 				#  Label and value are the same:
 				#
+			    set label [lindex $item 0]
 				$win.menu add radiobutton         	\
-								-label    $item   		\
-								-command  [mymethod changeValue $item] \
+				                                -label    $label   		\
+								-command  [mymethod changeValue $label] \
 								-variable ${selfns}::radioButtonValue \
-								-value    $item
+								-value    $label
 				
 			} elseif {[llength $item] == 2} {
 				#
