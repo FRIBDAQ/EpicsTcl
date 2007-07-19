@@ -94,4 +94,4 @@ Release 1.4
            epicsGraph widget adaptors so that bindings work better.
 - BZ 309 - Added epicsPullDown widget; configurable popup menu attached
            to a channel
-           
+- BZ 311 - Added 'values' subcommand for channel commands.
