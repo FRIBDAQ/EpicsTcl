@@ -214,6 +214,24 @@ CChannel::getValue() const
   return value;
 }
 
+/*!
+ * Return the set of allowed values for the channel.
+ * \return std::vector<std::string>
+ * \retval empty vector - channel is not yet connected.
+ *                        or is an enum that has not yet
+ *                        received a value and therefore cannot
+ *                        populate its value list.
+ * \retval vector size == 1 - Channel is not an enum type.
+ * \retval vector size > 1  - Channel is an enum type.
+ */
+
+vector<string>
+CChannel::getAllowedValues() const
+{
+	vector<string> result;
+	if (!m_pConverter) return result;    // Not connected
+	return m_pConverter->allowedValues();
+}
 
 /*!
   Sets a handler slot for channel value notifications:
@@ -405,6 +423,17 @@ CStringConverter::operator()(event_handler_args args)
 {
   return string((const char*)(args.dbr));
 }
+/*
+ *  Return the alowed values for the channel in this
+ * case it will be the string "string"
+ */
+std::vector<string> 
+CStringConverter::allowedValues() const
+{
+	vector<string> result;
+	result.push_back(string("string"));
+	return result;
+}
 ////////////////////////////////////////////////////////////
 /*!
    Return the request type appropriate to an integer converter
@@ -425,6 +454,18 @@ CIntegerConverter::operator()(event_handler_args args)
   sprintf(buffer, "%ld", *((long*)(args.dbr)));
   return string(buffer);
 }
+/*!
+ *  Return the allowed values for this type.
+ * In this case it's the string "int"
+ */
+std::vector<string> 
+CIntegerConverter::allowedValues() const
+{
+	vector<string> result;
+	result.push_back(string("int"));
+	return return result;
+}
+
 ////////////////////////////////////////////////////////////
 
 
@@ -447,7 +488,14 @@ CFloatConverter::operator()(event_handler_args args)
   sprintf(buffer, "%g", (*(double*)(args.dbr)));
   return string(buffer);
 }
-
-// Update handler for channels being destroyed:
-//
-
+/*!
+ *    Return the allowed values for a double
+ *    this will be the string float.
+ */
+std::vector<string> 
+CFloatConverter::allowedValues() const
+{
+	vector<string> result;
+	result.push_back(string("float"));
+	return return result;
+}

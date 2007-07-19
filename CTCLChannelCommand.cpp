@@ -121,6 +121,9 @@ CTCLChannelCommand::operator()(CTCLInterpreter&    interp,
   else if (subcommand == string("listlinks")) {
     return ListLinks(interp, objv);
   }
+  else if (subcommand == string("values")) {
+	  return ValueList(interp, objv);
+  }
   else {
     string result = objv[0];
     result       += " ";
@@ -458,11 +461,41 @@ CTCLChannelCommand::Usage()
   result       += " updatetime\n";
   result       += getName();
   result       += " delete\n";
+  result       += getName();
+  result       += "values\n";
 
 
   return result;
 }
 
+/*
+ *   Called to process the 'values' subcommand.
+ *   The result will be a Tcl list of the legal values
+ *   the variable can assume.  An empty list will indicate
+ *   the value is not yet connected.
+ */
+int
+CTCLChannelCommand::ValueList(CTCLInterpreter& interp, std::vector<CTCLObject>& objv)
+{
+	if (objv.size() != 2) {
+		string result("Too many command line parameters\n");
+		result += Usage();
+		setResult(result);
+		return TCL_ERROR;
+	}
+	// At this point we can't fail:
+	
+	vector<string> allowedValues = m_pChannel->getAllowedValues();
+	
+	CTCLObject result;
+	result.Bind(interp)
+	for (int =0; i < allowedValues.size()) {
+		result += allowedValues[i];
+	}
+	setResult(result);
+	return TCL_OK;
+	
+}
 // Updates the values of all linked variables we are maintaining.
 
 

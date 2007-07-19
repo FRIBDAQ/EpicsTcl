@@ -65,6 +65,7 @@ class CChannelVariable;
    - link tclvarname       - Links the channel to a Tcl variable.
    - listlinks ?pattern?   - List variable links.
    - unlink name           - Removes the link to the specified variable.
+   - values                - returns info about the legal values the chan can have
 */
 class CTCLChannelCommand : public CTCLObjectProcessor 
 {
@@ -121,6 +122,7 @@ private:
   int Link(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
   int Unlink(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
   int ListLinks(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
+  int ValueList(CTCLInterpreter& inter, std::vector<CTCLObject>& objv);
   std::string Usage();
   static void markChange(CChannel* pChannel, 
 			 void* pObject);        // Called in Epics thread

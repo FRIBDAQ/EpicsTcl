@@ -30,6 +30,13 @@
 #endif
 #endif
 
+#ifndef __STL_VECTOR
+#include <vector>
+#ifndef __STL_VECTOR
+#define __STL_VECTOR
+#endif
+#endif
+
 #ifndef __CRT_TIME
 #include <time.h>
 #ifndef __CRT_TIME
@@ -103,6 +110,7 @@ public:
   virtual void Connect();
   time_t       getLastUpdate() const;
   std::string  getValue()      const;
+  std::vector<std::string> getAllowedValues() const;
 
   void setSlot(Slot handler, void* data);
 
@@ -171,6 +179,7 @@ class CConverter
 public:
   virtual short  requestType() = 0;
   virtual std::string operator()(event_handler_args args) = 0;
+  virtual std::vector<std::string> allowedValues() const = 0;
 };
 
 class CStringConverter : public CConverter 
@@ -178,6 +187,7 @@ class CStringConverter : public CConverter
 public:
   virtual short requestType();
   virtual std::string operator()(event_handler_args args);
+  virtual std::vector<std::string> allowedValues() const;
 
 };
 
@@ -188,6 +198,7 @@ class CIntegerConverter : public CConverter
 public:
   virtual short requestType();
   virtual std::string operator()(event_handler_args args);
+  virtual std::vector<std::string> allowedValues() const;
 };
 
 class CFloatConverter : public CConverter
@@ -195,6 +206,7 @@ class CFloatConverter : public CConverter
 public:
   virtual short requestType();
   virtual std::string operator()(event_handler_args args);
+  virtual std::vector<std::string>  allowedValues() const;
 };
 
 /*!

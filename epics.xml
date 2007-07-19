@@ -56,6 +56,11 @@ epicschannel <replaceable>name</replaceable>
 <replaceable>name</replaceable> listlinks <replaceable>?pattern?</replaceable>
             </command>
         </cmdsynopsis>
+        <cmdsynopsis>
+        	<command>
+<replaceable>name</replaceable> values
+			</command>
+		</cmdsynopsis>	
     </refsynopsisdiv>
 
     <refsect1>
@@ -186,6 +191,23 @@ aaa delete;       # refcount becomes 0 so aaa is deleted.
                       </para>
                     </listitem>
                </varlistentry>
+               <varlistentry>
+               	<term><replaceable>name</replaceable> values</term>
+               	<listitem>
+               		<para>
+               			Lists the set of values that the process variable
+               			can legally accept.  If this list is empty, the channel
+               			is either not connected or has not received its first value
+               			and therefore does not yet know its list of enumerated values.
+               			If the list size is one, this will be a textual encoding of the
+               			data types acceptable by the channel e.g.
+               			<literal>float</literal>, <literal>string</literal> or
+               			<literal>int</literal>.
+               			If the list size is greater than 1, this is a list of allowed
+               			values for the enumerated variable.
+           			</para>
+       			</listitem>
+     		   </varlistentry>
             </variablelist>
         </para>
     </refsect1>
