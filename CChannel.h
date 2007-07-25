@@ -124,9 +124,11 @@ public:
   std::string operator=(std::string value);
   int         operator=(int value);
   double      operator=(double value);
+  
 
-
-
+  std::vector<std::string>& operator=(const std::vector<string>& rhs);
+  std::vector<int>&    operator=(const std::vector<int>& rhs);
+  std::vector<double>& operator=(const std::vector<double>& rhs);
 
   // Class level operations.
 

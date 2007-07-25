@@ -16,6 +16,7 @@
 #include "CChannel.h"
 #include <iostream>
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef _WINDOWS
 #ifdef Linux
@@ -307,7 +308,7 @@ CChannel::operator=(string value)
 {
   CCriticalRegion Monitor(m_Monitor);   // Probably don't have to but...
   if(m_fConnected) {
-    ca_put(DBF_STRING, m_nChannel, const_cast<char*>(value.c_str()));
+    ca_put(DBR_STRING, m_nChannel, const_cast<char*>(value.c_str()));
     ca_flush_io();
   }
   return value;
@@ -321,7 +322,7 @@ CChannel::operator=(int value)
 {
   CCriticalRegion Monitor(m_Monitor);   // Just in case...
   if (m_fConnected) {
-    ca_put(DBF_INT, m_nChannel, &value);
+    ca_put(DBR_INT, m_nChannel, &value);
     ca_flush_io();
   }
   return value;
@@ -335,13 +336,147 @@ CChannel::operator=(double value)
 {
   CCriticalRegion Monitor(m_Monitor);   // just in case.
   if (m_fConnected) {
-    ca_put(DBF_DOUBLE, m_nChannel, &value);
+    ca_put(DBR_DOUBLE, m_nChannel, &value);
     ca_flush_io();
   }
   return value;
 
 }
 
+/*!
+ *  Set a channel to a vector of strings.
+ *  - If the channel is not connected this is does nothing.
+ *  - If the vector has too many elements, only the first few
+ *    are used.
+ *  - If a string of the vector is too long to fit in an dbr_string_t
+ *    it is truncated so as to preserve a null terminated string
+ *    'case I don't know if epics will handle well if it's dbr_string_t
+ *    is not null terminated.
+ *  - If buffer cannot be allocated this is a no-op too.
+ * 
+ * \param rhs   - The vector of strings on the right hand side
+ *                of the assigment.
+ * \return std::vector<std::string>&  
+ * \retval Reference to the source vector.
+ */
+vector<string>&
+CChannel::operator=(const std::vector<string>& rhs)
+{
+	
+	if (m_fConnected) {
+		CCriticalRegion Monitor(m_Monitor);
+		
+		// Figure out the actual item count:
+		
+		int count = rhs.size();
+		if (count > ca_element_count(m_nChannel)) {
+			count = ca_element_count(m_nChannel);
+		}
+		// Now we need to allocate storage for the array of strings:
+		
+		size_t bytesNeeded      = dbr_size_n(DBR_STRING, count);
+		dbr_string_t* pStorage  = malloc(bytesNeeded);
+		if (pStorage) {
+			memset(pStorage, 0, bytesNeeded);
+			dbr_string_t*  pDest = pStorage;
+			for (int i =0; i < count; i++) {
+				strncpy(pDest, rhs[i].c_str(), sizeof(dbr_string_t)-1);
+				pDest++;
+			}
+			// Set the channel; flush the buffers:
+			
+			ca_array_put(DBR_STRING, count, m_nChannel, pStorage);
+			ca_flush_io();
+			free(pStorage);
+
+		}
+	}
+
+	return rhs;
+}
+
+/*!
+ * Set the array channel to a vector of integers.
+ * The type chosen will be a DBR_INT.
+ * Vector restrictions are essentially the same as
+ * assignment to a string, however there are no issues
+ * with the source element sizes not fitting into the destination
+ * array elements.
+ * \param rhs   - vector of data to store into the array channel.
+ * \return std::vector<int>&
+ * \retval Reference to rhs.
+ */
+vector<int>&
+CChannel::operator=(const vector<int>& rhs)
+{
+	
+	if (m_fConnected) {
+		CCriticalRegion Monitor(m_Monitor);
+		// Figure out my counts, and storage requirements.
+		
+		int count = rhs.size();
+		if (count > ca_element_count(m_nChannel)) {
+			count = ca_element_count(m_nChannel);
+		}
+		
+		size_t bytesNeeded      = dbr_size_n(DBR_INT, count);
+		dbr_int_t* pStorage     = malloc(bytesNeeded);
+		
+		if (pStorage) {
+			dbr_int_t* pDest;
+			for (int i=0; i < count; i++) {
+				*pDest++ = rhs[i];
+			}
+			// Set the channel; flush the buffers:
+			
+			ca_array_put(DBR_INT, count, m_nChannel, pStorage);
+			ca_flush_io();
+			free(pStorage);
+			
+		}
+		
+	}
+	
+	return rhs;
+}
+/*!
+ * Assign a vector of doubles t to an array channel.
+ * \param rhs - vector of data to store.
+ * \return std::vector<double>
+ * \retval Reference to rhs.
+ */
+vector<double>&
+CChannel::operator=(const vector<double>& rhs)
+{
+	if (m_fConnected) {
+		CCriticalRegion Monitor(m_Monitor);
+		// Figure out my counts, and storage requirements.
+		
+		int count = rhs.size();
+		if (count > ca_element_count(m_nChannel)) {
+			count = ca_element_count(m_nChannel);
+		}
+		
+		size_t bytesNeeded      = dbr_size_n(DBR_DOUBLE, count);
+		dbr_int_t* pStorage     = malloc(bytesNeeded);
+		
+		if (pStorage) {
+			dbr_double_t* pDest;
+			for (int i=0; i < count; i++) {
+				*pDest++ = rhs[i];
+			}
+			// Set the channel; flush the buffers:
+			
+			ca_array_put(DBR_DOUBLE, count, m_nChannel, pStorage);
+			ca_flush_io();
+			free(pStorage);
+			
+		}
+		
+	}
+	
+	return rhs;	
+}
 
 /**
  * This function is a class level function that processes EPICS events
@@ -566,7 +701,7 @@ CStringConverter::getVector(chid channel, size_t max)
 	void* pRawData = getVectorData(channel, requestType(),
 			                       &numRead, max);
 	if (pRawData) {
-	  char* pItem = static_cast<char*>(pRawData);
+	  dbr_string_t* pItem = static_cast<dbr_string_t*>(pRawData);
 	  for (int i = 0; i < numRead; i++) {
 	    string value = convert(pItem);
 	    result.push_back(value);
@@ -629,7 +764,7 @@ CIntegerConverter::getVector(chid channel, size_t max)
 	void* pRawData = getVectorData(channel, requestType(),
 			 						&numRead, max);
 	if (pRawData) {
-		long* pElement = static_cast<long*>(pRawData);
+		dbr_int_t* pElement = static_cast<dbr_int_t*>(pRawData);
 		for (int i = 0; i < numRead; i++) {
 			string item = convert(pElement);
 			result.push_back(item);
@@ -667,7 +802,7 @@ CFloatConverter::operator()(event_handler_args args)
 string
 CFloatConverter::convert(const void* element)
 {
-	const double* value = static_cast<const double*>(element);
+	const dbr_double_t* value = static_cast<dbr_double_t*>(element);
 	char buffer[100];
 	sprintf(buffer, "%g", *value);
 	return string(buffer);
