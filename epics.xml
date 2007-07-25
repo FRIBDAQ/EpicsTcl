@@ -23,12 +23,12 @@ epicschannel <replaceable>name</replaceable>
         </cmdsynopsis>
         <cmdsynopsis>
              <command>
-<replaceable>name</replaceable> get
+<replaceable>name</replaceable> get ?count?
             </command>
         </cmdsynopsis>
         <cmdsynopsis>
              <command>
-<replaceable>name</replaceable> set <replaceable>value</replaceable>
+<replaceable>name</replaceable> set <replaceable>value-list ?data-type?</replaceable>
             </command>
         </cmdsynopsis>
         <cmdsynopsis>
@@ -61,6 +61,11 @@ epicschannel <replaceable>name</replaceable>
 <replaceable>name</replaceable> values
 			</command>
 		</cmdsynopsis>	
+		<cmdsynopsis>
+		<command>
+<replaceable>name</replaceable> size
+		</command>
+		</cmdsynopsis>
     </refsynopsisdiv>
 
     <refsect1>
@@ -108,7 +113,7 @@ aaa delete;       # refcount becomes 0 so aaa is deleted.
         <para>The subcommands for an epics channel are:
             <variablelist>
                 <varlistentry>
-                    <term><command>get</command></term>
+                    <term><command>get</command> <replaceable>?size?</replaceable></term>
                     <listitem>
                         <para>
                             Retrieves the value of the channel or field.  Note that if a
@@ -119,15 +124,34 @@ aaa delete;       # refcount becomes 0 so aaa is deleted.
                             processed prior to executing this command so it is possible for this
                             command to fail first and then work a few tries later.
                         </para>
+                        <para>
+                           If the channel is an array, the entire array is returned as a Tcl list
+                           unless the optional <replaceable>size</replaceable> parameter is provided.
+                           In that case, the first <replaceable>size</replaceable> elements are returned
+                           or all elements depending on which is fewer.
+                        </para>
                     </listitem>
                 </varlistentry>
                 <varlistentry>
-                    <term><command>set</command> <replaceable>value</replaceable></term>
+                    <term><command>set</command> <replaceable>value-list ?data-type?</replaceable></term>
                     <listitem>
                         <para>
                             Sets the value of the channel or database field (if changeable) to
-                            <replaceable>value</replaceable>.  All the remarks about the
+                            <replaceable>value-list</replaceable>.  All the remarks about the
                             <command>set</command> subcommand apply here too.
+                        </para>
+                        <para>
+                           If the channel is an array, <replaceable>value-list</replaceable> is a list
+                           of values that will be used to set the first elements of the array.
+                           The number of elements set is the smaller of the size of the list and the
+                           number of array elements managed by the channel.
+                        </para>
+                        <para>
+                        	If the optional <replaceable>data-type</replaceable> keyword is present,
+                        	it provides the data type to be used to do the set.  The data type can be
+                        	any of <literal>string</literal> (default), <literal>real</literal> or
+                        	<literal>int</literal>.  It is an error for <replaceable>value-list</replaceable>
+                        	to contain a value that cannot be converted to the type specified.
                         </para>
                     </listitem>
                 </varlistentry>
@@ -162,10 +186,16 @@ aaa delete;       # refcount becomes 0 so aaa is deleted.
                             from Tcl scripts are traced and result in attempts
                             to modify the epics channel.
                         </para>
-		        <para>
+		        		<para>
                             Additional <command>link</command>s are allowed and
                             create a 1 to many link between an epics channel
                             and several Tcl Variables.
+                        </para>
+                        <para>
+                        	At present, only the first element of array process variables
+                        	is linked to the Tcl variable.  Array process variables must be
+                        	handled via the <command>get</command> and <command>set</command>
+                        	sub-commands.
                         </para>
                     </listitem>
                 </varlistentry>
@@ -208,6 +238,16 @@ aaa delete;       # refcount becomes 0 so aaa is deleted.
            			</para>
        			</listitem>
      		   </varlistentry>
+     		   <varlistentry>
+     		   	<term><replaceable>name</replaceable> <command>size</command></term>
+     		   	<listitem>
+     		   		<para>
+     		   			Returns the number of elements in <replaceable>name</replaceable>. 
+     		   			Epics process variables can be thought of as arrays, where a scalar
+     		   			value is just the special case of an array of size 1.
+   		   			</para>
+		   		 </listitem>
+	   			</varlistentry>
             </variablelist>
         </para>
     </refsect1>
@@ -239,6 +279,26 @@ pack .l
            Creates a GUI that displays SOMECHANNEL with its engineering units,
            updating as the value updates in Epics.
         </para>
+        <para>
+        	The example below finds out how many elements are in the
+        	channel <literal>K5RGA_HSCAN_DAT</literal>
+        </para>
+        <programlisting>
+package require epics
+epicschannel K5RGA_HSCAN_DAT
+&hellip;
+set elements [K5RGA_HSCAN_DAT size]
+		</programlisting>
+		<para>
+		   The following example, takes the channel K5RGA_HSCAN_DAT, already assumed
+		   to be connected, and clears its second array element.
+		   Note that the elements of Tcl lists number from 0.
+		</para>
+		<programlisting>
+set data [K5RGA_HSCAN_DAT get 2];     # get elements 0,1.
+set data [lreplace $data 1 1 0];      # Replace second item with 0.
+K5RGA_HSCAN_DAT set $data;            # Set elements 0,1
+		</programlisting>	
     </refsect1>
     <refsect1>
         <title>OPEN ISSUES</title>
