@@ -244,17 +244,33 @@ CTCLChannelCommand::Set(CTCLInterpreter&    interp,
 
   try {
     if (datatype == string("string")) {
-      (*m_pChannel) = value;
+    	objv[2].Bind(interp);
+    	vector<string> items;
+    	int itemCount = objv[2].llength();
+    	for (int i =0; i < itemCount; i++) {
+    		items.push_back((string)(objv[2].lindex(i)));
+    	}
+    	(*m_pChannel)  = items;  // Vector set.
     }
     else if (datatype == string("int")) {
       objv[2].Bind(interp);
-      int ivalue = objv[2];
-      (*m_pChannel) = ivalue;
+      vector<int> items;
+      int itemCount = objv[2].llength();
+      for(int i=0; i < itemCount; i++) {
+    	  items.push_back(objv[2].lindex(i));
+      }
+      
+      (*m_pChannel) = items;
     }
     else if (datatype == string("real")) {
       objv[2].Bind(interp);
-      double dvalue = objv[2];
-      (*m_pChannel) = dvalue;
+      vector<double> items;
+      int itemCount = objv[2].llength();
+      for (int i =0; i < itemCount; i++) {
+    	items.push_back(objv[2].lindex(i));  
+      }
+      
+      (*m_pChannel) = items;
     }
     else {
       string result = objv[0];
@@ -279,7 +295,8 @@ CTCLChannelCommand::Set(CTCLInterpreter&    interp,
     result       += string(objv[2]);
     result       += " ";
     result       += datatype;
-    result       += " -- data does not convert to selecte data type\n";
+    result       += "\n -- data does not all convert to selecte data type \n";
+    result       += "or is not a proper list.\n";
     interp.setResult(result);
 
     return TCL_ERROR;
