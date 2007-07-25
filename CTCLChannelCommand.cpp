@@ -509,7 +509,7 @@ CTCLChannelCommand::ValueList(CTCLInterpreter& interp, std::vector<CTCLObject>& 
  */
 int
 CTCLChannelCommand::Size(CTCLInterpreter& interp, 
-						 std::vector<CTCLChannel>& objv)
+			 std::vector<CTCLObject>& objv)
 {
 	// It's an error to pass in any arguments other than
 	// the subcommand.
@@ -527,7 +527,7 @@ CTCLChannelCommand::Size(CTCLInterpreter& interp,
 	if (m_pChannel->isConnected()) {
 		CTCLObject result;
 		result.Bind(interp);
-		result = m_pChannel->size();
+		result = (int)m_pChannel->size();
 		interp.setResult(result);
 		return TCL_OK;
 	}
@@ -535,7 +535,7 @@ CTCLChannelCommand::Size(CTCLInterpreter& interp,
 		interp.setResult("Channel not connected");
 		return TCL_ERROR;
 	}
-	}
+
 }
 
 // Updates the values of all linked variables we are maintaining.

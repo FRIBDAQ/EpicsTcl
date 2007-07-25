@@ -96,3 +96,6 @@ Release 1.4
            to a channel
 - BZ 311 - Added 'values' subcommand for channel commands.
          - Added an enumerated type converter to CChannel.
+
+Release 1.4-001
+- BZ 311 - Add ability to get number of elements in a channel.
