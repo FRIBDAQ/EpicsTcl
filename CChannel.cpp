@@ -498,7 +498,8 @@ CConverter::getVectorData(chid channel,
 	void* pDataStorage = malloc(bytesRequired);
 	if (pDataStorage) {
 		int status = ca_array_get(format, requestSize, 
-							      channel, pDataStorage);
+					  channel, pDataStorage);
+		while (ca_pend_io(0.01) != ECA_NORMAL) {} // Wait for data.
 		//
 		// On get failure, just free storage and arrange
 		// for a null pointer to be returned.
@@ -538,7 +539,7 @@ CStringConverter::operator()(event_handler_args args)
  * between getVector and operator()
  */
 string
-CStringConverter::convert(void* element)
+CStringConverter::convert(const void* element)
 {
 	return string((char*)element);
 }
@@ -558,20 +559,20 @@ CStringConverter::allowedValues() const
  * Return a converted vector of values.
  */
 vector<string>
-CString::getVector(chid channel, size_t max)
+CStringConverter::getVector(chid channel, size_t max)
 {
 	vector<string> result;
 	size_t         numRead;
 	void* pRawData = getVectorData(channel, requestType(),
 			                       &numRead, max);
 	if (pRawData) {
-		char* pItem = static_cast<char*>(pRawData);
-		for (int i = 0; i < numRead; i++) {
-			string value = convert(*pItem);
-			result.push_back(value);
-			pItem++;
-		}
-		free(pRawdata);
+	  char* pItem = static_cast<char*>(pRawData);
+	  for (int i = 0; i < numRead; i++) {
+	    string value = convert(pItem);
+	    result.push_back(value);
+	    pItem++;
+	  }
+	  free(pRawData);
 	}
 	return result;
 }
@@ -599,10 +600,10 @@ CIntegerConverter::operator()(event_handler_args args)
  * a string given a pointer to that element.
  */
 string
-CIntegerConverter::convert(void* element)
+CIntegerConverter::convert(const void* element)
 {
 	  char buffer[100];
-	  sprintf(buffer, "%ld", *((long*)element)));
+	  sprintf(buffer, "%ld", *((long*)element));
 	  return string(buffer);
 
 }
@@ -620,7 +621,7 @@ CIntegerConverter::allowedValues() const
 /*! 
  * Get and convert a vector of values.
  */
-string
+vector<string>
 CIntegerConverter::getVector(chid channel, size_t max)
 {
 	vector<string> result;
@@ -631,10 +632,10 @@ CIntegerConverter::getVector(chid channel, size_t max)
 		long* pElement = static_cast<long*>(pRawData);
 		for (int i = 0; i < numRead; i++) {
 			string item = convert(pElement);
-			numRead.push_back(item);
+			result.push_back(item);
 			pElement++;
 		}
-		free(pRawdata);
+		free(pRawData);
 	}
 	return result;
 }
@@ -664,9 +665,9 @@ CFloatConverter::operator()(event_handler_args args)
  *   getVector members to convert a single item.
  */
 string
-CFloatConverter::convert(void* element)
+CFloatConverter::convert(const void* element)
 {
-	double* value = static_cast<double*>(element);
+	const double* value = static_cast<const double*>(element);
 	char buffer[100];
 	sprintf(buffer, "%g", *value);
 	return string(buffer);
@@ -688,7 +689,7 @@ CFloatConverter::allowedValues() const
 vector<string>
 CFloatConverter::getVector(chid channel, size_t max)
 {
-	vector result;
+	vector<string> result;
 	size_t numRead;
 	
 	void* pRawRead = getVectorData(channel, requestType(), 
@@ -700,7 +701,7 @@ CFloatConverter::getVector(chid channel, size_t max)
 			result.push_back(value);
 			pValue++;
 		}
-		free(pRawRead;)
+		free(pRawRead);
 	}
 	return result;
 }
@@ -734,7 +735,7 @@ CEnumConverter::operator()(event_handler_args args)
  *  it has been factored out insted.
  */
 string
-CEnumConverter::convert(void* element) 
+CEnumConverter::convert(const void* element) 
 {
     const struct dbr_gr_enum* pValue = static_cast<const struct dbr_gr_enum*>(element);
 	
@@ -779,14 +780,14 @@ CEnumConverter::getVector(chid channel, size_t max)
 {
 	vector<string> result;
 	
-	size_t nRead
+	size_t nRead;
 	void* pRawData = getVectorData(channel, requestType(), 
 								   &nRead,  max);
 	if (pRawData) {
 		dbr_gr_enum* pArray = static_cast<dbr_gr_enum*>(pRawData);
 		for(int i=0; i < nRead; i++) {
 			string value = convert(pArray);
-			result.push_back(value)l
+			result.push_back(value);
 			pArray++;
 		}
 		free(pRawData);

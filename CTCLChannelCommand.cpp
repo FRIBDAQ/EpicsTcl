@@ -189,10 +189,11 @@ CTCLChannelCommand::Get(CTCLInterpreter& interp,
   vector<string> data = m_pChannel->getVector(max);
   CTCLObject result;
   result.Bind(interp);
-  for (int i=0; i < data.size() i++) {
+  for (int i=0; i < data.size(); i++) {
 	  result += data[i];
   }
-  interp.setResult(interp);
+  
+  interp.setResult(result);
   return TCL_OK;
 }
 /*!
