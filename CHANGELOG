@@ -99,3 +99,5 @@ Release 1.4
 
 Release 1.4-001
 - BZ 311 - Add ability to get number of elements in a channel.
+         - Add ability to read an array from a channel.
+         - Add ability to write an array to a channel.
