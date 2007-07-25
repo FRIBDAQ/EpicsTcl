@@ -359,7 +359,7 @@ CChannel::operator=(double value)
  * \return std::vector<std::string>&  
  * \retval Reference to the source vector.
  */
-vector<string>&
+const vector<string>&
 CChannel::operator=(const std::vector<string>& rhs)
 {
 	
@@ -375,12 +375,12 @@ CChannel::operator=(const std::vector<string>& rhs)
 		// Now we need to allocate storage for the array of strings:
 		
 		size_t bytesNeeded      = dbr_size_n(DBR_STRING, count);
-		dbr_string_t* pStorage  = malloc(bytesNeeded);
+		dbr_string_t* pStorage  = (dbr_string_t*)malloc(bytesNeeded);
 		if (pStorage) {
 			memset(pStorage, 0, bytesNeeded);
 			dbr_string_t*  pDest = pStorage;
 			for (int i =0; i < count; i++) {
-				strncpy(pDest, rhs[i].c_str(), sizeof(dbr_string_t)-1);
+				strncpy(*pDest, rhs[i].c_str(), sizeof(dbr_string_t)-1);
 				pDest++;
 			}
 			// Set the channel; flush the buffers:
@@ -397,7 +397,8 @@ CChannel::operator=(const std::vector<string>& rhs)
 
 /*!
  * Set the array channel to a vector of integers.
- * The type chosen will be a DBR_INT.
+ * The type chosen will be a DBR_LONG as DBR_INT
+K5RGA_HSCAN_DAT * is evidently a 32 bit value.
  * Vector restrictions are essentially the same as
  * assignment to a string, however there are no issues
  * with the source element sizes not fitting into the destination
@@ -406,7 +407,7 @@ CChannel::operator=(const std::vector<string>& rhs)
  * \return std::vector<int>&
  * \retval Reference to rhs.
  */
-vector<int>&
+const vector<int>&
 CChannel::operator=(const vector<int>& rhs)
 {
 	
@@ -419,17 +420,17 @@ CChannel::operator=(const vector<int>& rhs)
 			count = ca_element_count(m_nChannel);
 		}
 		
-		size_t bytesNeeded      = dbr_size_n(DBR_INT, count);
-		dbr_int_t* pStorage     = malloc(bytesNeeded);
+		size_t bytesNeeded      = dbr_size_n(DBR_LONG, count);
+		dbr_long_t* pStorage     = (dbr_long_t*)malloc(bytesNeeded);
 		
 		if (pStorage) {
-			dbr_int_t* pDest;
+			dbr_long_t* pDest = pStorage;
 			for (int i=0; i < count; i++) {
 				*pDest++ = rhs[i];
 			}
 			// Set the channel; flush the buffers:
 			
-			ca_array_put(DBR_INT, count, m_nChannel, pStorage);
+			ca_array_put(DBR_LONG, count, m_nChannel, pStorage);
 			ca_flush_io();
 			free(pStorage);
 			
@@ -445,7 +446,7 @@ CChannel::operator=(const vector<int>& rhs)
  * \return std::vector<double>
  * \retval Reference to rhs.
  */
-vector<double>&
+const vector<double>&
 CChannel::operator=(const vector<double>& rhs)
 {
 	if (m_fConnected) {
@@ -458,10 +459,10 @@ CChannel::operator=(const vector<double>& rhs)
 		}
 		
 		size_t bytesNeeded      = dbr_size_n(DBR_DOUBLE, count);
-		dbr_int_t* pStorage     = malloc(bytesNeeded);
+		dbr_double_t* pStorage     = (dbr_double_t*)malloc(bytesNeeded);
 		
 		if (pStorage) {
-			dbr_double_t* pDest;
+			dbr_double_t* pDest = pStorage;
 			for (int i=0; i < count; i++) {
 				*pDest++ = rhs[i];
 			}
@@ -764,7 +765,7 @@ CIntegerConverter::getVector(chid channel, size_t max)
 	void* pRawData = getVectorData(channel, requestType(),
 			 						&numRead, max);
 	if (pRawData) {
-		dbr_int_t* pElement = static_cast<dbr_int_t*>(pRawData);
+		dbr_long_t* pElement = static_cast<dbr_long_t*>(pRawData);
 		for (int i = 0; i < numRead; i++) {
 			string item = convert(pElement);
 			result.push_back(item);
@@ -802,7 +803,7 @@ CFloatConverter::operator()(event_handler_args args)
 string
 CFloatConverter::convert(const void* element)
 {
-	const dbr_double_t* value = static_cast<dbr_double_t*>(element);
+	const dbr_double_t* value = static_cast<const dbr_double_t*>(element);
 	char buffer[100];
 	sprintf(buffer, "%g", *value);
 	return string(buffer);

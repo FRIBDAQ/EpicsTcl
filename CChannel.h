@@ -126,9 +126,9 @@ public:
   double      operator=(double value);
   
 
-  std::vector<std::string>& operator=(const std::vector<string>& rhs);
-  std::vector<int>&    operator=(const std::vector<int>& rhs);
-  std::vector<double>& operator=(const std::vector<double>& rhs);
+  const std::vector<std::string>& operator=(const std::vector<std::string>& rhs);
+  const std::vector<int>&    operator=(const std::vector<int>& rhs);
+  const std::vector<double>& operator=(const std::vector<double>& rhs);
 
   // Class level operations.
 
