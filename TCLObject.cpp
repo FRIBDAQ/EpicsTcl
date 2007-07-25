@@ -274,11 +274,10 @@ CTCLObject& CTCLObject::operator+=(int nItem)
 
   DupIfMust();
   CTCLInterpreter* pInterp = AssertIfNotBound();
-  CTCLObject obj;
-  obj = nItem;
+
 
   Tcl_ListObjAppendElement(pInterp->getInterpreter(),
-			   m_pObject, obj.m_pObject);
+			   m_pObject, Tcl_NewIntObj(nItem));
   return *this;
   
 }
@@ -308,10 +307,9 @@ CTCLObject& CTCLObject::operator+=(const char* pItem)
   
   DupIfMust();
   CTCLInterpreter* pInterp = AssertIfNotBound();
-  CTCLObject obj;
-  obj = pItem;
+ 
   Tcl_ListObjAppendElement(pInterp->getInterpreter(),
-			   m_pObject, obj.m_pObject);
+			   m_pObject, Tcl_NewStringObj(pItem, -1));
   return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
