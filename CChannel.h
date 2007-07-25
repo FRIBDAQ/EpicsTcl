@@ -112,6 +112,7 @@ public:
   std::string  getValue()      const;
   std::vector<std::string> getAllowedValues() const;
 
+  size_t       size()  const;
   void setSlot(Slot handler, void* data);
 
   // operations to set channel values

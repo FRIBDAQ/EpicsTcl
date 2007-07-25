@@ -66,6 +66,8 @@ class CChannelVariable;
    - listlinks ?pattern?   - List variable links.
    - unlink name           - Removes the link to the specified variable.
    - values                - returns info about the legal values the chan can have
+   - size                  - Returns the # elements in the channel. Ths is 1 for
+                             scalars and larger for vectors.
 */
 class CTCLChannelCommand : public CTCLObjectProcessor 
 {
@@ -122,7 +124,8 @@ private:
   int Link(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
   int Unlink(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
   int ListLinks(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
-  int ValueList(CTCLInterpreter& inter, std::vector<CTCLObject>& objv);
+  int ValueList(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
+  int Size(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
   std::string Usage();
   static void markChange(CChannel* pChannel, 
 			 void* pObject);        // Called in Epics thread

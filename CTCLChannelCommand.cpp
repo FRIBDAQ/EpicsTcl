@@ -124,6 +124,9 @@ CTCLChannelCommand::operator()(CTCLInterpreter&    interp,
   else if (subcommand == string("values")) {
 	  return ValueList(interp, objv);
   }
+  else if (subcommand == string("size")) {
+	  return Size(interp, objv);
+  }
   else {
     string result = objv[0];
     result       += " ";
@@ -448,9 +451,9 @@ CTCLChannelCommand::Usage()
 {
   string result = "Usage: \n";
   result       += getName();
-  result       += "  get\n";
+  result       += "  get ?count?\n";
   result       += getName();
-  result       += " set value ?string|int|real\n";
+  result       += " set value_list ?string|int|real?\n";
   result       += getName();
   result       += " link tclVariableName\n";
   result       += getName();
@@ -462,7 +465,9 @@ CTCLChannelCommand::Usage()
   result       += getName();
   result       += " delete\n";
   result       += getName();
-  result       += "values\n";
+  result       += " values\n";
+  result       += getName();
+  result       += " size\n";
 
 
   return result;
@@ -496,6 +501,43 @@ CTCLChannelCommand::ValueList(CTCLInterpreter& interp, std::vector<CTCLObject>& 
 	return TCL_OK;
 	
 }
+/*
+ * Return the number of elements the channel contains.
+ * An error is returned if the channel is not yet connected.
+ * Note that we won't let the channel throw it's exception, but
+ * will explicitly check for a connection.
+ */
+int
+CTCLChannelCommand::Size(CTCLInterpreter& interp, 
+						 std::vector<CTCLChannel>& objv)
+{
+	// It's an error to pass in any arguments other than
+	// the subcommand.
+	
+	if (objv.size() != 2) {
+		string result("Invalid parameter count\n");
+		result += Usage();
+		interp.setResult(result);
+		return TCL_ERROR;
+	}
+	
+	// If the channel is connected we can get the info
+	// otherwise it's an error.
+	
+	if (m_pChannel->isConnected()) {
+		CTCLObject result;
+		result.Bind(interp);
+		result = m_pChannel->size();
+		interp.setResult(result);
+		return TCL_OK;
+	}
+	else {
+		interp.setResult("Channel not connected");
+		return TCL_ERROR;
+	}
+	}
+}
+
 // Updates the values of all linked variables we are maintaining.
 
 

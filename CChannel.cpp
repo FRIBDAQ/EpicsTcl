@@ -232,7 +232,24 @@ CChannel::getAllowedValues() const
 	if (!m_pConverter) return result;    // Not connected
 	return m_pConverter->allowedValues();
 }
-
+/*!
+ *  Returns the number of elements in the channel
+ *  this will be 1 for a scalar channel, and something
+ *  larger than 1 if the channel is a vector.
+ *  If the channel is not yet connected, I'm assuming we can't
+ *  get that yet so we will throw a string exception:
+ *  "Channel not connected"
+ */
+size_t
+CChannel::size() const
+{
+	if (m_fConnected) {
+		return ca_element_count(m_nChannel);
+	}
+	else {
+		throw "Channel not connected";
+	}
+}
 /*!
   Sets a handler slot for channel value notifications:
   \param handler : CChannel::Slot 
