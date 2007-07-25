@@ -117,7 +117,8 @@ public:
   // Utilties:
 
 private:
-  int Get(CTCLInterpreter& interp);
+  int Get(CTCLInterpreter& interp,
+		  std::vector<CTCLObject>& objv);
   int Set(CTCLInterpreter& interp, std::vector<CTCLObject>& objv);
   int Updatetime(CTCLInterpreter& interp);
   int Delete(CTCLInterpreter& interp);

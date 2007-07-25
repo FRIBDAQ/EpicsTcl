@@ -101,7 +101,7 @@ CTCLChannelCommand::operator()(CTCLInterpreter&    interp,
 
   string subcommand = objv[1];
   if (subcommand == string("get")) {
-    return Get(interp);
+    return Get(interp, objv);
   }
   else if (subcommand == string("set")) {
     return Set(interp, objv);
@@ -151,11 +151,33 @@ CTCLChannelCommand::operator()(CTCLInterpreter&    interp,
    which fits in well with Tcl's EIAS model.
    \param interp : CTCLInterpreter&
       Interpreter executing the command.
+   \param objv :  Vector of encapsulated objects that represent the
+   					command line.
 */
 int
-CTCLChannelCommand::Get(CTCLInterpreter& interp)
+CTCLChannelCommand::Get(CTCLInterpreter& interp,
+						vector<CTCLObject>& objv)
 {
-  interp.setResult(m_pChannel->getValue()); // do this to force an update...
+  if(objv.size() > 3) {
+	  string error=("Too many command line parameters\n");
+	  error += Usage();
+	  interp.setResult(error);
+	  return TCL_ERROR;
+  }
+  // Figure out how many elements we'll ask for...
+  
+  size_t max = 0;
+  if (objv.size() ==3) {
+	  try {
+		  objv[2].Bind(interp);
+		  max = (int)objv[2];
+	  }
+	  catch(...) {
+		  string error("Size parameter must convert to an integer");
+		  return TCL_ERROR;
+	  }
+  }
+  
 
   if (!m_pChannel->isConnected()) {
     string result = m_pChannel->getName();
@@ -164,7 +186,13 @@ CTCLChannelCommand::Get(CTCLInterpreter& interp)
 
     return TCL_ERROR;
   }
-
+  vector<string> data = m_pChannel->getVector(max);
+  CTCLObject result;
+  result.Bind(interp);
+  for (int i=0; i < data.size() i++) {
+	  result += data[i];
+  }
+  interp.setResult(interp);
   return TCL_OK;
 }
 /*!

@@ -113,6 +113,8 @@ public:
   std::vector<std::string> getAllowedValues() const;
 
   size_t       size()  const;
+  std::vector<std::string> getVector(size_t max=0);
+  
   void setSlot(Slot handler, void* data);
 
   // operations to set channel values
@@ -180,7 +182,15 @@ class CConverter
 public:
   virtual short  requestType() = 0;
   virtual std::string operator()(event_handler_args args) = 0;
+  virtual std::string convert(void* element) = 0;
   virtual std::vector<std::string> allowedValues() const = 0;
+  virtual std::vector<std::string> getVector(chid channel,
+		  									 size_t max=0) = 0;
+protected:
+  void*   getVectorData(chid channel,
+		                short format,
+		                size_t *numRead,
+		                size_t max=0);
 };
 
 class CStringConverter : public CConverter 
@@ -188,7 +198,10 @@ class CStringConverter : public CConverter
 public:
   virtual short requestType();
   virtual std::string operator()(event_handler_args args);
+  virtual std::string convert(void* element);
   virtual std::vector<std::string> allowedValues() const;
+  virtual std::vector<std::string> getVector(chid channel,
+		  									 size_t max=0);
 
 };
 
@@ -199,7 +212,10 @@ class CIntegerConverter : public CConverter
 public:
   virtual short requestType();
   virtual std::string operator()(event_handler_args args);
+  virtual std::string convert(void* element);
   virtual std::vector<std::string> allowedValues() const;
+  virtual std::vector<std::string> getVector(chid channel,
+		  									 size_t max=0);
 };
 
 class CFloatConverter : public CConverter
@@ -207,7 +223,10 @@ class CFloatConverter : public CConverter
 public:
   virtual short requestType();
   virtual std::string operator()(event_handler_args args);
+  virtual std::string convert(void* element);
   virtual std::vector<std::string>  allowedValues() const;
+  virtual std::vector<std::string> getVector(chid channel,
+		  									 size_t max=0);
 };
 
 class CEnumConverter : public CConverter
@@ -216,7 +235,10 @@ class CEnumConverter : public CConverter
 public:
 	virtual short requestType();
 	virtual std::string operator()(event_handler_args args);
+    virtual std::string convert(void* element);
 	virtual std::vector<std::string> allowedValues() const;
+    virtual std::vector<std::string> getVector(chid channel,
+	   	  									   size_t max=0);
 	
 };
 /*!

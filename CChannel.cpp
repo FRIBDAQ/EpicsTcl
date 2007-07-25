@@ -1,6 +1,21 @@
+/*
+    This software is Copyright by the Board of Trustees of Michigan
+    State University (c) Copyright 2005.
 
+    You may use this software under the terms of the GNU public license
+    (GPL).  The terms of this license are described at:
+
+     http://www.gnu.org/licenses/gpl.txt
+
+     Author:
+             Ron Fox
+	     NSCL
+	     Michigan State University
+	     East Lansing, MI 48824-1321
+*/
 #include "CChannel.h"
 #include <iostream>
+#include <stdlib.h>
 
 #ifndef _WINDOWS
 #ifdef Linux
@@ -251,6 +266,21 @@ CChannel::size() const
 	}
 }
 /*!
+ *  Returns a vector value channel:
+ * An empty vector is returned if fails.
+ */
+vector<string>
+CChannel::getVector(size_t max)
+{
+	if (m_pConverter) {
+		return  m_pConverter->getVector(m_nChannel, max);
+	}
+	else {
+		vector<string> empty;
+		return empty;
+	}
+}
+/*!
   Sets a handler slot for channel value notifications:
   \param handler : CChannel::Slot 
      Function called when the channel value changes. If this is null,
@@ -422,6 +452,67 @@ CConversionFactory::Converter(short type) {
     return new CStringConverter;
   }
 }
+/////////////////////////////////////////////////////////////
+/*
+ * Utiltity converter function.. Retreives array data from the
+ * specified channel.  If the data cannot be retrieved,
+ * a null pointer is returned.  Otherwise, a pointer to the
+ * data (dynamically allocated via malloc) is returned.
+ * It is up to the caller to 
+ * - Know how to interpret the actual data.
+ * - free, the data later.
+ * Note that we use malloc/free to manage storage because
+ * - This is not object data.
+ * - We don't know the actual underlying type (well we do but
+ *   we don't want to know as that causes software scalability
+ *   problems as we add converters.
+ * Parameters:
+ *    channel    - Channel id of the channel to request data from.
+ *    format     - Format of the data.
+ *    numRead    - pointer to a final count, 0 stored if nothing
+ *                 is gotten.
+ *    max        - Maximum number of elements to request.
+ *                 o If zero, the entire array is returned.
+ *                 o If greater than the size of the array,
+ *                   the entire array only is returned.
+ */
+void*
+CConverter::getVectorData(chid channel,
+						  short format,
+						  size_t* numRead,
+						  size_t max)
+{
+	*numRead = 0;               // Pessimistic guess.
+	
+	// Figure out the number of elements we'll request as well
+	// as how much storage that will require.
+	
+	int arraySize = ca_element_count(channel);
+	int requestSize = max;
+	
+	if ((max == 0) || (max > arraySize)) {
+		requestSize = arraySize;
+	}
+	size_t bytesRequired = dbr_size_n(format, requestSize);
+	
+	void* pDataStorage = malloc(bytesRequired);
+	if (pDataStorage) {
+		int status = ca_array_get(format, requestSize, 
+							      channel, pDataStorage);
+		//
+		// On get failure, just free storage and arrange
+		// for a null pointer to be returned.
+		//
+		if (status != ECA_NORMAL) {
+			free(pDataStorage);
+			pDataStorage = (void*)NULL;
+		}
+		else {
+			*numRead = requestSize;    // Ensure the right count 
+		}
+	}
+	return pDataStorage;
+}
 
 /////////////////////////////////////////////////////////////
 /*!
@@ -440,8 +531,18 @@ CStringConverter::requestType()
 string
 CStringConverter::operator()(event_handler_args args)
 {
-  return string((const char*)(args.dbr));
+  return convert(args.dbr);
 }
+/*
+ * Convert an alement to a string.  This is common code
+ * between getVector and operator()
+ */
+string
+CStringConverter::convert(void* element)
+{
+	return string((char*)element);
+}
+
 /*
  *  Return the alowed values for the channel in this
  * case it will be the string "string"
@@ -451,6 +552,27 @@ CStringConverter::allowedValues() const
 {
 	vector<string> result;
 	result.push_back(string("string"));
+	return result;
+}
+/*
+ * Return a converted vector of values.
+ */
+vector<string>
+CString::getVector(chid channel, size_t max)
+{
+	vector<string> result;
+	size_t         numRead;
+	void* pRawData = getVectorData(channel, requestType(),
+			                       &numRead, max);
+	if (pRawData) {
+		char* pItem = static_cast<char*>(pRawData);
+		for (int i = 0; i < numRead; i++) {
+			string value = convert(*pItem);
+			result.push_back(value);
+			pItem++;
+		}
+		free(pRawdata);
+	}
 	return result;
 }
 ////////////////////////////////////////////////////////////
@@ -469,9 +591,20 @@ CIntegerConverter::requestType()
 string
 CIntegerConverter::operator()(event_handler_args args)
 {
-  char buffer[100];
-  sprintf(buffer, "%ld", *((long*)(args.dbr)));
-  return string(buffer);
+  return convert(args.dbr);
+}
+/*!
+ *  Convert a single value.  This is code commonly used between
+ * the operator() and getVector to convert a single element to
+ * a string given a pointer to that element.
+ */
+string
+CIntegerConverter::convert(void* element)
+{
+	  char buffer[100];
+	  sprintf(buffer, "%ld", *((long*)element)));
+	  return string(buffer);
+
 }
 /*!
  *  Return the allowed values for this type.
@@ -484,7 +617,27 @@ CIntegerConverter::allowedValues() const
 	result.push_back(string("int"));
 	return result;
 }
-
+/*! 
+ * Get and convert a vector of values.
+ */
+string
+CIntegerConverter::getVector(chid channel, size_t max)
+{
+	vector<string> result;
+	size_t numRead;
+	void* pRawData = getVectorData(channel, requestType(),
+			 						&numRead, max);
+	if (pRawData) {
+		long* pElement = static_cast<long*>(pRawData);
+		for (int i = 0; i < numRead; i++) {
+			string item = convert(pElement);
+			numRead.push_back(item);
+			pElement++;
+		}
+		free(pRawdata);
+	}
+	return result;
+}
 ////////////////////////////////////////////////////////////
 
 
@@ -503,9 +656,20 @@ CFloatConverter::requestType()
 string
 CFloatConverter::operator()(event_handler_args args)
 {
-  char buffer[100];
-  sprintf(buffer, "%g", (*(double*)(args.dbr)));
-  return string(buffer);
+  return convert(args.dbr);
+
+}
+/*
+ *   Utility function used by both the oeprator() and
+ *   getVector members to convert a single item.
+ */
+string
+CFloatConverter::convert(void* element)
+{
+	double* value = static_cast<double*>(element);
+	char buffer[100];
+	sprintf(buffer, "%g", *value);
+	return string(buffer);
 }
 /*!
  *    Return the allowed values for a double
@@ -516,6 +680,28 @@ CFloatConverter::allowedValues() const
 {
 	vector<string> result;
 	result.push_back(string("float"));
+	return result;
+}
+/*!
+ *   Return a converted vector.
+ */
+vector<string>
+CFloatConverter::getVector(chid channel, size_t max)
+{
+	vector result;
+	size_t numRead;
+	
+	void* pRawRead = getVectorData(channel, requestType(), 
+									&numRead, max);
+	if (pRawRead) {
+		double* pValue = static_cast<double*>(pRawRead);
+		for (int i=0; i < numRead; i++) {
+			string value = convert(pValue);
+			result.push_back(value);
+			pValue++;
+		}
+		free(pRawRead;)
+	}
 	return result;
 }
 ///////////////////////////////////////////////////////////////
@@ -539,7 +725,18 @@ CEnumConverter::requestType()
 string
 CEnumConverter::operator()(event_handler_args args)
 {
-        const struct dbr_gr_enum* pValue = static_cast<const struct dbr_gr_enum*>(args.dbr);
+	return convert(args.dbr);
+}
+/*!
+ *  Convert a channel data element to its string representation.
+ *  See operator() for more information.  This code used to live
+ *  in operator() but as it's common between that and getVector
+ *  it has been factored out insted.
+ */
+string
+CEnumConverter::convert(void* element) 
+{
+    const struct dbr_gr_enum* pValue = static_cast<const struct dbr_gr_enum*>(element);
 	
 	// If needed build up the allowed values string.
 	
@@ -574,4 +771,25 @@ CEnumConverter::allowedValues() const
 {
 	return m_allowedValues;
 }
-
+/*!
+ * Return a vector of converted values
+ */
+vector<string>
+CEnumConverter::getVector(chid channel, size_t max)
+{
+	vector<string> result;
+	
+	size_t nRead
+	void* pRawData = getVectorData(channel, requestType(), 
+								   &nRead,  max);
+	if (pRawData) {
+		dbr_gr_enum* pArray = static_cast<dbr_gr_enum*>(pRawData);
+		for(int i=0; i < nRead; i++) {
+			string value = convert(pArray);
+			result.push_back(value)l
+			pArray++;
+		}
+		free(pRawData);
+	}
+	return result;
+}
