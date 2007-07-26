@@ -321,6 +321,94 @@ setenv LD_ASSUME_KERNEL 2.4.19
             </para>
             </example>
         </para>
+        <refsect2>
+        <title>Issues with enumerated variable types</title>
+        <para>
+        	Enumerated types have an interesting interaction with array sets.
+        	This is not an defect in the software package, it is simply a property
+        	of Tcl that interacts with some enumerated types, and the ability to set
+        	enumerated types by string values.  Consider an enumerated type whose string
+        	values have spaces e.g one legitimate value is <literal>"a b"</literal>.
+        	Let's call this process variable <literal>funky1</literal> (we will have
+        	a <literal>funky2</literal> to show another interesting issue with enumerated process
+        	variables. Suppose that this value <literal>"a b"</literal> corresponds to enumerated
+        	index 0.  Consider the following two chunks of Tcl (<literal>funky1</literal> is already assumed
+        	to be established as a channel).
+        </para>
+        <programlisting>
+funky1 set [lindex [funky1 values] 0]
+funky1 set "a b"
+		</programlisting>
+		<para>
+			Both of these provide the parameter <literal>a b</literal> to the <command>set</command> subcommand.
+			this looks like a two element list, but <literal>funky1</literal> is only a single element array,
+			so the value <literal>a</literal> is set which may not be legal, in which case epics will throw an
+			error or, even worse, may correspond to another legal value for the enumerated type.
+		</para>
+		<para>
+			There are two potential solutions to this problem.  First, ensure that a single element list is 
+			received by the <command>set</command> command, second, use indices only:
+		</para>	
+		<programlisting>
+funky1 set [list [lindex [funky1 values] 0]]		
+funky1 set [lsearch [funky1 values] "a "b] int
+		</programlisting>
+		<para>
+			The <command>list</command> command will add an additional level of quoting if necessary
+			to ensure that each parameter it recieves is a properly quoted list element.  The
+			<command>lsearch</command> command will return the index of <literal>"a b"</literal>
+			in the list of allowed values for <literal>funky1</literal>.  This is an integer that
+			represents the enumerated index value.  The <literal>int</literal> at the back end of the
+			command forces the <command>set</command> to be done as an integer data type rather
+			than a string. See the discussion below about <firstterm>pathalogical</firstterm>
+			enumerated process variables
+		</para>
+		<para>
+			For enumerated process variables there can also be an interesting pathology.
+			Consider a process variable <literal>funky2</literal> for which the
+			<command>values</command> subcommand returns the list:
+			<literal> 5 4 3 2 1 0</literal>.  It is not clear what the following does, or even
+			what the intent is:
+		</para>
+		<programlisting>
+funky2 set 2
+		</programlisting>
+		<para>
+			Is the 2 the string 2 (which has enumerated index 3), or is it the index 2
+			which has the string value 3?  Process variable designers should avoid such
+			pathologies.  If, however, a pathology like this does exist, that would imply 
+			that the only unambiguous way to set enumerated process variables is by
+			index.  The following <emphasis>is</emphasis> unambiguous:
+		</para>
+		<programlisting>
+funky2 set 2 int
+         </programlisting>
+         <para>
+         	This forces an integer set of the process variable which selects
+         	the textual value 3.  Note that this pathology may well be hidden from
+         	the programmer, who is just using the <command>values</command> command
+         	to get the list of legal values and selecting from amongst them.
+         	The above discussion should hopefully lead you to conclude that
+         	for enumerated epics variable types, you should probably only use the
+         	textual representation, relying on the index to set the value and
+         	ensuring that the index is treated as an index by using the <literal>int</literal>
+         	data type parameter on the <command>set</command> sub command to ensure
+         	that pathalogically labelled variables are not a problem. e.g:
+       	</para>
+       	<programlisting>
+someenum set [lindex [someenum values] $index];  # Avoid this!!!
+someenum set $index int;                         # use this instead.
+       	</programlisting>
+       	<para>
+       		There is a further subtlety. For linked variables, modifications of the
+       		variable triggers a set in <emphasis>string</emphasis> form.  This
+       		avoids the vector/list issue, but steps right into the issue with
+       		pathological value sets.  Therefore once more enumerated process variables,
+       		following the plan of using the text (variable) for display only, but
+       		use the <command><replaceable>someenum</replaceable> set <replaceable>some-integer</replaceable> int</command>
+       		form for setting the variable is the best policy.
+       	</para>
+      	</refsect2>
     </refsect1>
 </refentry>
 
