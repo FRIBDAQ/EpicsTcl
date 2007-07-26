@@ -191,6 +191,9 @@ public:
 protected:
   void*   getVectorData(chid channel,
 		                short format,
+#ifdef _WINDOWS
+                        size_t itemsize,
+#endif
 		                size_t *numRead,
 		                size_t max=0);
 };

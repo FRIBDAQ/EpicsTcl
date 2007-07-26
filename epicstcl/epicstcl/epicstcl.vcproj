@@ -141,7 +141,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:MSVCRT&#x0D;&#x0A;"
-				AdditionalDependencies="tkstub84.lib  tclstub84.lib tk84.lib tcl84.lib ca.lib"
+				AdditionalDependencies="tkstub84.lib tclstub84.lib tk84.lib tcl84.lib ca.lib dbStaticHost.lib"
 				OutputFile="$(OutDir)\epics.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;\\expdc01\ctldev\Source\Win32\EpicsBase\3_14\lib\win32-x86&quot;;C:\tcl\lib"

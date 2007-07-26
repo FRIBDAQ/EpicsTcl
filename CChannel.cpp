@@ -26,6 +26,9 @@
 #endif
 #endif
 
+#ifdef _WINDOWS
+#define dbr_buffersize(typename, count) (sizeof(typename)*(count))
+#endif
 
 using namespace std;
 
@@ -373,8 +376,11 @@ CChannel::operator=(const std::vector<string>& rhs)
 			count = ca_element_count(m_nChannel);
 		}
 		// Now we need to allocate storage for the array of strings:
-		
+#ifdef _WINDOWS
+        size_t bytesNeeded      = dbr_buffersize(dbr_string_t, count);
+#else
 		size_t bytesNeeded      = dbr_size_n(DBR_STRING, count);
+#endif
 		dbr_string_t* pStorage  = (dbr_string_t*)malloc(bytesNeeded);
 		if (pStorage) {
 			memset(pStorage, 0, bytesNeeded);
@@ -419,8 +425,11 @@ CChannel::operator=(const vector<int>& rhs)
 		if (count > ca_element_count(m_nChannel)) {
 			count = ca_element_count(m_nChannel);
 		}
-		
+#ifdef _WINDOWS
+        size_t bytesNeeded      = dbr_buffersize(dbr_long_t, count);
+#else
 		size_t bytesNeeded      = dbr_size_n(DBR_LONG, count);
+#endif
 		dbr_long_t* pStorage     = (dbr_long_t*)malloc(bytesNeeded);
 		
 		if (pStorage) {
@@ -457,8 +466,11 @@ CChannel::operator=(const vector<double>& rhs)
 		if (count > ca_element_count(m_nChannel)) {
 			count = ca_element_count(m_nChannel);
 		}
-		
+#ifdef _WINDOWS
+        size_t bytesNeeded      = dbr_buffersize(dbr_double_t, count);
+#else
 		size_t bytesNeeded      = dbr_size_n(DBR_DOUBLE, count);
+#endif
 		dbr_double_t* pStorage     = (dbr_double_t*)malloc(bytesNeeded);
 		
 		if (pStorage) {
@@ -615,6 +627,9 @@ CConversionFactory::Converter(short type) {
 void*
 CConverter::getVectorData(chid channel,
 						  short format,
+#ifdef _WINDOWS
+                          size_t  itemsize,
+#endif
 						  size_t* numRead,
 						  size_t max)
 {
@@ -629,7 +644,11 @@ CConverter::getVectorData(chid channel,
 	if ((max == 0) || (max > arraySize)) {
 		requestSize = arraySize;
 	}
+#ifdef _WINDOWS
+    size_t bytesRequired = itemsize*requestSize;
+#else
 	size_t bytesRequired = dbr_size_n(format, requestSize);
+#endif
 	
 	void* pDataStorage = malloc(bytesRequired);
 	if (pDataStorage) {
@@ -700,6 +719,9 @@ CStringConverter::getVector(chid channel, size_t max)
 	vector<string> result;
 	size_t         numRead;
 	void* pRawData = getVectorData(channel, requestType(),
+#ifdef _WINDOWS
+                                   sizeof(dbr_string_t),
+#endif
 			                       &numRead, max);
 	if (pRawData) {
 	  dbr_string_t* pItem = static_cast<dbr_string_t*>(pRawData);
@@ -763,6 +785,9 @@ CIntegerConverter::getVector(chid channel, size_t max)
 	vector<string> result;
 	size_t numRead;
 	void* pRawData = getVectorData(channel, requestType(),
+#ifdef _WINDOWS
+                                    sizeof(dbr_long_t),
+#endif
 			 						&numRead, max);
 	if (pRawData) {
 		dbr_long_t* pElement = static_cast<dbr_long_t*>(pRawData);
@@ -829,6 +854,9 @@ CFloatConverter::getVector(chid channel, size_t max)
 	size_t numRead;
 	
 	void* pRawRead = getVectorData(channel, requestType(), 
+#ifdef _WINDOWS
+                                    sizeof(double),
+#endif
 									&numRead, max);
 	if (pRawRead) {
 		double* pValue = static_cast<double*>(pRawRead);
@@ -918,6 +946,9 @@ CEnumConverter::getVector(chid channel, size_t max)
 	
 	size_t nRead;
 	void* pRawData = getVectorData(channel, requestType(), 
+#ifdef _WINDOWS
+                                    sizeof(dbr_gr_enum),
+#endif
 								   &nRead,  max);
 	if (pRawData) {
 		dbr_gr_enum* pArray = static_cast<dbr_gr_enum*>(pRawData);
