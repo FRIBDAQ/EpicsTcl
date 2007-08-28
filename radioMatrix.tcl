@@ -62,8 +62,8 @@ snit::widget  ::controlwidget::radioMatrix {
 
 
     option -orient   horizontal
-    option -rows     {}
-    option -columns  {}
+    option -rows     {1}
+    option -columns  {1}
     option -values   [list]
     option -command  [list]
 
