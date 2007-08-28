@@ -103,3 +103,6 @@ Release 1.4-001
          - Add ability to write an array to a channel.
 
 Release 1.4.002
+         - Default the -row, -column options of the radioMatrix
+           widget to 1.
+
