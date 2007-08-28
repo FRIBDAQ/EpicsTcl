@@ -151,7 +151,7 @@ install-exec-local: $(MANPAGES)
 install-data-local:
 	$(mkinstalldirs) $(prefix)/TclLibs
 	mv $(prefix)/lib/libepics* $(prefix)/TclLibs
-	echo "package ifneeded epics 1.2 [list load [file join \$$dir libepics$(SLIBEXT)]]"  \
+	echo "package ifneeded epics 1.4 [list load [file join \$$dir libepics$(SLIBEXT)]]"  \
 		> $(prefix)/TclLibs/pkgIndex.tcl;
 
 
