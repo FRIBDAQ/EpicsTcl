@@ -105,4 +105,7 @@ Release 1.4-001
 Release 1.4.002
          - Default the -row, -column options of the radioMatrix
            widget to 1.
+         - Make attempts to link a variable to two different channels
+           an error.
+
 

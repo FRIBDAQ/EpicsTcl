@@ -60,7 +60,7 @@ class CTCLChannelCommand;
 */
 class CTCLEpicsCommand  : public CTCLObjectProcessor
 {
-private:
+public:
   // This structure is used to manage all the epics channel commands
   // and their reference counts.  This is done so that sections of a large
   // application can create/delete channels without any fear of stepping on the
@@ -89,6 +89,10 @@ private:
 
   typedef std::map<std::string, RefCountedChannel> KnownChannels;
 
+ private:
+
+
+
   // class level data:
 
   static KnownChannels  m_channelInfo;
@@ -111,6 +115,9 @@ public:
 
   static void                deleteChannel(std::string name);
   static RefCountedChannel*  haveChannel(std::string name);
+  static KnownChannels::iterator begin();
+  static KnownChannels::iterator end();
+
  
 };
 

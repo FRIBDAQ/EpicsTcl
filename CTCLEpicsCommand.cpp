@@ -116,3 +116,22 @@ CTCLEpicsCommand::deleteChannel(string name)
     }
   }
 }
+///////////////////////////////////////////////////////////////////////////
+/*!
+    Return a begin iteration iterator for the list of known channels.
+*/
+CTCLEpicsCommand::KnownChannels::iterator
+CTCLEpicsCommand::begin()
+{
+  return m_channelInfo.begin();
+}
+
+/*!
+   Return an end iteration iterator for the list of known channels
+*/
+
+CTCLEpicsCommand::KnownChannels::iterator
+CTCLEpicsCommand::end()
+{
+  return m_channelInfo.end();
+}

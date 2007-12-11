@@ -357,6 +357,16 @@ CTCLChannelCommand::Link(CTCLInterpreter& interp,
   }
   string tclVarName = objv[2];
 
+
+  // If the variable is linked to another channel that's an error:
+
+  if (isLinked(tclVarName)) {
+    string result = tclVarName;
+    result       += " is already linked to a different channel";
+    interp.setResult(result);
+    return TCL_ERROR;
+  }
+
   // If a variable with the same name already exists, simply
   // add another reference to it...otherwise, make a new one
   // and register it... ensure that we have a trace handler established
@@ -666,6 +676,29 @@ CTCLChannelCommand::update(Tcl_Event* p, int flags)
 
   return 1;
   
+}
+
+/*
+   Returns true if there are any channels that have the named TCL variable as a linked
+   variable.. false otherwise.
+*/
+bool
+CTCLChannelCommand::isLinked(string variableName)
+{
+  CTCLEpicsCommand::KnownChannels::iterator i = CTCLEpicsCommand::begin();
+
+
+  // Remember we can multiply link to ourself, but not to other chans:
+
+  while (i != CTCLEpicsCommand::end()) {
+    CTCLChannelCommand* pItem = i->second.s_pChannel;
+    if ((pItem->find(variableName) != (pItem->m_linkedVariables).end()) &&
+	(pItem != this)) {
+      return true;
+    }
+    i++;
+  }
+  return false;
 }
 
 /*

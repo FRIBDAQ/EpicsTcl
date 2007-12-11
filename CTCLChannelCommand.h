@@ -132,6 +132,7 @@ private:
 			 void* pObject);        // Called in Epics thread
   static int update(Tcl_Event* pEvent, int flags);      // Called in Tcl thread.
 
+  bool isLinked(std::string variableName);
 
   VariableInfoIterator find(std::string variableName);
 };
