@@ -370,3 +370,4 @@ CRangeError::UpdateReason()
   m_ReasonText = szMessage;
 
 }
+
