@@ -342,7 +342,7 @@ then
   then
      AC_MSG_RESULT([tcl/tk libraries allow stubs enabling])
      TCL_FLAGS="$TCL_FLAGS -DUSE_TCL_STUBS"
-     TCL_LDFLAGS="-L${tcl_libdir} -ltkstub -ltclstub"
+     TCL_LDFLAGS="-L${tcl_libdir}  -ltclstub"
   else
     # Find the lib basename:
 

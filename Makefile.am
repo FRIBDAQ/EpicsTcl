@@ -1,7 +1,7 @@
 lib_LTLIBRARIES = libException.la libtclPlus.la libepics.la
 
 
-INCLUDES= $(THREADFLAGS) @TCL_FLAGS@ @X11INCS@ @EPICS_BIN@ @EPICS_INCLUDES@ \
+INCLUDES= $(THREADFLAGS) @TCL_FLAGS@  @EPICS_BIN@ @EPICS_INCLUDES@ \
 	-DTCL_THREADS
 ### libException
 

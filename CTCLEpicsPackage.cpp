@@ -30,7 +30,7 @@ using namespace std;
 
 
 
-static char* version= "1.4";
+static char* version= "2.0";
 
 static const int caPollInterval(16); // ms per epics poll.
 
@@ -58,7 +58,6 @@ __declspec(dllexport)
 
 #ifdef USE_TCL_STUBS
     Tcl_InitStubs(pInterp, "8.3", 0);
-    Tk_InitStubs(pInterp, "8.3", 0);
 #endif
 
     Tcl_PkgProvide(pInterp, "epics", version);

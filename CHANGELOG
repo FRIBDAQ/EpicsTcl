@@ -108,4 +108,8 @@ Release 1.4.002
          - Make attempts to link a variable to two different channels
            an error.
 
+Release 2.0
+         - Allow package to be used in Tcl programs that don't use
+           Tk.. the event loop must be used, however to accept Epics
+           changes.
 
