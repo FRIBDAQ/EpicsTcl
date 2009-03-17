@@ -350,7 +350,7 @@ CTCLTimer::Set()
 //
 
   if(!m_fSet) {
-    m_tToken = Tk_CreateTimerHandler(m_nMsec, 
+    m_tToken = Tcl_CreateTimerHandler(m_nMsec, 
 				     CallbackRelay,
 				     (ClientData)this);
     m_fSet = kfTRUE;
@@ -375,7 +375,7 @@ CTCLTimer::Clear()
 //
   
   if(m_fSet) {
-    Tk_DeleteTimerHandler(m_tToken);
+    Tcl_DeleteTimerHandler(m_tToken);
     m_fSet = kfFALSE;
     m_tToken = 0;
   }

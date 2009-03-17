@@ -6,7 +6,7 @@ AM_CONFIG_HEADER(config.h)
 
 #    Separate device libraries.
 
-AM_INIT_AUTOMAKE(epicstcl, 2.0)  
+AM_INIT_AUTOMAKE(epicstcl, 2.0-001)  
 
 #
 #   The variable below should track the
@@ -343,6 +343,16 @@ then
      AC_MSG_RESULT([tcl/tk libraries allow stubs enabling])
      TCL_FLAGS="$TCL_FLAGS -DUSE_TCL_STUBS"
      TCL_LDFLAGS="-L${tcl_libdir}  -ltclstub"
+     tcl_libname=$(echo $tcl_libname|cut -c 4- )  # trim off lib 
+        #
+	# Use basename to trim of the .a or .so:
+	#
+
+      tcl_libname=$(basename $(basename $(basename $tcl_libname .a) .so) .dylib)
+
+
+      tk_libname=tk$(echo $tcl_libname|cut -c 4-)   # trim off tc...and use tk
+      TCL_TESTLDFLAGS="-L${tcl_libdir}   -l${tcl_libname}"
   else
     # Find the lib basename:
 
@@ -356,7 +366,8 @@ then
 
        tk_libname=tk$(echo $tcl_libname|cut -c 4-)   # trim off tc...and use tk
 
-       TCL_LDFLAGS="-L${tcl_libdir} -l${tk_libname}  -l${tcl_libname}"
+       TCL_LDFLAGS="-L${tcl_libdir}   -l${tcl_libname}"
+       TCL_TESTLDFLAGS="-L${tcl_libdir}   -l${tcl_libname}"
   fi
 else
   AC_MSG_ERROR([Unable to find the tcl library, help me out with --with-tcl-libdir])

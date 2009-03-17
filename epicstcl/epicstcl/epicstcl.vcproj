@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="h:\test\stripper\console\epicstcl;\\expdc01\ctldev\Source\Win32\EpicsBase\3_14\include\os\WIN32;\\expdc01\ctldev\Source\Win32\EpicsBase\3_14\include;&quot;C:\Documents and Settings\fox\Desktop\stripperfoil\console\epicstcl&quot;;C:\tcl\include"
+				AdditionalIncludeDirectories="h:\test\stripper\console\epicstcl;\\exp\files\control\ctldev\Source\Win32\EpicsBase\3_14\include\os\WIN32;\\exp\files\control\ctldev\Source\Win32\EpicsBase\3_14\include;&quot;C:\Documents and Settings\fox\Desktop\stripperfoil\console\epicstcl&quot;;C:\tcl\include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;USE_TCL_STUBS;WIN32;NDEBUG;_WINDOWS;_USRDLL;EPICSTCL_EXPORTS"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
@@ -144,7 +144,7 @@
 				AdditionalDependencies="tkstub84.lib tclstub84.lib tk84.lib tcl84.lib ca.lib dbStaticHost.lib"
 				OutputFile="$(OutDir)\epics.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;\\expdc01\ctldev\Source\Win32\EpicsBase\3_14\lib\win32-x86&quot;;C:\tcl\lib"
+				AdditionalLibraryDirectories="&quot;\\exp\files\control\ctldev\Source\Win32\EpicsBase\3_14\lib\win32-x86&quot;;C:\tcl\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"

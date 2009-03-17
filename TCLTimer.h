@@ -302,10 +302,7 @@ DAMAGES.
 #define __TCL_TCL_H 
 #endif
         
-#ifndef __TCL_TK_H
-#include <tk.h>
-#define _TCL_TK_H
-#endif
+
 
 #ifndef __HISTOTYPES_H
 #include <histotypes.h>
@@ -314,7 +311,7 @@ DAMAGES.
                                
 class CTCLTimer  : public CTCLInterpreterObject        
 {
-  Tk_TimerToken m_tToken;  // Timer token returned from Tk_CreateTimerHandler.
+  Tcl_TimerToken m_tToken;  // Timer token returned from Tk_CreateTimerHandler.
   UInt_t m_nMsec;		// No. Milleseconds delay on timer.
   Bool_t m_fSet;		// kfTRUE if timer is  pending (m_tToken valid).
   
@@ -353,7 +350,7 @@ private:
 
 public:
 
-  Tk_TimerToken getToken() const
+  Tcl_TimerToken getToken() const
   {
     return m_tToken;
   }
@@ -369,7 +366,7 @@ public:
 
 protected:                   
 
-  void setToken (Tk_TimerToken am_tToken)
+  void setToken (Tcl_TimerToken am_tToken)
   { 
     m_tToken = am_tToken;
   }

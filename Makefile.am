@@ -70,7 +70,7 @@ libepics_la_LIBADD  = @top_srcdir@/libtclPlus.la  \
 			@top_srcdir@/libException.la \
 			$(TCL_LDFLAGS) $(EPICS_LDFLAGS)		
 
-libepics_la_LDFLAGS = 	$(THREADFLAGS) -version-info 1:0:0 $(OSLDFLAGS)
+libepics_la_LDFLAGS = 	$(THREADFLAGS) -version-info 2:0:0 $(OSLDFLAGS)
 
 
 
@@ -175,7 +175,7 @@ unittests_SOURCES = TestRunner.cpp testException.cpp testErrnoException.cpp \
 	testStreamIOError.cpp testRangeError.cpp
 
 unittests_LDFLAGS = $(THREADFLAGS)
-unittests_LDADD   =  $(CPPUNIT_LDFLAGS) -lException
+unittests_LDADD   =  $(CPPUNIT_LDFLAGS) -lException $(TCL_LDFLAGS)
 
 noinst_HEADERS = Asserts.h
 
@@ -186,7 +186,7 @@ tracetests_SOURCES = TestRunner.cpp \
 tracetests_DEPENDENCIES = $(testableObjects)
 
 TestLdflags =  $(testableObjects) $(CPPUNIT_LDFLAGS) $(X11EXTRA_LDFLAGS) \
-	-L@top_srcdir@/Exception -lException
+	-L@top_srcdir@/Exception -lException $(TCL_LDFLAGS)
 
 
 tracetests_LDFLAGS= $(THREADFLAGS)
@@ -196,7 +196,7 @@ interptests_SOURCES=interpretertest.cpp objecttest.cpp resulttest.cpp \
 	objcommandtest.cpp compatcommand.cpp
 
 
-interptests_LDADD = TestRunner.o $(TestLdflags)
+interptests_LDADD = TestRunner.o $(TestLdflags) $(TCL_LDFLAGS)
 interptests_LDFLAGS=$(THREADFLAGS)
 
 interptests_DEPENDENCIES = $(testableObjects) TestRunner.o

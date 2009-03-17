@@ -308,10 +308,6 @@ DAMAGES.
 #include <histotypes.h>
 #endif
 
-#ifndef _TK_H
-#include <tk.h>
-#define _TK_H
-#endif
 
 class CTCLIntpreter;
 

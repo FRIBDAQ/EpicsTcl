@@ -113,3 +113,5 @@ Release 2.0
            Tk.. the event loop must be used, however to accept Epics
            changes.
 
+Release 2.0-001
+         - Remove all dependencies on Tk
