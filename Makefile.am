@@ -22,14 +22,14 @@ include_HEADERS = ErrnoException.h Exception.h  StreamIOError.h \
 	CTCLEpicsPackage.h	\
 	CChannel.h CChannelVariable.h
 
-libException_la_LDFLAGS = $(THREADFLAGS) -version-info 1:0:0 \
+libException_la_LDFLAGS = $(THREADFLAGS) -version-info 2:0:0 \
 	$(OSLDFLAGS)
 
 
 
 # libtclPlus:
 
-libtclPlus_la_LDFLAGS = $(THREADFLAGS) -version-info 1:0:0 \
+libtclPlus_la_LDFLAGS = $(THREADFLAGS) -version-info 2:0:0 \
 	$(OSLDFLAGS)
 
 libtclPlus_la_LIBADD = @top_srcdir@/libException.la 
@@ -150,9 +150,9 @@ install-exec-local: $(MANPAGES)
 
 install-data-local:
 	$(mkinstalldirs) $(prefix)/TclLibs
-	mv $(prefix)/lib/libepics* $(prefix)/TclLibs
-	echo "package ifneeded epics 1.4 [list load [file join \$$dir libepics$(SLIBEXT)]]"  \
-		> $(prefix)/TclLibs/pkgIndex.tcl;
+	-cp $(prefix)/lib/libepics* $(prefix)/TclLibs
+	echo "package ifneeded epics 2.0 [list load [file join \$$dir libepics$(SLIBEXT)]]"  \
+		>> $(prefix)/TclLibs/pkgIndex.tcl;
 
 
 
