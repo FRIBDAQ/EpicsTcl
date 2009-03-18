@@ -1,0 +1,19 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## config-in.dpatch by  <blair@ctrlpclnx.nscl.msu.edu>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Mangle rpath to Lenny Tcl/Tk style
+
+@DPATCH@
+
+--- epicstcl-2.0-001-old/configure.in	2009-03-17 11:14:51.000000000 -0400
++++ epicstcl-2.0-001-new/configure.in	2009-03-17 14:39:43.000000000 -0400
+@@ -38,7 +38,7 @@
+    incsysdir="os/Linux"
+    libsysdir="linux-x86"     # God help me if I need x64.
+    binsysdir="linux-x86"
+-   OSLDFLAGS="-Wl,\"-rpath=$libdir\""
++   OSLDFLAGS="-Wl,\"-rpath=$libdir/tcltk/epicstcl2.0\""
+    SLIBEXT=".so"
+    THREADFLAGS="-pthread -D_REENTRANT=1 -D_THREAD_SAFE=1"
+ elif echo $host_os |grep -s darwin 

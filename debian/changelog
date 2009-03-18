@@ -1,0 +1,6 @@
+epicstcl (2.0-1) stable; urgency=low
+
+  * Initial debianization for Debian GNU/Linux Lenny (5.0) release
+
+ -- Ryan Blair <blair@nscl.msu.edu>  Tue, 17 Mar 2009 13:11:31 -0400
+
