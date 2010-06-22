@@ -1,11 +1,17 @@
+
+
 #
 #    This software is Copyright by the Board of Trustees of Michigan
 #    State University (c) Copyright 2005.
 #
 #    You may use this software under the terms of the GNU public license
-#    (GPL).  The terms of this license are described at:
+#    (GPL) ir the Tcl BSD derived license  The terms of these licenses
+#     are described at:
 #
-#     http://www.gnu.org/licenses/gpl.txt
+#     GPL:  http://www.gnu.org/licenses/gpl.txt
+#     Tcl:  http://www.tcl.tk/softare/tcltk/license.html
+#     Start with the second paragraph under the Tcl/Tk License terms
+#     as ownership is solely by Board of Trustees at Michigan State University. 
 #
 #     Author:
 #             Ron Fox
