@@ -23,6 +23,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #ifndef _WINDOWS
 #ifdef Linux
@@ -282,6 +283,7 @@ CChannel::size() const
 vector<string>
 CChannel::getVector(size_t max)
 {
+  CCriticalRegion Monitor(m_Monitor);
 	if (m_pConverter) {
 		return  m_pConverter->getVector(m_nChannel, max);
 	}
@@ -555,6 +557,7 @@ CChannel::StateHandler(connection_handler_args args)
 void
 CChannel::UpdateHandler(event_handler_args args)
 {
+
   if(args.status == ECA_NORMAL) {
     CChannel* pChannel = (CChannel*)args.usr;
     CCriticalRegion Monitor(pChannel->m_Monitor);   // Ensure the world is ours.
