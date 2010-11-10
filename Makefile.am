@@ -186,7 +186,7 @@ tracetests_SOURCES = TestRunner.cpp \
 tracetests_DEPENDENCIES = $(testableObjects)
 
 TestLdflags =  $(testableObjects) $(CPPUNIT_LDFLAGS) $(X11EXTRA_LDFLAGS) \
-	-L@top_srcdir@/Exception -lException $(TCL_LDFLAGS) -lefence
+	-L@top_srcdir@/Exception -lException $(TCL_LDFLAGS) 
 
 
 tracetests_LDFLAGS= $(THREADFLAGS)
