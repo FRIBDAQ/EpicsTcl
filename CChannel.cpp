@@ -40,52 +40,7 @@
 using namespace std;
 
 
-// Local class to manage synchronization.
-// Synchronization is handled by constructing this
-// object on a mutex that is used to manage the monitor.
-// destruction releases.  The safe way for example is:
-//  {         // Start of critical region...
-//   CCriticalRegion monitor(mutex);  // Mutex locked.
-//    ...
-//  }         // mutex unlocked.
 
-#ifdef _WINDOWS
-class CCriticalRegion {
-private:
-CRITICAL_SECTION*   m_pMutex;
-public:
-  CCriticalRegion(CRITICAL_SECTION& mutex) :
-    m_pMutex(&mutex) {
-    EnterCriticalSection(m_pMutex);
-  }
-  ~CCriticalRegion() {
-    LeaveCriticalSection(m_pMutex);
-  }
-  // It is important to define the following as private to
-  // ensure this mutex is not duplicated:
-private:
-  CCriticalRegion(const CCriticalRegion& rhs);
-  CCriticalRegion& operator=(const CCriticalRegion& rhs);
-};
-#else
-class CCriticalRegion {
-private:
-  pthread_mutex_t*   m_pMutex;
-public:
-  CCriticalRegion(pthread_mutex_t& mutex) :
-    m_pMutex(&mutex) {
-    pthread_mutex_lock(m_pMutex);
-  }
-  ~CCriticalRegion() {
-    pthread_mutex_unlock(m_pMutex);
-  }
-  // It is important to define the following as private to
-  // ensure this mutex is not duplicated:
-private:
-  CCriticalRegion(const CCriticalRegion& rhs);
-  CCriticalRegion& operator=(const CCriticalRegion& rhs);
-};
-#endif
 
 static void
 nullConnectionHandler(connection_handler_args arg)
@@ -284,13 +239,13 @@ vector<string>
 CChannel::getVector(size_t max)
 {
   CCriticalRegion Monitor(m_Monitor);
-	if (m_pConverter) {
-		return  m_pConverter->getVector(m_nChannel, max);
-	}
-	else {
-		vector<string> empty;
-		return empty;
-	}
+  if (m_pConverter) {
+    return  m_pConverter->getVector(m_nChannel, max, &Monitor);
+  }
+  else {
+    vector<string> empty;
+    return empty;
+  }
 }
 /*!
   Sets a handler slot for channel value notifications:
@@ -532,6 +487,7 @@ CChannel::StateHandler(connection_handler_args args)
     pChannel->m_fConnected = true;
     if(!pChannel->m_fUpdateHandlerEstablished) {
       pChannel->m_pConverter = CConversionFactory::Converter(ca_field_type(id));
+
       ca_add_event(pChannel->m_pConverter->requestType(), 
 		   id, UpdateHandler, (void*)pChannel, &(pChannel->m_updateEventId));
       pChannel->m_fUpdateHandlerEstablished;
@@ -598,8 +554,8 @@ CConversionFactory::Converter(short type) {
     return new CIntegerConverter;
     break;
   case DBF_ENUM:
-	return new CEnumConverter;
-	break;
+    return new CEnumConverter;
+    break;
   case DBF_FLOAT:
   case DBF_DOUBLE:
     return new CFloatConverter;
@@ -609,6 +565,8 @@ CConversionFactory::Converter(short type) {
     return new CStringConverter;
   }
 }
+
+
 /////////////////////////////////////////////////////////////
 /*
  * Utiltity converter function.. Retreives array data from the
@@ -635,12 +593,12 @@ CConversionFactory::Converter(short type) {
  */
 void*
 CConverter::getVectorData(chid channel,
-						  short format,
+			  short format,
 #ifdef _WINDOWS
                           size_t  itemsize,
 #endif
-						  size_t* numRead,
-						  size_t max)
+			  size_t* numRead,
+			  size_t max)
 {
 	*numRead = 0;               // Pessimistic guess.
 	
@@ -723,15 +681,19 @@ CStringConverter::allowedValues() const
  * Return a converted vector of values.
  */
 vector<string>
-CStringConverter::getVector(chid channel, size_t max)
+CStringConverter::getVector(chid channel, size_t max,
+			    CCriticalRegion* pMonitor)
 {
 	vector<string> result;
 	size_t         numRead;
+	if(pMonitor) pMonitor->unlock();
 	void* pRawData = getVectorData(channel, requestType(),
 #ifdef _WINDOWS
-                                   sizeof(dbr_string_t),
+				       sizeof(dbr_string_t),
 #endif
-			                       &numRead, max);
+				       &numRead, max);
+	if(pMonitor) pMonitor->lock();
+
 	if (pRawData) {
 	  dbr_string_t* pItem = static_cast<dbr_string_t*>(pRawData);
 	  for (int i = 0; i < numRead; i++) {
@@ -789,15 +751,19 @@ CIntegerConverter::allowedValues() const
  * Get and convert a vector of values.
  */
 vector<string>
-CIntegerConverter::getVector(chid channel, size_t max)
+CIntegerConverter::getVector(chid channel, size_t max,
+			     CCriticalRegion* pMonitor)
 {
 	vector<string> result;
 	size_t numRead;
+	if (pMonitor) pMonitor->unlock();
 	void* pRawData = getVectorData(channel, requestType(),
 #ifdef _WINDOWS
                                     sizeof(dbr_long_t),
 #endif
-			 						&numRead, max);
+				       &numRead, max);
+	if(pMonitor) pMonitor->lock();
+
 	if (pRawData) {
 		dbr_long_t* pElement = static_cast<dbr_long_t*>(pRawData);
 		for (int i = 0; i < numRead; i++) {
@@ -857,16 +823,18 @@ CFloatConverter::allowedValues() const
  *   Return a converted vector.
  */
 vector<string>
-CFloatConverter::getVector(chid channel, size_t max)
+CFloatConverter::getVector(chid channel, size_t max,
+			   CCriticalRegion* pMonitor)
 {
 	vector<string> result;
 	size_t numRead;
-	
+	if(pMonitor)pMonitor->unlock();
 	void* pRawRead = getVectorData(channel, requestType(), 
 #ifdef _WINDOWS
-                                    sizeof(double),
+				       sizeof(double),
 #endif
-									&numRead, max);
+				       &numRead, max);
+	if (pMonitor) pMonitor->lock();
 	if (pRawRead) {
 		double* pValue = static_cast<double*>(pRawRead);
 		for (int i=0; i < numRead; i++) {
@@ -949,16 +917,19 @@ CEnumConverter::allowedValues() const
  * Return a vector of converted values
  */
 vector<string>
-CEnumConverter::getVector(chid channel, size_t max)
+CEnumConverter::getVector(chid channel, size_t max,
+			  CCriticalRegion* pMonitor)
 {
 	vector<string> result;
 	
 	size_t nRead;
+	if(pMonitor) pMonitor->lock();
 	void* pRawData = getVectorData(channel, requestType(), 
 #ifdef _WINDOWS
                                     sizeof(dbr_gr_enum),
 #endif
-								   &nRead,  max);
+				       &nRead,  max);
+	if (pMonitor) pMonitor->unlock();
 	if (pRawData) {
 		dbr_gr_enum* pArray = static_cast<dbr_gr_enum*>(pRawData);
 		for(int i=0; i < nRead; i++) {

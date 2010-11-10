@@ -59,6 +59,76 @@
 
 class CConverter;
 
+#ifdef WINDOWS
+typedef CRITICAL_SECTION   Mutex;
+#else
+typedef pthread_mutex_t    Mutex;
+#endif
+
+// Class to manage synchronization.
+// Synchronization is handled by constructing this
+// object on a mutex that is used to manage the monitor.
+// destruction releases.  The safe way for example is:
+//  {         // Start of critical region...
+//   CCriticalRegion monitor(mutex);  // Mutex locked.
+//    ...
+//  }         // mutex unlocked.
+
+#ifdef _WINDOWS
+class CCriticalRegion {
+private:
+  CRITICAL_SECTION*   m_pMutex;
+public:
+  CCriticalRegion(CRITICAL_SECTION& mutex) :
+    m_pMutex(&mutex) {
+    lock();
+  }
+  ~CCriticalRegion() {
+    unlock();
+  }
+
+  void unlock() {
+    LeaveCriticalSection(m_pMutex);
+  }
+  void lock() {
+    EnterCriticalSection(m_pMutex);
+  }
+
+
+  // It is important to define the following as private to
+  // ensure this mutex is not duplicated:
+private:
+  CCriticalRegion(const CCriticalRegion& rhs);
+  CCriticalRegion& operator=(const CCriticalRegion& rhs);
+};
+#else
+class CCriticalRegion {
+private:
+  pthread_mutex_t*   m_pMutex;
+public:
+  CCriticalRegion(pthread_mutex_t& mutex) :
+    m_pMutex(&mutex) {
+    lock();
+  }
+  ~CCriticalRegion() {
+    unlock();
+  }
+  // Allow manual manipulation of the lock:
+
+  void unlock() {
+    pthread_mutex_unlock(m_pMutex);
+  }
+  void lock() {
+    pthread_mutex_lock(m_pMutex);
+  }
+  // It is important to define the following as private to
+  // ensure this mutex is not duplicated:
+private:
+  CCriticalRegion(const CCriticalRegion& rhs);
+  CCriticalRegion& operator=(const CCriticalRegion& rhs);
+};
+#endif
+
 /**
  *   The CChannel class implements transparently updated EPICS channels for C++
  * programs.  Objects require a two-phase construction, as we won't be sure of the
@@ -82,13 +152,9 @@ private:
   CConverter*   m_pConverter;
   Slot          m_pHandler;
   void*         m_pHandlerData;
-#ifdef _WINDOWS
-  mutable CRITICAL_SECTION m_Monitor;
-#else
-  mutable pthread_mutex_t m_Monitor;
-#endif
-  
   evid          m_updateEventId;
+
+  mutable Mutex m_Monitor;
 public:
   CChannel(std::string name);
   virtual ~CChannel();
@@ -181,21 +247,25 @@ protected:
 
 class CConverter 
 {
+protected:
+  Mutex *m_pMutex;
 public:
+  
   virtual short  requestType() = 0;
   virtual std::string operator()(event_handler_args args) = 0;
   virtual std::string convert(const void* element) = 0;
   virtual std::vector<std::string> allowedValues() const = 0;
   virtual std::vector<std::string> getVector(chid channel,
-		  									 size_t max=0) = 0;
+					     size_t max=0,
+					     CCriticalRegion* pMonitor=0) = 0;
 protected:
   void*   getVectorData(chid channel,
-		                short format,
+			short format,
 #ifdef _WINDOWS
                         size_t itemsize,
 #endif
-		                size_t *numRead,
-		                size_t max=0);
+			size_t *numRead,
+			size_t max=0);
 };
 
 class CStringConverter : public CConverter 
@@ -206,7 +276,8 @@ public:
   virtual std::string convert(const void* element);
   virtual std::vector<std::string> allowedValues() const;
   virtual std::vector<std::string> getVector(chid channel,
-		  									 size_t max=0);
+					     size_t max=0,
+					     CCriticalRegion* pMonitor=0);
 
 };
 
@@ -220,7 +291,8 @@ public:
   virtual std::string convert(const void* element);
   virtual std::vector<std::string> allowedValues() const;
   virtual std::vector<std::string> getVector(chid channel,
-		  									 size_t max=0);
+					     size_t max=0,
+					     CCriticalRegion* pMonitor=0);
 };
 
 class CFloatConverter : public CConverter
@@ -231,19 +303,21 @@ public:
   virtual std::string convert(const void* element);
   virtual std::vector<std::string>  allowedValues() const;
   virtual std::vector<std::string> getVector(chid channel,
-		  									 size_t max=0);
+					     size_t max=0,
+					     CCriticalRegion* pMonitor=0);
 };
 
 class CEnumConverter : public CConverter
 {
-	std::vector<std::string> m_allowedValues;
-public:
-	virtual short requestType();
-	virtual std::string operator()(event_handler_args args);
-    virtual std::string convert(const void* element);
-	virtual std::vector<std::string> allowedValues() const;
-    virtual std::vector<std::string> getVector(chid channel,
-	   	  									   size_t max=0);
+  std::vector<std::string> m_allowedValues;
+ public:
+  virtual short requestType();
+  virtual std::string operator()(event_handler_args args);
+  virtual std::string convert(const void* element);
+  virtual std::vector<std::string> allowedValues() const;
+  virtual std::vector<std::string> getVector(chid channel,
+					     size_t max=0,
+					     CCriticalRegion* pMonitor=0);
 	
 };
 /*!
