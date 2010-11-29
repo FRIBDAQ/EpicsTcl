@@ -805,7 +805,7 @@ CFloatConverter::convert(const void* element)
 {
 	const dbr_double_t* value = static_cast<const dbr_double_t*>(element);
 	char buffer[100];
-	sprintf(buffer, "%g", *value);
+	sprintf(buffer, "%.7g", *value);
 	return string(buffer);
 }
 /*!
