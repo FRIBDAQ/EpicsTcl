@@ -115,3 +115,8 @@ Release 2.0
 
 Release 2.0-001
          - Remove all dependencies on Tk
+Release 2.0-003
+         - A bit of threading improvement
+         - Some factorization of code in CChannel.
+          (especially semaphore handling).
+         - Support linking against epics static libs.
