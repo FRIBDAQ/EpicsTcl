@@ -430,7 +430,7 @@ then
 
    EPICSSOFTWARE="controlpush epicsdisplay chanlog" # Add these directories to build.
    EPICS_INCLUDES="-I$epicsroot/include -I$epicsroot/include/$incsysdir"
-   EPICS_LDFLAGS="-L$epicsroot/lib/$libsysdir -lca"
+   EPICS_LDFLAGS="-L$epicsroot/lib/$libsysdir -lca -lCom -lrt"
    if test "$host_os" == "linux-gnu"
    then
       EPICS_LDFLAGS="$EPICS_LDFLAGS  -Wl,\"-rpath=$epicsroot/lib/$libsysdir\""
