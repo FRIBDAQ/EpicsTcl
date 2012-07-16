@@ -34,7 +34,7 @@
 
 using namespace std;
 
-
+static struct ca_client_context* pEpicsContext;
 
 static const char* version= "2.0";
 
@@ -47,9 +47,11 @@ static const int caPollInterval(16); // ms per epics poll.
 
 static void pollEpics(ClientData ignored) {
 
-  CChannel::doEvents(0.01);
-  Tcl_CreateTimerHandler(caPollInterval, pollEpics, (ClientData)NULL);
-
+  ca_attach_context(pEpicsContext);
+  while (1) {
+    CChannel::doEvents(0.0);
+    //  Tcl_CreateTimerHandler(caPollInterval, pollEpics, (ClientData)NULL);
+  }
 }
 
 
@@ -62,6 +64,7 @@ __declspec(dllexport)
   int Epics_Init(Tcl_Interp* pInterp)
   {
 
+    Tcl_ThreadId pollId;
 #ifdef USE_TCL_STUBS
     Tcl_InitStubs(pInterp, "8.3", 0);
 #endif
@@ -70,8 +73,10 @@ __declspec(dllexport)
 
     CTCLInterpreter* pI = new CTCLInterpreter(pInterp);	
     new CTCLEpicsCommand(*pI);
-    pollEpics((ClientData)NULL);
-
+    // pollEpics((ClientData)NULL);
+    ca_context_create(ca_enable_preemptive_callback);
+    pEpicsContext = ca_current_context();
+    Tcl_CreateThread(&pollId, pollEpics, NULL, TCL_THREAD_STACK_DEFAULT, TCL_THREAD_NOFLAGS);
 
 
     return TCL_OK;		// Don't start deadlock killer.

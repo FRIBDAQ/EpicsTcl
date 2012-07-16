@@ -77,7 +77,7 @@ libepics_la_LDFLAGS = 	$(THREADFLAGS) -version-info 2:0:0 $(OSLDFLAGS)
 
 ####### The Tcl Widgets.
 
-PKGDIR=$(prefix)/TclLibs/widgets
+PKGDIR=@prefix@/TclLibs/widgets
 
 PACKAGES = meter.tcl bcmMeter.tcl epicsLabel.tcl \
 	radioMatrix.tcl epicsEnumeratedControl.tcl \
@@ -144,13 +144,14 @@ install-exec-local: $(MANPAGES)
 	$(INSTALL_SCRIPT) $(PACKAGES) $(PKGDIR)
 	echo "pkg_mkIndex $(PKGDIR) *.tcl" >makeindex.tcl
 	$(TCLSH_CMD) <makeindex.tcl
+	$(INSTALL_SCRIPT) epicsServer.tcl @bindir@
 
 
 #  This is to get the epics library put in the right place after install:
 
 install-data-local:
-	$(mkinstalldirs) $(prefix)/TclLibs
-	-cp $(prefix)/lib/libepics* $(prefix)/TclLibs
+	$(mkinstalldirs) @prefix@/TclLibs
+	-cp @libdir@/libepics* $(prefix)/TclLibs
 	echo "package ifneeded epics 2.0 [list load [file join \$$dir libepics$(SLIBEXT)]]"  \
 		>> $(prefix)/TclLibs/pkgIndex.tcl;
 
