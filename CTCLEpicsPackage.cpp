@@ -36,7 +36,7 @@ using namespace std;
 
 static struct ca_client_context* pEpicsContext;
 
-static const char* version= "2.0";
+static const char* version= "2.1";
 
 static const int caPollInterval(16); // ms per epics poll.
 

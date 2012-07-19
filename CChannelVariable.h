@@ -70,7 +70,7 @@ public:
 
   // The function called on trace:
 
-  virtual char* operator()(char* pName,
+  virtual const  char* operator()(char* pName,
 			   char* pSubscript,
 			   int   flags);
   void Reference();

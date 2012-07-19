@@ -1,5 +1,6 @@
 lib_LTLIBRARIES = libException.la libtclPlus.la libepics.la
 
+ACLOCAL_AMFLAGS= -I m4
 
 INCLUDES= $(THREADFLAGS) @TCL_FLAGS@  @EPICS_BIN@ @EPICS_INCLUDES@ \
 	-DTCL_THREADS
@@ -87,6 +88,8 @@ PACKAGES = meter.tcl bcmMeter.tcl epicsLabel.tcl \
 	epicsMeter.tcl epicsStripChart.tcl epicsgraph.tcl \
 	pollmanager.tcl epicsPullDown.tcl
 
+TCLPROGRAMS=epicsServer.tcl
+
 # Man pages:
 
 WEBXMLFILES= manual.xml bcmMeter.xml epicsLabel.xml	\
@@ -120,6 +123,8 @@ MANPAGES =  intro.1tcl bcmMeter.1tcl epicsLabel.1tcl \
 
 WEBDOCS = epics.pdf
 
+
+
 $(WEBDOCS): $(WEBXMLFILES)
 	$(HCDOCBOOK) manual.xml
 	$(DVIPDF)     manual.dvi
@@ -144,7 +149,7 @@ install-exec-local: $(MANPAGES)
 	$(INSTALL_SCRIPT) $(PACKAGES) $(PKGDIR)
 	echo "pkg_mkIndex $(PKGDIR) *.tcl" >makeindex.tcl
 	$(TCLSH_CMD) <makeindex.tcl
-	$(INSTALL_SCRIPT) epicsServer.tcl @bindir@
+	$(INSTALL_SCRIPT) $(TCLPROGRAMS) @bindir@
 
 
 #  This is to get the epics library put in the right place after install:
@@ -152,7 +157,7 @@ install-exec-local: $(MANPAGES)
 install-data-local:
 	$(mkinstalldirs) @prefix@/TclLibs
 	-cp @libdir@/libepics* $(prefix)/TclLibs
-	echo "package ifneeded epics 2.0 [list load [file join \$$dir libepics$(SLIBEXT)]]"  \
+	echo "package ifneeded epics 2.1 [list load [file join \$$dir libepics$(SLIBEXT)]]"  \
 		>> $(prefix)/TclLibs/pkgIndex.tcl;
 
 
@@ -209,4 +214,4 @@ endif
 
 ## Tarball generation stuff:
 
-EXTRA_DIST= $(PACKAGES) $(XMLFILES)
+EXTRA_DIST= $(PACKAGES) $(XMLFILES) $(TCLPROGRAMS)

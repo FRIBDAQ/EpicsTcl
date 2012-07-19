@@ -120,3 +120,6 @@ Release 2.0-003
          - Some factorization of code in CChannel.
           (especially semaphore handling).
          - Support linking against epics static libs.
+Release 2.1
+	- Rewrite CChannel to simplify and therefore ensure that
+          memory management and synchronization are more likely to be right.
