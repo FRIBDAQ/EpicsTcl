@@ -1,0 +1,125 @@
+March 22, 2007 - Use CChannelVariable derived from CTCLVariable so that
+                 epics linked variables are bi-directional.
+               - Formally set release level to 1.2
+               - Manage duplicate channel definitions by using reference counted
+                 channels.
+March 26, 2007 - Correct docs for epicsTypeNGo - It should be used as
+		 controlwidget::epicsTypNGo
+               - Correct docs for meter widget.. in some cases the
+	         phrase 'meter height' is more appropriately 
+	         meter indicator height.
+               - Support mult-way links of epics PV's to tcl variables.
+               - support epicschannel listlinks subcommand.
+               - First shot at measuring text so it will fit inside the
+                 window even on Weird-ass MAC's for the meter widget.
+March 27, 2007 - Implement epicsMeter widget.  This widget provides a meter
+                 for any epics channel .. not just a BCM.
+               - Supply a controlwidget::epicsBCMMeter alias to 
+	         controlwidget::bcmMeter to match the normal epics naming 
+                 scheme
+               - Correct epics.xml so that:
+                 o first example uses a label not an entry.
+                 o plug the use of the epics widgets rather than
+                   roll your own.
+                 o Build epicsStripChart widget.. need docs.
+March 28, 2007 - Fix timebase error in stripchart.
+               - Fix bindDown typo in led.
+               - Hunt for tcl development stuff in /opt/local/{include,lib}
+                 where the OS-X darwin ports put it.. that's the preferred
+                 tcl/tk version for us since it supports a good BLT.
+               - Add epicsStripChart documentation.
+March 29, 2007 - Remove last debugging outputs from epicsStripChart.tcl
+               - Add examples to the epicsStripChart docs.  
+   	       - Remove empty doc file ClanguageTraceCallbacks.xml
+               - set configure.in to 1.2-pre1  will be final when
+  		 Skip's shopping list is completely implemented.
+April 24, 2007 - Added epicsGraph widget.. This is the x/y plot widget
+                 on Skip's shopping list for epics widgets.
+April 25, 2007 - Add stuff needed to build windows targets.
+               - Added docs for epicsGraph widget.
+April 26, 2007 - Ensure that the windows port still compiles/works
+                 on linux
+	       - Add a sample application to the epicsgraph manpage.
+June 5, 2007   - Use a per channel semaphore to ensure that data structures
+                 in the channel are appropriately synchonized between 
+                 epics and application threads (notifications can be
+                 in an arbitrary thread).
+               - Ensure that Tcl calls triggered by a notification
+                 are done by posting events to the Tcl interpreter so that
+                 they get done in the contex of the Tcl thread rather than
+                 violating the Tcl apartment model of threading.
+               - In epicsStripChart.tcl:
+                 o Use a more efficient way to trim back the history lists.
+                 o Do timing based on an absolute time offset relative to the
+                   start time and timebase rather than accumulating times and
+                   hence errors in the offsets.
+               - Document the need to define LD_ASSUME_KERNEL=2.4.9
+                 for some linux systems.
+  	       - Deal with some timing holes revolving around channel deletion:
+                 o Don't allow channel command update handlers to run on 
+                   channel commands that were destroyed.
+                 o When channels are deleted prior to being connected, 
+                   change their connection handlers to something safe and
+                   null so that update handlers won't get established if they
+                   get connected in the timing hole between object deletion
+                   and epics channel run-down.
+Release 1.3   Released June 6, 2007
+
+Release 1.3-001
+	- Fix potential compute bound deadlock with circular traces when the
+          same tcl variable is bound more than once to a channel >and<
+          that channel shows a high rate of change.
+        - Deployed June 15, 2007.
+
+Release 1.3.002
+- BZ302 - Ensure that label options can propagate to the underlying label
+          widgets for both epicsLabel and epicsLabelWithUnits.
+- BZ304 - Ensure that the led widget gets initialized with the current value
+          of the variable once all the widgets are made.
+- Make the typengo widget restore the prior type-in value on
+  focus out or validation failures.
+- Add new layout options to typengo:
+   -orient vertical | horizontal
+   -showlabel true  | false
+- BZ306 - Allow button to expand with frame.
+
+Release 1.3-003
+- BZ 310 - Capture initial state of epicsbuttons.
+
+Release 1.4
+- BZ 308 - Add a widget adaptor (and documentation) for an epicsCommandButton.
+           This is a tk button that sets a channel to a value and makes
+           not assumptions about the rendering of the button.
+- BZ 312 - Make the blt graphical widgets (epicsStripChart and
+           epicsGraph widget adaptors so that bindings work better.
+- BZ 309 - Added epicsPullDown widget; configurable popup menu attached
+           to a channel
+- BZ 311 - Added 'values' subcommand for channel commands.
+         - Added an enumerated type converter to CChannel.
+
+Release 1.4-001
+- BZ 311 - Add ability to get number of elements in a channel.
+         - Add ability to read an array from a channel.
+         - Add ability to write an array to a channel.
+
+Release 1.4.002
+         - Default the -row, -column options of the radioMatrix
+           widget to 1.
+         - Make attempts to link a variable to two different channels
+           an error.
+
+Release 2.0
+         - Allow package to be used in Tcl programs that don't use
+           Tk.. the event loop must be used, however to accept Epics
+           changes.
+
+Release 2.0-001
+         - Remove all dependencies on Tk
+Release 2.0-003
+         - A bit of threading improvement
+         - Some factorization of code in CChannel.
+          (especially semaphore handling).
+         - Support linking against epics static libs.
+Release 2.1
+	 - put the epics poll in a separate thread.
+	

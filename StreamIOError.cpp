@@ -48,10 +48,10 @@ static const char* Copyright= "(C) Copyright Michigan State University 1936, All
 #include "StreamIOError.h"    				
 #include <string.h>
 
-static char* pCopyrightNotice = 
+static const char* pCopyrightNotice = 
 "(C) Copyright 1999 NSCL, All rights reserved StreamIOError.cpp \n";
 
-static char* pErrorMessages[] =
+static  char* pErrorMessages[] =
 {
   "End of file encountered (prematurely) ",
   "Bad bit set in ios:: ",

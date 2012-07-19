@@ -485,8 +485,10 @@ CChannel::StateHandler(connection_handler_args args)
 
   if (op == CA_OP_CONN_UP) {	// Just connected...
     pChannel->m_fConnected = true;
-    if(!pChannel->m_fUpdateHandlerEstablished) {
+    if (!pChannel->m_pConverter) {
       pChannel->m_pConverter = CConversionFactory::Converter(ca_field_type(id));
+    }
+    if(!pChannel->m_fUpdateHandlerEstablished) {
 
       ca_add_event(pChannel->m_pConverter->requestType(), 
 		   id, UpdateHandler, (void*)pChannel, &(pChannel->m_updateEventId));
@@ -524,7 +526,7 @@ CChannel::UpdateHandler(event_handler_args args)
       pChannel->m_LastUpdateTime = now;
       pChannel->m_sValue = (*(pChannel->m_pConverter))(args);
 
-      // If necessary, invoke the user's update handler.
+      // If necessary, invoke the user's update handler.1
 
       if(pChannel->m_pHandler) {
 	(pChannel->m_pHandler)(pChannel, pChannel->m_pHandlerData);
