@@ -677,7 +677,7 @@ CTCLChannelCommand::update(Tcl_Event* p, int flags)
     pEvent->pChangedChannel->UpdateLinkedVariable();
   }
   // Need to release the command name storage:
-
+ 
   Tcl_Free(pEvent->channelName);
 
   return 1;
