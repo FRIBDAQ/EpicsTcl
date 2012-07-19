@@ -24,6 +24,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdint.h>
+
 
 #ifndef _WINDOWS
 #ifdef Linux
@@ -100,19 +102,16 @@ CChannel::~CChannel()
     CCriticalRegion enter(m_Monitor);
 
     if (m_fConnected || (m_fUpdateHandlerEstablished)) {
-      ca_clear_event(m_updateEventId);	// Stop event update event dispatching.
+      ca_clear_subscription(m_updateEventId);	// Stop event update event dispatching.
     }
-    else {
-      // Need to establish a 'null' connection event as it may yet connect:
-      // We'll establish something that just returns:
 
-      ca_change_connection_event(m_nChannel, nullConnectionHandler);
-    }
     ca_clear_channel(m_nChannel);
 
   }
   doEvents(0.1);		// Let the events run down.
+
   // Now kill off the converter and the rest of our stuff.
+
   {
     CCriticalRegion enter(m_Monitor);
     delete converter;
@@ -168,7 +167,8 @@ CChannel::Connect()
   CCriticalRegion Monitor(m_Monitor);   // Just in case...
 
   if(!m_fConnectionHandlerEstablished) {
-    ca_search_and_connect(m_sName.c_str(), &m_nChannel, StateHandler, (void*)this);
+    ca_create_channel(m_sName.c_str(), StateHandler, (void*)this,
+		      0, &m_nChannel);
   }
   m_fConnectionHandlerEstablished = true;
 }
@@ -194,6 +194,8 @@ CChannel::getValue() const
   string value =  m_sValue;              // it's copied for return.
   return value;
 }
+
+
 
 /*!
  * Return the set of allowed values for the channel.
@@ -233,18 +235,38 @@ CChannel::size() const
 }
 /*!
  *  Returns a vector value channel:
- * An empty vector is returned if fails.
+ *  Throws an exception if the channel is not connected.
+ *
+ *  @param max - maximum number of elements that will be filled:
+ *               - 0 - all elements.
+ *               - If larger than the vector size the full vector is returned.
+ *
  */
-vector<string>
+std::vector<std::string>
 CChannel::getVector(size_t max)
 {
   CCriticalRegion Monitor(m_Monitor);
-  if (m_pConverter) {
-    return  m_pConverter->getVector(m_nChannel, max, &Monitor);
-  }
-  else {
-    vector<string> empty;
-    return empty;
+  if (m_fConnected) {
+    size_t elements;
+    if ((max == 0) || (max > m_VectorValue.size())) {
+      elements = m_VectorValue.size();
+    } else {
+      elements = m_VectorValue.size();
+    }
+
+    // The stuff below assumes that either
+    // - typically we want all or most of the vector.
+    // - or vectors are short:
+    //
+    std::vector<string>   result = m_VectorValue;
+
+    while(result.size() > elements) {
+      result.pop_back();	// Trim the vector from the rear.
+    }
+    
+    return result;
+  } else {
+    throw "Channel not connected";
   }
 }
 /*!
@@ -490,13 +512,18 @@ CChannel::StateHandler(connection_handler_args args)
     }
     if(!pChannel->m_fUpdateHandlerEstablished) {
 
-      ca_add_event(pChannel->m_pConverter->requestType(), 
-		   id, UpdateHandler, (void*)pChannel, &(pChannel->m_updateEventId));
-      pChannel->m_fUpdateHandlerEstablished;
+      ca_create_subscription(pChannel->m_pConverter->requestType(),
+			    0, id, DBE_VALUE, 
+			    UpdateHandler, (void*)pChannel,
+			    &(pChannel->m_updateEventId));
+
+      pChannel->m_fUpdateHandlerEstablished = true;
     }
   }
   else if (op == CA_OP_CONN_DOWN) { // just disconnected
     pChannel->m_fConnected = false;
+    ca_clear_subscription(pChannel->m_updateEventId);
+    pChannel->m_fUpdateHandlerEstablished = false;
     delete pChannel->m_pConverter;
     pChannel->m_pConverter = 0;
   }
@@ -504,6 +531,44 @@ CChannel::StateHandler(connection_handler_args args)
     // TODO: Figure out appropriate error handling here.
   }
 }
+/**
+ * The actual update handler.
+ * @param args -. Event handler structure that contains everything we need to
+ *                process the event.
+ *
+ * The caller ensures that the status is ECA_NORMAL for us
+ */
+void
+CChannel::Update(event_handler_args args)
+{
+
+  CCriticalRegion lock(m_Monitor);	// This entire functions is critical.
+
+  // There should be a converter but double check just in case:
+
+  if(m_pConverter) {
+    
+    // Update the last update time.
+
+    time_t now = time(NULL);
+    m_LastUpdateTime = now;
+
+    // Update the simple string value.
+    
+    m_sValue  = (*m_pConverter)(args);
+    
+    // Update the cached vector value
+
+    m_VectorValue = m_pConverter->getVector(args);
+  }
+  // Fire any slot function...with the mutex held to ensure stability:
+
+  if (m_pHandler) {
+    (*m_pHandler)(this, m_pHandlerData);
+  }
+  
+}  
+
 /**
  * Called in response to a channel update event.
  * - args.usr  - points to the object associated with the event.
@@ -518,20 +583,7 @@ CChannel::UpdateHandler(event_handler_args args)
 
   if(args.status == ECA_NORMAL) {
     CChannel* pChannel = (CChannel*)args.usr;
-    CCriticalRegion Monitor(pChannel->m_Monitor);   // Ensure the world is ours.
-
-
-    if(pChannel->m_pConverter) {
-      time_t    now      = time(NULL); // Last update time.
-      pChannel->m_LastUpdateTime = now;
-      pChannel->m_sValue = (*(pChannel->m_pConverter))(args);
-
-      // If necessary, invoke the user's update handler.1
-
-      if(pChannel->m_pHandler) {
-	(pChannel->m_pHandler)(pChannel, pChannel->m_pHandlerData);
-      }
-    }
+    pChannel->Update(args);
   }
   else {
     // TODO:  Figure out appropriate error action if any.
@@ -569,75 +621,6 @@ CConversionFactory::Converter(short type) {
 }
 
 
-/////////////////////////////////////////////////////////////
-/*
- * Utiltity converter function.. Retreives array data from the
- * specified channel.  If the data cannot be retrieved,
- * a null pointer is returned.  Otherwise, a pointer to the
- * data (dynamically allocated via malloc) is returned.
- * It is up to the caller to 
- * - Know how to interpret the actual data.
- * - free, the data later.
- * Note that we use malloc/free to manage storage because
- * - This is not object data.
- * - We don't know the actual underlying type (well we do but
- *   we don't want to know as that causes software scalability
- *   problems as we add converters.
- * Parameters:
- *    channel    - Channel id of the channel to request data from.
- *    format     - Format of the data.
- *    numRead    - pointer to a final count, 0 stored if nothing
- *                 is gotten.
- *    max        - Maximum number of elements to request.
- *                 o If zero, the entire array is returned.
- *                 o If greater than the size of the array,
- *                   the entire array only is returned.
- */
-void*
-CConverter::getVectorData(chid channel,
-			  short format,
-#ifdef _WINDOWS
-                          size_t  itemsize,
-#endif
-			  size_t* numRead,
-			  size_t max)
-{
-	*numRead = 0;               // Pessimistic guess.
-	
-	// Figure out the number of elements we'll request as well
-	// as how much storage that will require.
-	
-	int arraySize = ca_element_count(channel);
-	int requestSize = max;
-	
-	if ((max == 0) || (max > arraySize)) {
-		requestSize = arraySize;
-	}
-#ifdef _WINDOWS
-    size_t bytesRequired = itemsize*requestSize;
-#else
-	size_t bytesRequired = dbr_size_n(format, requestSize);
-#endif
-	
-	void* pDataStorage = malloc(bytesRequired);
-	if (pDataStorage) {
-		int status = ca_array_get(format, requestSize, 
-					  channel, pDataStorage);
-		while (ca_pend_io(0.01) != ECA_NORMAL) {} // Wait for data.
-		//
-		// On get failure, just free storage and arrange
-		// for a null pointer to be returned.
-		//
-		if (status != ECA_NORMAL) {
-			free(pDataStorage);
-			pDataStorage = (void*)NULL;
-		}
-		else {
-			*numRead = requestSize;    // Ensure the right count 
-		}
-	}
-	return pDataStorage;
-}
 
 /////////////////////////////////////////////////////////////
 /*!
@@ -683,29 +666,19 @@ CStringConverter::allowedValues() const
  * Return a converted vector of values.
  */
 vector<string>
-CStringConverter::getVector(chid channel, size_t max,
-			    CCriticalRegion* pMonitor)
+CStringConverter::getVector(event_handler_args args)
 {
-	vector<string> result;
-	size_t         numRead;
-	if(pMonitor) pMonitor->unlock();
-	void* pRawData = getVectorData(channel, requestType(),
-#ifdef _WINDOWS
-				       sizeof(dbr_string_t),
-#endif
-				       &numRead, max);
-	if(pMonitor) pMonitor->lock();
 
-	if (pRawData) {
-	  dbr_string_t* pItem = static_cast<dbr_string_t*>(pRawData);
-	  for (int i = 0; i < numRead; i++) {
-	    string value = convert(pItem);
-	    result.push_back(value);
-	    pItem++;
-	  }
-	  free(pRawData);
+	vector<string> result;
+	long           nStrings = args.count;
+	const dbr_string_t*    pStrings = reinterpret_cast<const dbr_string_t*>(args.dbr);
+	
+	for (long i= 0; i < nStrings; i++) {
+	  result.push_back(convert(*pStrings));
+	  pStrings++;
 	}
 	return result;
+
 }
 ////////////////////////////////////////////////////////////
 /*!
@@ -753,29 +726,19 @@ CIntegerConverter::allowedValues() const
  * Get and convert a vector of values.
  */
 vector<string>
-CIntegerConverter::getVector(chid channel, size_t max,
-			     CCriticalRegion* pMonitor)
+CIntegerConverter::getVector(event_handler_args args)
 {
-	vector<string> result;
-	size_t numRead;
-	if (pMonitor) pMonitor->unlock();
-	void* pRawData = getVectorData(channel, requestType(),
-#ifdef _WINDOWS
-                                    sizeof(dbr_long_t),
-#endif
-				       &numRead, max);
-	if(pMonitor) pMonitor->lock();
 
-	if (pRawData) {
-		dbr_long_t* pElement = static_cast<dbr_long_t*>(pRawData);
-		for (int i = 0; i < numRead; i++) {
-			string item = convert(pElement);
-			result.push_back(item);
-			pElement++;
-		}
-		free(pRawData);
-	}
-	return result;
+  long          count   = args.count;
+  const dbr_long_t*   pValues = reinterpret_cast<const dbr_long_t*>(args.dbr);
+  vector<string> result;
+
+  for (long i =0; i < count; i++) {
+    result.push_back(convert(pValues));
+    pValues++;
+  }
+  return result;
+
 }
 ////////////////////////////////////////////////////////////
 
@@ -825,28 +788,18 @@ CFloatConverter::allowedValues() const
  *   Return a converted vector.
  */
 vector<string>
-CFloatConverter::getVector(chid channel, size_t max,
-			   CCriticalRegion* pMonitor)
+CFloatConverter::getVector(event_handler_args args)
 {
-	vector<string> result;
-	size_t numRead;
-	if(pMonitor)pMonitor->unlock();
-	void* pRawRead = getVectorData(channel, requestType(), 
-#ifdef _WINDOWS
-				       sizeof(double),
-#endif
-				       &numRead, max);
-	if (pMonitor) pMonitor->lock();
-	if (pRawRead) {
-		double* pValue = static_cast<double*>(pRawRead);
-		for (int i=0; i < numRead; i++) {
-			string value = convert(pValue);
-			result.push_back(value);
-			pValue++;
-		}
-		free(pRawRead);
-	}
+	vector<string>       result;
+	long                 nValues = args.count;
+	const dbr_double_t*  pValues = reinterpret_cast<const dbr_double_t*>(args.dbr);
+
+	for (long i = 0; i <nValues; i++) {
+	  result.push_back(convert(pValues));
+	  pValues++;
+	} 
 	return result;
+
 }
 ///////////////////////////////////////////////////////////////
 /*!
@@ -919,27 +872,16 @@ CEnumConverter::allowedValues() const
  * Return a vector of converted values
  */
 vector<string>
-CEnumConverter::getVector(chid channel, size_t max,
-			  CCriticalRegion* pMonitor)
+CEnumConverter::getVector(event_handler_args args)
 {
 	vector<string> result;
-	
-	size_t nRead;
-	if(pMonitor) pMonitor->lock();
-	void* pRawData = getVectorData(channel, requestType(), 
-#ifdef _WINDOWS
-                                    sizeof(dbr_gr_enum),
-#endif
-				       &nRead,  max);
-	if (pMonitor) pMonitor->unlock();
-	if (pRawData) {
-		dbr_gr_enum* pArray = static_cast<dbr_gr_enum*>(pRawData);
-		for(int i=0; i < nRead; i++) {
-			string value = convert(pArray);
-			result.push_back(value);
-			pArray++;
-		}
-		free(pRawData);
+	long           nItems = args.count;
+	dbr_gr_enum*   pItems = reinterpret_cast<dbr_gr_enum*>(args.count);
+
+	for (long i = 0; i < nItems; i++) {
+	  result.push_back(convert(pItems));
+	  pItems++;
 	}
 	return result;
+
 }

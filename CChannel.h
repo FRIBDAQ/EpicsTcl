@@ -148,6 +148,7 @@ private:
   bool          m_fUpdateHandlerEstablished;
   bool          m_fConnectionHandlerEstablished;
   std::string   m_sValue;
+  std::vector<std::string> m_VectorValue;
   time_t        m_LastUpdateTime;
   CConverter*   m_pConverter;
   Slot          m_pHandler;
@@ -179,7 +180,7 @@ public:
   std::vector<std::string> getAllowedValues() const;
 
   size_t       size()  const;
-  std::vector<std::string> getVector(size_t max=0);
+  std::vector<std::string> getVector(size_t max = 0);
   
   void setSlot(Slot handler, void* data);
 
@@ -199,6 +200,10 @@ public:
   // Class level operations.
 
   static void doEvents(float seconds);
+
+ private:
+  void StateChange(connection_handler_args args);
+  void Update(event_handler_args args);
 
 protected:
   static void StateHandler(connection_handler_args args);
@@ -255,17 +260,8 @@ public:
   virtual std::string operator()(event_handler_args args) = 0;
   virtual std::string convert(const void* element) = 0;
   virtual std::vector<std::string> allowedValues() const = 0;
-  virtual std::vector<std::string> getVector(chid channel,
-					     size_t max=0,
-					     CCriticalRegion* pMonitor=0) = 0;
-protected:
-  void*   getVectorData(chid channel,
-			short format,
-#ifdef _WINDOWS
-                        size_t itemsize,
-#endif
-			size_t *numRead,
-			size_t max=0);
+  virtual std::vector<std::string> getVector(event_handler_args args) = 0;
+
 };
 
 class CStringConverter : public CConverter 
@@ -275,9 +271,7 @@ public:
   virtual std::string operator()(event_handler_args args);
   virtual std::string convert(const void* element);
   virtual std::vector<std::string> allowedValues() const;
-  virtual std::vector<std::string> getVector(chid channel,
-					     size_t max=0,
-					     CCriticalRegion* pMonitor=0);
+  virtual std::vector<std::string> getVector(event_handler_args args);
 
 };
 
@@ -290,9 +284,7 @@ public:
   virtual std::string operator()(event_handler_args args);
   virtual std::string convert(const void* element);
   virtual std::vector<std::string> allowedValues() const;
-  virtual std::vector<std::string> getVector(chid channel,
-					     size_t max=0,
-					     CCriticalRegion* pMonitor=0);
+  virtual std::vector<std::string> getVector(event_handler_args args);
 };
 
 class CFloatConverter : public CConverter
@@ -302,9 +294,7 @@ public:
   virtual std::string operator()(event_handler_args args);
   virtual std::string convert(const void* element);
   virtual std::vector<std::string>  allowedValues() const;
-  virtual std::vector<std::string> getVector(chid channel,
-					     size_t max=0,
-					     CCriticalRegion* pMonitor=0);
+  virtual std::vector<std::string> getVector(event_handler_args args);
 };
 
 class CEnumConverter : public CConverter
@@ -315,9 +305,7 @@ class CEnumConverter : public CConverter
   virtual std::string operator()(event_handler_args args);
   virtual std::string convert(const void* element);
   virtual std::vector<std::string> allowedValues() const;
-  virtual std::vector<std::string> getVector(chid channel,
-					     size_t max=0,
-					     CCriticalRegion* pMonitor=0);
+  virtual std::vector<std::string> getVector(event_handler_args args);
 	
 };
 /*!
