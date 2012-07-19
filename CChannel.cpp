@@ -876,7 +876,7 @@ CEnumConverter::getVector(event_handler_args args)
 {
 	vector<string> result;
 	long           nItems = args.count;
-	dbr_gr_enum*   pItems = reinterpret_cast<dbr_gr_enum*>(args.count);
+	const dbr_gr_enum*   pItems = reinterpret_cast<const dbr_gr_enum*>(args.dbr);
 
 	for (long i = 0; i < nItems; i++) {
 	  result.push_back(convert(pItems));

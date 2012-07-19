@@ -68,7 +68,7 @@ CTCLVariable::~CTCLVariable ( ) {
 //  Operation Type:
 //     Trace handler.
 //
-char*  
+const char*  
 CTCLVariable::operator()(char* pName, char* pSubscript, int Flags) 
 {
 // Called when trace is enabled on a variable.
@@ -112,7 +112,7 @@ CTCLVariable::operator()(char* pName, char* pSubscript, int Flags)
 //  Operation Type:
 //     contextualizer
 //
-char* 
+const char* 
 CTCLVariable::TraceRelay(ClientData pObject, Tcl_Interp* pInterpreter, 
 			 tclConstCharPtr pName,
 			 tclConstCharPtr pIndex,
@@ -318,7 +318,8 @@ CTCLVariable::Trace(int flags, char* pIndex)
   if(m_fTracing)UnTrace();	// Remove any trace already set.
   int status = Tcl_TraceVar2(pInterp->getInterpreter(), 
 			     (char*)(m_sVariable.c_str()), pIndex,
-			     flags, TraceRelay, (ClientData)this);
+			     flags, 
+			     (Tcl_VarTraceProc*)(TraceRelay), (ClientData)this);
   if(status == TCL_OK) {
     m_fTracing = kfTRUE;
     m_nTraceFlags = flags;
@@ -348,7 +349,8 @@ CTCLVariable::UnTrace()
 		    (char*)(m_sVariable.c_str()), 
 		    (char*)(m_sTraceIndex.size() ? m_sTraceIndex.c_str() : 
                                            (char*)kpNULL),
-		    m_nTraceFlags, TraceRelay, (ClientData)this);
+		    m_nTraceFlags, 
+		    (Tcl_VarTraceProc*)(TraceRelay), (ClientData)this);
   }
 
 }
