@@ -1,5 +1,6 @@
 lib_LTLIBRARIES = libException.la libtclPlus.la libepics.la
 
+ACLOCAL_AMFLAGS= -I m4
 
 INCLUDES= $(THREADFLAGS) @TCL_FLAGS@  @EPICS_BIN@ @EPICS_INCLUDES@ \
 	-DTCL_THREADS
