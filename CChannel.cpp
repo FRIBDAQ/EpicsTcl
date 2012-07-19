@@ -258,6 +258,8 @@ CChannel::getVector(size_t max)
     // - typically we want all or most of the vector.
     // - or vectors are short:
     //
+
+
     std::vector<string>   result = m_VectorValue;
 
     while(result.size() > elements) {
@@ -546,6 +548,7 @@ CChannel::Update(event_handler_args args)
 
   CCriticalRegion lock(m_Monitor);	// This entire functions is critical.
 
+
   // There should be a converter but double check just in case:
 
   if(m_pConverter) {
@@ -585,20 +588,7 @@ CChannel::UpdateHandler(event_handler_args args)
 
   if(args.status == ECA_NORMAL) {
     CChannel* pChannel = (CChannel*)args.usr;
-    CCriticalRegion Monitor(pChannel->m_Monitor);   // Ensure the world is ours.
-
-
-    if(pChannel->m_pConverter) {
-      time_t    now      = time(NULL); // Last update time.
-      pChannel->m_LastUpdateTime = now;
-      pChannel->m_sValue = (*(pChannel->m_pConverter))(args);
-
-      // If necessary, invoke the user's update handler.1
-
-      if(pChannel->m_pHandler) {
-	(pChannel->m_pHandler)(pChannel, pChannel->m_pHandlerData);
-      }
-    }
+    pChannel->Update(args);
   }
   else {
     // TODO:  Figure out appropriate error action if any.
@@ -808,7 +798,6 @@ CFloatConverter::getVector(event_handler_args args)
 	vector<string>       result;
 	long                 nValues = args.count;
 	const dbr_double_t*  pValues = reinterpret_cast<const dbr_double_t*>(args.dbr);
-
 	for (long i = 0; i <nValues; i++) {
 	  result.push_back(convert(pValues));
 	  pValues++;
