@@ -1,6 +1,6 @@
 #!/usr/bin/tclsh
 
-set epicsTclPath /opt/lucid/epicstcl/TclLibs
+set epicsTclPath /usr/local/lib
 
 
 #  Packages
@@ -23,21 +23,6 @@ array set pendingRequests [list];        # array of requests that are pending.
 array set knownChannels   [list];	# Set of channels we are monitoring.
 array set values          [list];	# Array of values.
 array set units           [list];	# array of units.
-
-##
-#  Delete all epics channels and associated data:
-#
-proc purgeChannels {} {
-    foreach channel [array names ::knownChannels] {
-	catch {
-	    $channel delete
-	    unset ::knownChannels($channel)
-	    unset ::values($channel)
-	    unset ::units($channel)
-	}; 
-       
-    }
-}
 
 #------------------------------------------------------------------------
 #
@@ -124,6 +109,7 @@ package require epics;		# Now we can load epics now that all paths are in.
 
 #
 proc readRequest socket {
+
     set request [gets $socket]
     fileevent $socket readable ""
 
@@ -149,16 +135,18 @@ proc readRequest socket {
 	
 	set requestList [list $socket $::tick $request]
 	set ::pendingRequests($::requestIndex) $requestList
-	incr $::requestIndex
+	incr ::requestIndex
 	
 	# See if the request and others can be satisfied:
 	
 	satisfyRequests
-    }]
+    } msg]
     # Any error merits closing the socket. now.
     #
     if {$status} {
+	puts "Error in request: $msg $::errorInfo"
 	close $socket
+	return
     }
 }
 #
@@ -305,10 +293,6 @@ proc epicsUpdate {name index op} {
 
 }
 
-proc periodicallyPurgeChannels ms {
-    after $ms [list periodicallyPurgeChannels $ms]
-    purgeChannels
-}
 
 trace add variable values write epicsUpdate
 trace add variable units  write epicsUpdate
@@ -319,7 +303,7 @@ trace add variable units  write epicsUpdate
 # Main loop.
 #
 
-# periodicallyPurgeChannels [expr 60*1000]
+
 while 1 {
     vwait tick
     processTimeouts
