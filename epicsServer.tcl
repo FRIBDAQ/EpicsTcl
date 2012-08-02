@@ -1,6 +1,8 @@
 #!/usr/bin/tclsh
 
-set epicsTclPath /usr/local/lib
+
+set here [file dirname [info script]]
+set epicsTclPath [file join [file normalize $here] .. TclLibs]
 
 
 #  Packages

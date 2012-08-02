@@ -144,7 +144,7 @@ man_MANS = $(MANPAGES)
 #### installation time stuff.
 
 install-exec-local: $(MANPAGES)
-	$(mkinstalldirs) $(PKGDIR) 
+	$(mkinstalldirs) $(PKGDIR) @bindir@
 	chmod o+rx $(PKGDIR)
 	$(INSTALL_SCRIPT) $(PACKAGES) $(PKGDIR)
 	echo "pkg_mkIndex $(PKGDIR) *.tcl" >makeindex.tcl

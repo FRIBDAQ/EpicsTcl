@@ -7,7 +7,7 @@ AM_CONFIG_HEADER(config.h)
 
 #    Separate device libraries.
 
-AM_INIT_AUTOMAKE(epicstcl, 2.2)  
+AM_INIT_AUTOMAKE(epicstcl, 2.2-001)  
 
 #
 #   The variable below should track the
@@ -36,9 +36,25 @@ then
    kernel_full_version="$(uname -r)"
    kernel_version="$(echo $kernel_full_version | cut -f1,2 -d.)"
    AC_MSG_RESULT([Building on $host_os kernel $kernel_version])  
+
+   arch="$(uname -m)"
+   case $arch in
+       i[[3456]]86)
+           libsysdir="linux-x86"
+           binsysdir="linux-x86"
+           ;;
+       x86_64)
+           libsysdir="linux-x86_64"
+           binsysdir="linux-x86_64"
+           ;;
+       *)
+           echo 'no idea how to deal with this architecture: ' $arch
+           exit
+           ;;
+   esac
+
+
    incsysdir="os/Linux"
-   libsysdir="linux-x86"     # God help me if I need x64.
-   binsysdir="linux-x86"
    OSLDFLAGS="-Wl,\"-rpath=$libdir\""
    SLIBEXT=".so"
    THREADFLAGS="-pthread -D_REENTRANT=1 -D_THREAD_SAFE=1"
@@ -384,8 +400,7 @@ X11LIBS="${X_LIBS} ${X_EXTRA_LIBS} -lXm -lXt -lX11"
 #
 #   Look for epics in:
 #    /usr/local/epics
-#    /opt/epics
-#    /soft/intel/epics   [nscl].
+#    /usr/lib/epics   [BNL].
 #    --with-epics-rootdir=
 # Underneath that we have (we require intel linux remember):
 #    include                  - the include directory
@@ -394,7 +409,7 @@ X11LIBS="${X_LIBS} ${X_EXTRA_LIBS} -lXm -lXt -lX11"
 #    bin/linux-x86/caRepeater - The caRepeater program.
 #
 
-epicstestdirs="/usr/local/epics /opt/epics /soft/intel/epics"
+epicstestdirs="/usr/local/epics /usr/lib/epics"
 haveepics="no"
 
 AC_MSG_CHECKING([ for epics includes, libs and binaries])
