@@ -1,0 +1,2 @@
+shlibs:Depends=epicstcl, libc6 (>= 2.2.5), libepics3.14.11, libgcc1 (>= 1:4.1.1), libstdc++6 (>= 4.6), tcl8.5 (>= 8.5.0)
+misc:Depends=

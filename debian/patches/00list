@@ -1,4 +1,0 @@
-makefile-am.dpatch
-makefile-am-headers.dpatch
-makefile-am-manpages.dpatch
-config-in.dpatch

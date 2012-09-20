@@ -1,3 +1,9 @@
+epicstcl (2.2-1) stable; urgency=low
+
+  * Updating for Squeeze/Wheezy and using Brookhaven's EPICS packages
+
+ -- Ryan Blair <blair@nscl.msu.edu>  Thu, 20 Sep 2012 10:39:13 -0400
+
 epicstcl (2.0-1) stable; urgency=low
 
   * Initial debianization for Debian GNU/Linux Lenny (5.0) release
