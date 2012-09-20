@@ -9,7 +9,7 @@ INCLUDES= $(THREADFLAGS) @TCL_FLAGS@  @EPICS_BIN@ @EPICS_INCLUDES@ \
 libException_la_SOURCES = ErrnoException.cpp Exception.cpp \
 			  RangeError.cpp StreamIOError.cpp \
 			StateException.cpp
-include_HEADERS = ErrnoException.h Exception.h  StreamIOError.h \
+noinst_HEADERS = ErrnoException.h Exception.h  StreamIOError.h \
 	RangeError.h StateException.h                           \
 	 TCLApplication.h TCLCommandPackage.h TCLException.h \
 	TCLFileHandler.h TCLHashTable.h TCLHashTableItem.h \
@@ -21,16 +21,16 @@ include_HEADERS = ErrnoException.h Exception.h  StreamIOError.h \
 	TCLObjectProcessor.h TCLCompatibilityProcessor.h histotypes.h \
 	CTCLChannelCommand.h CTCLEpicsCommand.h \
 	CTCLEpicsPackage.h	\
-	CChannel.h CChannelVariable.h
+	CChannel.h CChannelVariable.h Asserts.h
 
-libException_la_LDFLAGS = $(THREADFLAGS) -version-info 2:0:0 \
+libException_la_LDFLAGS = $(THREADFLAGS) -version-info 2:2:0 \
 	$(OSLDFLAGS)
 
 
 
 # libtclPlus:
 
-libtclPlus_la_LDFLAGS = $(THREADFLAGS) -version-info 2:0:0 \
+libtclPlus_la_LDFLAGS = $(THREADFLAGS) -version-info 2:2:0 \
 	$(OSLDFLAGS)
 
 libtclPlus_la_LIBADD = @top_srcdir@/libException.la 
@@ -71,7 +71,7 @@ libepics_la_LIBADD  = @top_srcdir@/libtclPlus.la  \
 			@top_srcdir@/libException.la \
 			$(TCL_LDFLAGS) $(EPICS_LDFLAGS)		
 
-libepics_la_LDFLAGS = 	$(THREADFLAGS) -version-info 2:0:0 $(OSLDFLAGS)
+libepics_la_LDFLAGS = 	$(THREADFLAGS) -version-info 2:2:0 $(OSLDFLAGS)
 
 
 
@@ -156,9 +156,9 @@ install-exec-local: $(MANPAGES)
 
 install-data-local:
 	$(mkinstalldirs) @prefix@/TclLibs
-	-cp @libdir@/libepics* $(prefix)/TclLibs
+	-cp @libdir@/libepics* @prefix@/TclLibs
 	echo "package ifneeded epics 2.2 [list load [file join \$$dir libepics$(SLIBEXT)]]"  \
-		>> $(prefix)/TclLibs/pkgIndex.tcl;
+		>> @prefix@/TclLibs/pkgIndex.tcl;
 
 
 
@@ -182,8 +182,6 @@ unittests_SOURCES = TestRunner.cpp testException.cpp testErrnoException.cpp \
 
 unittests_LDFLAGS = $(THREADFLAGS)
 unittests_LDADD   =  $(CPPUNIT_LDFLAGS) -lException $(TCL_LDFLAGS)
-
-noinst_HEADERS = Asserts.h
 
 tracetests_SOURCES = TestRunner.cpp \
 			ccallbacktest.cpp \
