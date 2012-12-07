@@ -125,7 +125,13 @@ Release 2.1
 Release 2.2
 	 - Rewrite the entire CChannel class to simplify so that
 	 synchronization is a snap.
+Relesae 2.2-001
 	 - Fix errors in epicsServer.tcl
 	   * If error setting up request output to log and exit.
 	   * Remove $ from request index in incr.
+	 - Make epicsServer.tcl locate it's packages.
+	 - Fix Makefile.am so that it properly creates @bindir@ if
+	   necessary when installing epicsServer.tcl
+
+	
 	
