@@ -58,7 +58,7 @@ CLanguageTraceCallback::~CLanguageTraceCallback() {}
      \note If the user tried to trick us by providing a null function pointer,
      we raise that as a TCL error.
 */
-const char*
+char*
 CLanguageTraceCallback::operator()(CTCLInterpreter* pInterp,
 				   char*            pVariable, 
 				   char*            pElement, 

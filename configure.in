@@ -7,7 +7,7 @@ AM_CONFIG_HEADER(config.h)
 
 #    Separate device libraries.
 
-AM_INIT_AUTOMAKE(epicstcl, 2.2-001)  
+AM_INIT_AUTOMAKE(epicstcl, 2.3)  
 
 #
 #   The variable below should track the
@@ -28,6 +28,15 @@ SOVERSION="8:1"
 AC_MSG_CHECKING([operating system ])
 
 AC_CANONICAL_HOST
+
+#
+#  Test for pthreads:
+# Defines:
+#    PTHREAD_LIBS - linker flagbs.
+#    PTHREAD_CFLAGS - C/C++ flags.
+#    PTHREAD_CC     - Special compiler if requred.
+# 
+AX_PTHREAD
 
 
 
@@ -57,7 +66,6 @@ then
    incsysdir="os/Linux"
    OSLDFLAGS="-Wl,\"-rpath=$libdir\""
    SLIBEXT=".so"
-   THREADFLAGS="-pthread -D_REENTRANT=1 -D_THREAD_SAFE=1"
 elif echo $host_os |grep -s darwin 
 then
    # God help me when the version changes:
@@ -67,7 +75,6 @@ then
    libsysdir="darwin-ppc"
    binsysdir="darwin-ppc"
    SLIBEXT=".dylib"
-   THREADFLAGS="-D_REENTRANT=1 -D_THREAD_SAFE=1"
  
 else
    AC_MSG_ERROR([This software can only be built on linux-gnu or darwin not $host_os])
@@ -189,207 +196,29 @@ AH_VERBATIM([VHAVE_STD_NAMESPACE],[
 
 AC_LANG_POP(C++)
 
-# NSCL DAQ specific checks:
-
-
-
-# Locate Tcl/Tk and setup compile/link switches for them too:
-# The list below is the set of versions we will look for.  At this
-# time, 8.4 is pretty standard and 8.5 is impending which means that
-# soon some redhat systems will have it I suppose.
-# This list must be updated as time goes by.
+#  Check for Tcl  This test produces:
+#  TCL_DEFS     - definitions used to compile Tcl.
+#  TCL_LIBS     - Link library switches needed to link Tcl.
+#  TCL_CPPFLAGS - C/C++ compilation flags.
+#  TCLSH        - tclsh shell.
 #
-tcl_versions="8.5 8.4 8.3 8.2 8.1 8.0"     # First match;  so order new -> old.
+#  WISH         - wish Tk shell.
+#  TK_DEFS      - Definitions used to compile Tk.
+#  TK_LIBS      - link time flags to link with Tk.
+#  TK_CPPFLAGS  - Preprocessor flags to compile C/C++ with Tcl/Tk.
 
-#  The TCL Shell - used to run tests... must be in path.
-#  First check for a version qualified command:
+AX_TCL
+
+# Check for CPPUNIT - C++ Unit test framework.  This defines:
 #
+# CPPUNIT_CFLAGS - C/C++ compiler flags.
+# CPPUNIT_LIBS   - Loader flags that pull in the library.
 
-AC_MSG_CHECKING([for tcl shell command...])
-for version in $tcl_versions
-do
-	name=tclsh${version}
-	AC_CHECK_PROG(TCLSH_CMD, $name, $name)
-done
-#
-#   Could be unqualified by version:
-#
-AC_CHECK_PROG(TCLSH_CMD, tclsh, tclsh)
+AM_PATH_CPPUNIT
 
-if test "$TCLSH_CMD" == ""
-then
-	AC_MSG_ERROR([Can't find a tcl shell])
-else
-	AC_MSG_RESULT([found: $TCLSH_CMD])
-fi
+# Assume that CPPUNIT_LIBS is not null if it was found:
 
-#  TCL headers:
-#    We know of a few places the headers can live:
-#       /opt/local/include        OS-X with darwin ports installed (preferred).
-#       /usr/include              redhat linux.
-#       /usr/include/tcl          debian dude that made  link to default tcl.
-#       /usr/include/tcl<version> debian linux
-#       /usr/local/include        default for source based install.
-#       Whatever the user specifies. 
-#        For now, the versions we look for are determined by the
-#        variable tcl_versions  that variable is a list of version 
-#        number specifiers.
-#
-
-
-tcl_header_dir=""
-AC_MSG_CHECKING([for tcl headers])
-
-AC_ARG_WITH(tcl-header-dir,
-	[  --with-tcl-header-dir=path Path to tcl headers],
-	[tcl_header_dir="$withval"
-	tcl_headers_found="yes"],[tcl_headers_found="no"])
-
-
-	# /opt/local/include
-if test $tcl_headers_found == "no"; then
-   AC_CHECK_FILE([/opt/local/include/tcl.h],
-	[tcl_header_dir="/opt/local/include"
-	tcl_headers_found="yes"])
-fi
-
-
-
-	# /usr/include
-
-if test $tcl_headers_found == "no"; then
-   AC_CHECK_FILE([/usr/include/tcl.h],
-	[tcl_header_dir="/usr/include"
-	tcl_headers_found="yes"])
-fi
-
-	# /usr/include/tcl
-
-if test $tcl_headers_found == "no"; then
-   AC_CHECK_FILE([/usr/include/tcl/tcl.h],
-	[tcl_header_dir="/usr/include/tcl"
-	tcl_headers_found="yes"])
-fi
-
-	# /usr/include/tcl<version>
-
-if test $tcl_headers_found == "no" ; then
- for version in $tcl_versions;  do
-   if test $tcl_headers_found == "no" ; then   # stop at first match
-      testdir=/usr/include/tcl$version
-      AC_CHECK_FILE([${testdir}/tcl.h],
-	[tcl_header_dir=${testdir}
-	 tcl_headers_found="yes"])
-   fi
- done
-fi
-
-      # /usr/local/include
-if test $tcl_headers_found == "no"; then
-   AC_CHECK_FILE([/usr/local/include/tcl.h],
-	[tcl_header_dir="/usr/local/include/tcl"
-	tcl_headers_found="yes"])
-fi
-
-
-if test $tcl_headers_found == "yes"; then
-   TCL_FLAGS="-I${tcl_header_dir}"
-   AC_MSG_RESULT([found in $tcl_header_dir])
-else
-   AC_MSG_ERROR([can't find tcl.h try using --with-tcl-header-dir to help me])
-fi
-
-#  Tcl libraries:
-#     We look for the following:
-#      /opt/local/lib/tclstub.a    - stubs lib for OS-X with darwin. port install.
-#      /usr/lib/lib/tclstub.a      -  Stubs library is there.
-#      /usr/lib/libtcl.a           - Usually a link to a default lib.
-#      /usr/lib/libtcl<version>.a  - version of tcl from tcl_versions
-#      /usr/local/lib/libtcl.a     - As above but installed from source.
-#      /usr/local/lib<version>.a   - As Above but installed from source.
-#      If --with-tcl-libdir=dir      is supplied, that directory is 
-#                                    searched first.
-# ASSUMPTIONS:  libtcl and libtk will have the same naming conventions.
-#
-
-tcl_libsearchpath=""
-tcl_libfound="no"
-AC_MSG_CHECKING([Tcl/Tk library to use])
-
-	# Does the user want us to look somewhere in particular:
-
-AC_ARG_WITH(tcl-libdir,
-	[  --with-tcl-libdir=dir Specify where the tcl libraries live.],
-	[tcl_libsearchpath=$withval])
-
-tcl_libsearchpath="$tcl_libsearchpath /opt/local/lib /usr/lib /usr/local/lib"
-
-tcl_libfiles="libtclstub.a libtcl.a"
-
-for v in ${tcl_versions}
-do
-   tcl_libfiles="$tcl_libfiles libtcl${v}.a"
-   tcl_libfiles="$tcl_libfiles libtcl${v}.so"
-   tcl_libfiles="$tcl_libfiles libtcl${v}.dylib"   # OS-X
-done
-
-
-for dir in ${tcl_libsearchpath} 
-do
-  for file in ${tcl_libfiles}
-  do
-    fname=$dir/$file
-    if test $tcl_libfound == "no" 
-    then
-      AC_CHECK_FILE($fname,
-	[tcl_libdir=$dir
-         tcl_libname=$file
-	 tcl_libfound="yes"
-	])
-    fi
-  done
-done
-
-if test "$tcl_libfound" == "yes"
-then
-
-  # If the stubs library exists...we need todo a bit more stuff:
-
-  if test "`basename $tcl_libname`" == "libtclstub.a"
-  then
-     AC_MSG_RESULT([tcl/tk libraries allow stubs enabling])
-     TCL_FLAGS="$TCL_FLAGS -DUSE_TCL_STUBS"
-     TCL_LDFLAGS="-L${tcl_libdir}  -ltclstub"
-     tcl_libname=$(echo $tcl_libname|cut -c 4- )  # trim off lib 
-        #
-	# Use basename to trim of the .a or .so:
-	#
-
-      tcl_libname=$(basename $(basename $(basename $tcl_libname .a) .so) .dylib)
-
-
-      tk_libname=tk$(echo $tcl_libname|cut -c 4-)   # trim off tc...and use tk
-      TCL_TESTLDFLAGS="-L${tcl_libdir}   -l${tcl_libname}"
-  else
-    # Find the lib basename:
-
-      tcl_libname=$(echo $tcl_libname|cut -c 4- )  # trim off lib 
-        #
-	# Use basename to trim of the .a or .so:
-	#
-
-       tcl_libname=$(basename $(basename $(basename $tcl_libname .a) .so) .dylib)
-
-
-       tk_libname=tk$(echo $tcl_libname|cut -c 4-)   # trim off tc...and use tk
-
-       TCL_LDFLAGS="-L${tcl_libdir}   -l${tcl_libname}"
-       TCL_TESTLDFLAGS="-L${tcl_libdir}   -l${tcl_libname}"
-  fi
-else
-  AC_MSG_ERROR([Unable to find the tcl library, help me out with --with-tcl-libdir])
-fi
-
+AM_CONDITIONAL([CPPUNIT], [test -n "${CPPUNIT_LIBS}"])
 
 #  X11 libraries 
 
@@ -462,36 +291,7 @@ else
 fi
 
 
-#  We now look for cppunit.  This is needed to build c++ tests
-#  If it is available, we'll define the following:
-#  CPPUNIT   - Indicating to the Makefiles to enable building the tests.
-#  CPPUNIT_INCLUDES - Any switches needed at compile time for cppunit.
-#  CPPUNIT_LDFLAGS  - Any switches needed at link time for cppunit.
-#
-#
 
-AC_ARG_ENABLE(cppunit,
-		AS_HELP_STRING([--enable-cppunit],[build cppunit based tests]),
-		[havecppunit="check"], [havecppunit="no"])
-
-if test "$havecppunit" != "no" 
-then
-	AC_LANG_PUSH(C++)
-	AC_MSG_CHECKING([for cppunit unit testing framework])
-
-	AC_CHECK_HEADERS([cppunit/Test.h], [havecppunit="yes"], [havecppunit="no"])
-	AC_MSG_RESULT([$havecppunit])
-	if test "$havecppunit" == "yes"
-	then
-		CPPUNIT_INCLUDES=""
-		CPPUNIT_LDFLAGS="-lcppunit"
-		AC_SUBST(CPPUNIT_INCLUDES)
-		AC_SUBST(CPPUNIT_LDFLAGS)
-         fi
-AC_LANG_POP(C++)
-fi
-
-AM_CONDITIONAL(CPPUNIT, test $havecppunit == "yes")
 
 # define substitutions:
 
@@ -511,11 +311,6 @@ AC_SUBST(EPICS_LDFLAGS)
 AC_SUBST(EPICS_INCLUDES)
 AC_SUBST(EPICS_BIN)
 
-	# tcl/tk
-
-AC_SUBST(TCL_FLAGS)
-AC_SUBST(TCL_LDFLAGS)
-AC_SUBST(TCLSH_CMD)
 
 
 	# X11: 
@@ -533,9 +328,6 @@ AC_SUBST(HTMLDOCBOOK)
 AC_SUBST(DVIPDF)
 
 
-# Threading flags:
-
-AC_SUBST(THREADFLAGS)
 
 #  Create output files:
 

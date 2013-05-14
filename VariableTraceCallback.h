@@ -23,7 +23,7 @@ class CTCLInterpreter;
 class CVariableTraceCallback 
 {
  public:
-  virtual const char* operator()(CTCLInterpreter* pInterp,
+  virtual  char* operator()(CTCLInterpreter* pInterp,
 			   char* pVariable, 
 			   char* pElement,
 			   int   flags) = 0;

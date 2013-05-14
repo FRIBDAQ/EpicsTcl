@@ -132,6 +132,9 @@ Relesae 2.2-001
 	 - Make epicsServer.tcl locate it's packages.
 	 - Fix Makefile.am so that it properly creates @bindir@ if
 	   necessary when installing epicsServer.tcl
-
+Release 2.3
+	- Use stored Tcl, CPPUNIT and pthread tests in m4/*.m4
+	  rather than old style inline tests in configure.in.
+	
 	
 	

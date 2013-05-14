@@ -2,7 +2,7 @@ lib_LTLIBRARIES = libException.la libtclPlus.la libepics.la
 
 ACLOCAL_AMFLAGS= -I m4
 
-INCLUDES= $(THREADFLAGS) @TCL_FLAGS@  @EPICS_BIN@ @EPICS_INCLUDES@ \
+INCLUDES= @PTHREAD_CFLAGS@ @CPPUNIT_CFLAGS@ @TCL_CPPFLAGS@  @TK_CPPFLAGS@ @EPICS_BIN@ @EPICS_INCLUDES@ \
 	-DTCL_THREADS
 ### libException
 
@@ -23,14 +23,14 @@ noinst_HEADERS = ErrnoException.h Exception.h  StreamIOError.h \
 	CTCLEpicsPackage.h	\
 	CChannel.h CChannelVariable.h Asserts.h
 
-libException_la_LDFLAGS = $(THREADFLAGS) -version-info 2:2:0 \
-	$(OSLDFLAGS)
+libException_la_LDFLAGS = @TK_LIBS@ @TCL_LIBS@ @PTHREAD_LIBS@ -version-info 2:2:0 \
+	$(OSLDFLAGS) 
 
 
 
 # libtclPlus:
 
-libtclPlus_la_LDFLAGS = $(THREADFLAGS) -version-info 2:2:0 \
+libtclPlus_la_LDFLAGS = @PTHREAD_LIBS@ -version-info 2:2:0 \
 	$(OSLDFLAGS)
 
 libtclPlus_la_LIBADD = @top_srcdir@/libException.la 
@@ -69,9 +69,9 @@ libepics_la_SOURCES=CTCLChannelCommand.cpp CTCLEpicsCommand.cpp \
 
 libepics_la_LIBADD  = @top_srcdir@/libtclPlus.la  \
 			@top_srcdir@/libException.la \
-			$(TCL_LDFLAGS) $(EPICS_LDFLAGS)		
+			@TK_LIBS@ @TCL_LIBS@  $(EPICS_LDFLAGS)		
 
-libepics_la_LDFLAGS = 	$(THREADFLAGS) -version-info 2:2:0 $(OSLDFLAGS)
+libepics_la_LDFLAGS = 	@PTHREAD_LIBS@ -version-info 2:2:0 $(OSLDFLAGS)
 
 
 
@@ -147,8 +147,7 @@ install-exec-local: $(MANPAGES)
 	$(mkinstalldirs) $(PKGDIR) @bindir@
 	chmod o+rx $(PKGDIR)
 	$(INSTALL_SCRIPT) $(PACKAGES) $(PKGDIR)
-	echo "pkg_mkIndex $(PKGDIR) *.tcl" >makeindex.tcl
-	$(TCLSH_CMD) <makeindex.tcl
+	echo "pkg_mkIndex $(PKGDIR) *.tcl" | @TCLSH@
 	$(INSTALL_SCRIPT) $(TCLPROGRAMS) @bindir@
 
 
@@ -180,8 +179,8 @@ noinst_PROGRAMS = unittests tracetests interptests
 unittests_SOURCES = TestRunner.cpp testException.cpp testErrnoException.cpp \
 	testStreamIOError.cpp testRangeError.cpp
 
-unittests_LDFLAGS = $(THREADFLAGS)
-unittests_LDADD   =  $(CPPUNIT_LDFLAGS) -lException $(TCL_LDFLAGS)
+unittests_LDFLAGS = @PTHREAD_LIBS@
+unittests_LDADD   =  @CPPUNIT_LIBS@ -lException @TK_LIBS@ @TCL_LIBS@
 
 tracetests_SOURCES = TestRunner.cpp \
 			ccallbacktest.cpp \
@@ -189,19 +188,19 @@ tracetests_SOURCES = TestRunner.cpp \
 
 tracetests_DEPENDENCIES = $(testableObjects)
 
-TestLdflags =  $(testableObjects) $(CPPUNIT_LDFLAGS) $(X11EXTRA_LDFLAGS) \
-	-L@top_srcdir@/Exception -lException $(TCL_LDFLAGS) 
+TestLdflags =  $(testableObjects) @CPPUNIT_LIBS@ $(X11EXTRA_LDFLAGS) \
+	 -lException @TK_LIBS@ @TCL_LIBS@
 
 
-tracetests_LDFLAGS= $(THREADFLAGS)
+tracetests_LDFLAGS= @PTHREAD_LIBS@
 tracetests_LDADD = $(TestLdflags)
 
 interptests_SOURCES=interpretertest.cpp objecttest.cpp resulttest.cpp \
 	objcommandtest.cpp compatcommand.cpp
 
 
-interptests_LDADD = TestRunner.o $(TestLdflags) $(TCL_LDFLAGS)
-interptests_LDFLAGS=$(THREADFLAGS)
+interptests_LDADD = TestRunner.o $(TestLdflags) @CPPUNIT_LIBS@ @TK_LIBS@ @TCL_LIBS@
+interptests_LDFLAGS=@PTHREAD_LIBS@
 
 interptests_DEPENDENCIES = $(testableObjects) TestRunner.o
 
