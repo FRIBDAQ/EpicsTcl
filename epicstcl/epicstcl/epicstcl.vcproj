@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="epicstcl"
 	ProjectGUID="{A270384A-AD4A-44CF-8C28-E7548784A5BB}"
 	RootNamespace="epicstcl"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
 			Name="Win32"
+		/>
+		<Platform
+			Name="x64"
 		/>
 	</Platforms>
 	<ToolFiles>
@@ -68,6 +72,8 @@
 				AdditionalLibraryDirectories="C:\Tcl\lib"
 				GenerateDebugInformation="false"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -89,7 +95,84 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="2"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\fox\Desktop\stripperfoil\console\epicstcl&quot;;C:\Tcl\include"
+				PreprocessorDefinitions="USE_TCL_STUBS;WIN32;_DEBUG;_WINDOWS;_USRDLL;EPICSTCL_EXPORTS"
+				MinimalRebuild="false"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="0"
+				BufferSecurityCheck="false"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions=" /NODEFAULTLIB:MSVCRT"
+				AdditionalDependencies="tkstub84.lib tclstub84.lib ca.lib"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="C:\Tcl\lib"
+				GenerateDebugInformation="false"
+				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -120,13 +203,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="h:\test\stripper\console\epicstcl;\\exp\files\control\ctldev\Source\Win32\EpicsBase\3_14\include\os\WIN32;\\exp\files\control\ctldev\Source\Win32\EpicsBase\3_14\include;&quot;C:\Documents and Settings\fox\Desktop\stripperfoil\console\epicstcl&quot;;C:\tcl\include"
+				AdditionalIncludeDirectories="H:\test\stripper\console\epicstcl\libtcl\include\tclplus;H:\test\stripper\console\epicstcl\libtcl\include\exception;h:\test\stripper\console\epicstcl\libtcl\include;h:\test\stripper\console\epicstcl;\\exp\files\control\ctldev\Source\Win32\EpicsBase\3_14\include\os\WIN32;\\exp\files\control\ctldev\Source\Win32\EpicsBase\3_14\include;&quot;C:\Documents and Settings\fox\Desktop\stripperfoil\console\epicstcl&quot;;C:\tcl\include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;USE_TCL_STUBS;WIN32;NDEBUG;_WINDOWS;_USRDLL;EPICSTCL_EXPORTS"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -141,14 +224,16 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:MSVCRT&#x0D;&#x0A;"
-				AdditionalDependencies="tkstub84.lib tclstub84.lib tk84.lib tcl84.lib ca.lib dbStaticHost.lib"
+				AdditionalDependencies="tkstub85.lib tclstub85.lib tk85.lib tcl85.lib ca.lib dbStaticHost.lib"
 				OutputFile="$(OutDir)\epics.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;\\exp\files\control\ctldev\Source\Win32\EpicsBase\3_14\lib\win32-x86&quot;;C:\tcl\lib"
+				AdditionalLibraryDirectories="&quot;\\exp\files\control\ctldev\Source\Win32\EpicsBase\3_14\lib\win32-x86&quot;;C:\tcl32\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -170,7 +255,85 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="2"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="H:\test\stripper\console\epicstcl\libtcl\include\tclplus;H:\test\stripper\console\epicstcl\libtcl\include\exception;h:\test\stripper\console\epicstcl\libtcl\include;h:\test\stripper\console\epicstcl;\\exp\files\control\ctldev\Source\Win32\EpicsBase\3_14\include\os\WIN32;\\exp\files\control\ctldev\Source\Win32\EpicsBase\3_14\include;&quot;C:\Documents and Settings\fox\Desktop\stripperfoil\console\epicstcl&quot;;C:\tcl\include"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;USE_TCL_STUBS;WIN32;NDEBUG;_WINDOWS;_USRDLL;EPICSTCL_EXPORTS"
+				RuntimeLibrary="0"
+				BufferSecurityCheck="false"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/NODEFAULTLIB:MSVCRT&#x0D;&#x0A;"
+				AdditionalDependencies="tkstub85.lib tclstub85.lib tk85.lib tcl85.lib ca.lib dbStaticHost.lib"
+				OutputFile="$(OutDir)\epics.dll"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;\\exp\files\control\ctldev\Source\Win32\EpicsBase\3_14\lib\win32-x86&quot;;C:\tcl\lib"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -194,11 +357,39 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libtcl\tclplus\CConfigurableObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\exception\CDuplicateSingleton.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\exception\CInvalidArgumentException.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\tclplus\CItemConfiguration.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\tclplus\CLanguageTraceCallbacks.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\CLanguageTraceCallbacks.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\libtcl\exception\CNoSuchObjectException.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\CTCLChannelCommand.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\tclplus\CTCLChannelCommander.cpp"
 				>
 			</File>
 			<File
@@ -210,95 +401,115 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\ErrnoException.cpp"
+				RelativePath="..\..\libtcl\tclplus\CTCLServer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Exception.cpp"
+				RelativePath="..\..\libtcl\tclplus\CTCLStdioCommander.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\RangeError.cpp"
+				RelativePath="..\..\libtcl\tclplus\CTCLTcpServerInstance.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\StateException.cpp"
+				RelativePath="..\..\libtcl\exception\ErrnoException.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\StreamIOError.cpp"
+				RelativePath="..\..\libtcl\exception\Exception.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLApplication.cpp"
+				RelativePath="..\..\libtcl\exception\MonitorException.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLChannel.cpp"
+				RelativePath="..\..\libtcl\exception\RangeError.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLCommandPackage.cpp"
+				RelativePath="..\..\libtcl\exception\StateException.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLCompatibilityProcessor.cpp"
+				RelativePath="..\..\libtcl\exception\StreamIOError.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLException.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLChannel.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLFileHandler.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLCommandPackage.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLIdleProcess.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLCompatibilityProcessor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLInterpreter.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLException.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLInterpreterObject.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLIdleProcess.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLList.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLInterpreter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLObject.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLInterpreterObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLObjectProcessor.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLProcessor.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLResult.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLObjectPackage.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLString.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLObjectProcessor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLTimer.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLPackagedObjectProcessor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLTracedVariable.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLProcessor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\TCLVariable.cpp"
+				RelativePath="..\..\libtcl\tclplus\TCLResult.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\tclplus\TCLString.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\tclplus\TCLTimer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\tclplus\TCLTracedVariable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\tclplus\TCLVariable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\exception\URIFormatException.cpp"
 				>
 			</File>
 		</Filter>
@@ -340,6 +551,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libtcl\include\tclplus\CConfigurableObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\include\exception\CDuplicateSingleton.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\include\exception\CInvalidArgumentException.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\include\tclplus\CItemConfiguration.h"
+				>
+			</File>
+			<File
 				RelativePath="H:\test\stripper\console\epicstcl\CLanguageTraceCallbacks.h"
 				>
 			</File>
@@ -349,6 +576,10 @@
 			</File>
 			<File
 				RelativePath="H:\test\stripper\console\epicstcl\cmdline.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\include\exception\CNoSuchObjectException.h"
 				>
 			</File>
 			<File
@@ -368,6 +599,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libtcl\include\tclplus\CTCLChannelCommander.h"
+				>
+			</File>
+			<File
 				RelativePath="H:\test\stripper\console\epicstcl\CTCLEpicsCommand.h"
 				>
 			</File>
@@ -376,23 +611,15 @@
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\CTCPBadSocketState.h"
+				RelativePath="..\..\libtcl\include\tclplus\CTCLServer.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\CTCPConnectionFailed.h"
+				RelativePath="..\..\libtcl\include\tclplus\CTCLStdioCommander.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\CTCPConnectionLost.h"
-				>
-			</File>
-			<File
-				RelativePath="H:\test\stripper\console\epicstcl\CTCPNoSuchHost.h"
-				>
-			</File>
-			<File
-				RelativePath="H:\test\stripper\console\epicstcl\CTCPNoSuchService.h"
+				RelativePath="..\..\libtcl\include\tclplus\CTCLTcpServerInstance.h"
 				>
 			</File>
 			<File
@@ -400,11 +627,15 @@
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\ErrnoException.h"
+				RelativePath="..\..\libtcl\include\daqdatatypes.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\Exception.h"
+				RelativePath="..\..\libtcl\include\exception\ErrnoException.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\include\exception\Exception.h"
 				>
 			</File>
 			<File
@@ -412,11 +643,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libtcl\include\exception\MonitorException.h"
+				>
+			</File>
+			<File
 				RelativePath="H:\test\stripper\console\epicstcl\RangeError.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\StateException.h"
+				RelativePath="..\..\libtcl\include\exception\RangeError.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\include\exception\StateException.h"
 				>
 			</File>
 			<File
@@ -424,91 +663,107 @@
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLApplication.h"
+				RelativePath="..\..\libtcl\include\exception\StreamIOError.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLChannel.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLChannel.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLCommandPackage.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLCommandPackage.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLCompatibilityProcessor.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLCompatibilityProcessor.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLException.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLException.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLFileHandler.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLHashTable.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLHashTable.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLHashTableItem.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLHashTableItem.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLHashTableIterator.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLHashTableIterator.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLIdleProcess.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLIdleProcess.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLInterpreter.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLInterpreter.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLInterpreterObject.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLInterpreterObject.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLList.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLList.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLObject.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLObject.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLObjectPackage.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLObjectProcessor.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLObjectProcessor.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLProcessor.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLPackagedCommand.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLResult.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLPackagedObjectProcessor.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLString.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLProcessor.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLTimer.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLResult.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLVariable.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLString.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\TCLVersionHacks.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLTimer.h"
 				>
 			</File>
 			<File
-				RelativePath="H:\test\stripper\console\epicstcl\VariableTraceCallback.h"
+				RelativePath="..\..\libtcl\include\tclplus\TCLTracedVariable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\include\tclplus\TCLVariable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\include\tclplus\TCLVersionHacks.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\include\exception\URIFormatException.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libtcl\include\tclplus\VariableTraceCallback.h"
 				>
 			</File>
 		</Filter>
@@ -518,10 +773,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
-		<File
-			RelativePath=".\ReadMe.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

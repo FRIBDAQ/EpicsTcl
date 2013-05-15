@@ -24,7 +24,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+#ifdef __GNUG__
 #include <stdint.h>
+#endif
 
 
 #ifndef _WINDOWS

@@ -44,7 +44,7 @@
 #endif
 #endif
 
-#ifdef _WINDOWS
+#if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #else
 #ifndef _PTHREAD_H
@@ -59,7 +59,7 @@
 
 class CConverter;
 
-#ifdef WINDOWS
+#if defined(_WIN32) || defined(_WIN64)
 typedef CRITICAL_SECTION   Mutex;
 #else
 typedef pthread_mutex_t    Mutex;
@@ -74,7 +74,7 @@ typedef pthread_mutex_t    Mutex;
 //    ...
 //  }         // mutex unlocked.
 
-#ifdef _WINDOWS
+#if defined(_WIN32) || defined(_WIN64)
 class CCriticalRegion {
 private:
   CRITICAL_SECTION*   m_pMutex;

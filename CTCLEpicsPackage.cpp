@@ -45,7 +45,12 @@ static const int caPollInterval(16); // ms per epics poll.
 // for epics to stay happy.
 //
 
-static void pollEpics(ClientData ignored) {
+
+static void
+#if defined(_WIN32) || defined(_WIN64)
+__stdcall 
+#endif
+pollEpics(ClientData ignored) {
 
   ca_attach_context(pEpicsContext);
   while (1) {
@@ -58,7 +63,7 @@ static void pollEpics(ClientData ignored) {
 
 
 extern "C" {
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 __declspec(dllexport)
 #endif
   int Epics_Init(Tcl_Interp* pInterp)
@@ -76,7 +81,14 @@ __declspec(dllexport)
     // pollEpics((ClientData)NULL);
     ca_context_create(ca_enable_preemptive_callback);
     pEpicsContext = ca_current_context();
-    Tcl_CreateThread(&pollId, pollEpics, NULL, TCL_THREAD_STACK_DEFAULT, TCL_THREAD_NOFLAGS);
+
+
+	Tcl_CreateThread((&pollId), 
+#if defined(_WIN32) || defined(_WIN64)
+		(Tcl_ThreadCreateProc (__stdcall *))
+#endif
+		pollEpics, 
+		NULL, TCL_THREAD_STACK_DEFAULT, TCL_THREAD_NOFLAGS);
 
 
     return TCL_OK;		// Don't start deadlock killer.
