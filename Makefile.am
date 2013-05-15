@@ -55,14 +55,6 @@ XMLFILES = manual.xml meter.xml \
 	radioMatrix.xml \
 	typeNGo.xml      \
 	led.xml  \
-	CTCLApplication.xml CTCLInterpreterObject.xml \
-	CTCLInterpreter.xml CTCLVariable.xml CTCLChannel.xml \
-	CTCLCommandPackage.xml CTCLCompatibilityProcessor.xml \
-	CTCLException.xml CTCLFileHandler.xml CTCLHashTable.xml \
-	CTCLHashTableItem.xml CTCLHashTableIterator.xml CTCLIdleProcess.xml \
-	CTCLList.xml CTCLObject.xml CTCLObjectProcessor.xml \
-	CTCLPackagedCommand.xml CTCLProcessor.xml CTCLResult.xml \
-	CTCLString.xml CTCLTimer.xml TclPlus.xml \
 	$(WEBXMLFILES)
 
 
