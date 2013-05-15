@@ -225,6 +225,43 @@ AM_CONDITIONAL([CPPUNIT], [test -n "${CPPUNIT_LIBS}"])
 X11INCS="${X_CFLAGS}"
 X11LIBS="${X_LIBS} ${X_EXTRA_LIBS} -lXm -lXt -lX11"
 
+##
+#  Figure out libtclplus. If this is installed in a standardized
+#  place use it, otherwise configure make clean install
+#  the bundled version in the libtcl directory.
+#  Produce:
+#     LIBTCLPLUS_CFLAGS - Compilation flags required to build against the
+#                         appropriate one.
+#     LIBTCLPLUS_LDFLAGS - Appropriate linker flags.
+#
+# 
+
+AC_CHECK_LIB(Tcl_AppInit, tclPlus, [systemtcl="yes"], [systemtcl="no"])
+
+
+#
+#  IF systemtcl is yes we're pretty much done.. otherwise
+#  we need to configure/build/install libtcl into prefix and then set
+#  the flags:
+
+AC_MSG_CHECKING([Checking for libtclPlus])
+if test $systemtcl = "yes"
+then
+	LIBTCLPLUS_CFLAGS=
+	LIBTCLPLUS_LDFLAGS=-ltclPlus -lException
+	AC_MSG_RESULT([Found in  system libraries])
+else
+	AC_MSG_RESULT([Need to build local tagged copy])
+	(cd libtcl; ./configure --prefix=${prefix}; make clean install)
+	LIBTCLPLUS_CFLAGS="-I${prefix}/include"
+	LIBTCLPLUS_LDFLAGS=-"L${prefix}/lib -ltclPlus -lException -Wl,\"-rpath=${prefix}/lib\""
+
+fi
+
+AC_SUBST(LIBTCLPLUS_CFLAGS)
+AC_SUBST(LIBTCLPLUS_LDFLAGS)
+
+
 
 #
 #   Look for epics in:

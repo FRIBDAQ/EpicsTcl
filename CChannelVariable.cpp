@@ -142,7 +142,7 @@ CChannelVariable::newEpicsValue(string value)
    We must set the channel to the new value:
    Parameters are ignored.. must return NULL.
 */
-const char*
+char*
 CChannelVariable::operator()(char* name, char* subscript, int flags)
 {
   (*m_pChannel) = Get();

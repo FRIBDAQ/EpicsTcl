@@ -1,74 +1,26 @@
-lib_LTLIBRARIES = libException.la libtclPlus.la libepics.la
+lib_LTLIBRARIES =  libepics.la
 
 ACLOCAL_AMFLAGS= -I m4
 
 INCLUDES= @PTHREAD_CFLAGS@ @CPPUNIT_CFLAGS@ @TCL_CPPFLAGS@  @TK_CPPFLAGS@ @EPICS_BIN@ @EPICS_INCLUDES@ \
-	-DTCL_THREADS
-### libException
-
-libException_la_SOURCES = ErrnoException.cpp Exception.cpp \
-			  RangeError.cpp StreamIOError.cpp \
-			StateException.cpp
-noinst_HEADERS = ErrnoException.h Exception.h  StreamIOError.h \
-	RangeError.h StateException.h                           \
-	 TCLApplication.h TCLCommandPackage.h TCLException.h \
-	TCLFileHandler.h TCLHashTable.h TCLHashTableItem.h \
-	TCLHashTableIterator.h TCLIdleProcess.h	TCLInterpreter.h \
-	TCLInterpreterObject.h TCLList.h TCLObject.h TCLPackagedCommand.h \
-	TCLProcessor.h TCLResult.h TCLString.h TCLTimer.h TCLVariable.h \
-	TCLChannel.h TCLVersionHacks.h TCLTracedVariable.h \
-	VariableTraceCallback.h CLanguageTraceCallbacks.h \
-	TCLObjectProcessor.h TCLCompatibilityProcessor.h histotypes.h \
-	CTCLChannelCommand.h CTCLEpicsCommand.h \
-	CTCLEpicsPackage.h	\
-	CChannel.h CChannelVariable.h Asserts.h
-
-libException_la_LDFLAGS = @TK_LIBS@ @TCL_LIBS@ @PTHREAD_LIBS@ -version-info 2:2:0 \
-	$(OSLDFLAGS) 
-
-
-
-# libtclPlus:
-
-libtclPlus_la_LDFLAGS = @PTHREAD_LIBS@ -version-info 2:2:0 \
-	$(OSLDFLAGS)
-
-libtclPlus_la_LIBADD = @top_srcdir@/libException.la 
-
-
-
-testableSources = TCLInterpreter.cpp TCLProcessor.cpp  \
-	TCLVariable.cpp TCLString.cpp  \
-	TCLResult.cpp TCLTimer.cpp TCLFileHandler.cpp \
-	TCLList.cpp TCLException.cpp TCLInterpreterObject.cpp \
-	TCLCommandPackage.cpp TCLIdleProcess.cpp \
-	TCLObject.cpp TCLChannel.cpp TCLTracedVariable.cpp \
-	CLanguageTraceCallbacks.cpp TCLObjectProcessor.cpp \
-	TCLCompatibilityProcessor.cpp 
-
-testableObjects = TCLInterpreter.o   TCLProcessor.o    \
-	TCLVariable.o   TCLString.o    \
-	TCLResult.o   TCLTimer.o   TCLFileHandler.o   \
-	TCLList.o   TCLException.o \
-	TCLInterpreterObject.o   \
-	TCLCommandPackage.o   TCLIdleProcess.o   \
-	TCLObject.o   TCLChannel.o   TCLTracedVariable.o   \
-	CLanguageTraceCallbacks.o  TCLObjectProcessor.o \
-	TCLCompatibilityProcessor.o
-
-libtclPlus_la_SOURCES = TCLApplication.cpp CChannelVariable.cpp \
-	$(testableSources)
-
+	-DTCL_THREADS @LIBTCLPLUS_CFLAGS@
 
 
 ###### epics loadble Tcl package:
 
 
-libepics_la_SOURCES=CTCLChannelCommand.cpp CTCLEpicsCommand.cpp \
-			CTCLEpicsPackage.cpp CChannel.cpp
+noinst_HEADERS = CTCLChannelCommand.h CTCLEpicsCommand.h \
+	CTCLEpicsPackage.h	\
+	CChannel.h CChannelVariable.h Asserts.h
 
-libepics_la_LIBADD  = @top_srcdir@/libtclPlus.la  \
-			@top_srcdir@/libException.la \
+
+
+
+
+libepics_la_SOURCES=CTCLChannelCommand.cpp CTCLEpicsCommand.cpp \
+			CTCLEpicsPackage.cpp CChannel.cpp  CChannelVariable.cpp
+
+libepics_la_LIBADD  =   @LIBTCLPLUS_LDFLAGS@ \
 			@TK_LIBS@ @TCL_LIBS@  $(EPICS_LDFLAGS)		
 
 libepics_la_LDFLAGS = 	@PTHREAD_LIBS@ -version-info 2:2:0 $(OSLDFLAGS)
@@ -171,43 +123,6 @@ webdocs: $(WEBDOCS)
 	$(INSTALL_DATA)  $(WEBDOCS) $(WEBDOCDIR)
 
 
-## Tests:
-
-if CPPUNIT
-noinst_PROGRAMS = unittests tracetests interptests
-
-unittests_SOURCES = TestRunner.cpp testException.cpp testErrnoException.cpp \
-	testStreamIOError.cpp testRangeError.cpp
-
-unittests_LDFLAGS = @PTHREAD_LIBS@
-unittests_LDADD   =  @CPPUNIT_LIBS@ -lException @TK_LIBS@ @TCL_LIBS@
-
-tracetests_SOURCES = TestRunner.cpp \
-			ccallbacktest.cpp \
-			tracevartest.cpp
-
-tracetests_DEPENDENCIES = $(testableObjects)
-
-TestLdflags =  $(testableObjects) @CPPUNIT_LIBS@ $(X11EXTRA_LDFLAGS) \
-	 -lException @TK_LIBS@ @TCL_LIBS@
-
-
-tracetests_LDFLAGS= @PTHREAD_LIBS@
-tracetests_LDADD = $(TestLdflags)
-
-interptests_SOURCES=interpretertest.cpp objecttest.cpp resulttest.cpp \
-	objcommandtest.cpp compatcommand.cpp
-
-
-interptests_LDADD = TestRunner.o $(TestLdflags) @CPPUNIT_LIBS@ @TK_LIBS@ @TCL_LIBS@
-interptests_LDFLAGS=@PTHREAD_LIBS@
-
-interptests_DEPENDENCIES = $(testableObjects) TestRunner.o
-
-
-
-TESTS=./unittests ./tracetests ./interptests
-endif
 
 ## Tarball generation stuff:
 
