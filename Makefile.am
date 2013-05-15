@@ -126,4 +126,4 @@ webdocs: $(WEBDOCS)
 
 ## Tarball generation stuff:
 
-EXTRA_DIST= $(PACKAGES) $(XMLFILES) $(TCLPROGRAMS)
+EXTRA_DIST= $(PACKAGES) $(XMLFILES) $(TCLPROGRAMS) libtcl
