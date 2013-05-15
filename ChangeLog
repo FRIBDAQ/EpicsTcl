@@ -135,6 +135,8 @@ Relesae 2.2-001
 Release 2.3
 	- Use stored Tcl, CPPUNIT and pthread tests in m4/*.m4
 	  rather than old style inline tests in configure.in.
+	- Disentangle from the tclplus lib but store a local
+	  tagged copy in case that's not installed.
 	
 	
 	
