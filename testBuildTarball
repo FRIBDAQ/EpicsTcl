@@ -3,21 +3,16 @@
 make dist
 
 amversion=`grep AM_INIT_AUTOMAKE configure.in | cut -f2 -d" " | sed s/,//`
-acversion=`grep AC_INIT configure.in | cut -f2 -d"," | sed s/,// | sed s/")"//`
 
 target= ${WORKSPACE}/${amversion}-${BUILD_NUMBER}
 rm -rf ${target}
 
 
-rm -rf epicstcl-${amversion} epicstcl-${acversion}
+rm -rf epicstcl-${amversion} 
 
 tarball=epicstcl-${amversion}.tar.gz
 version=${amversion}
-if test ! -e ${tarball}
-then
-   tarball=epicstcl-${acversion}.tar.gz
-   version=${acversion}
-fi
+
 echo ${tarball}
 
 
