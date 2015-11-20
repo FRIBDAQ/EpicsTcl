@@ -1,0 +1,11 @@
+*.1tcl
+*.1c
+.deps
+.libs
+*.lo
+*.o
+auto4mte.cache
+config
+libtcl
+*.la
+m4
