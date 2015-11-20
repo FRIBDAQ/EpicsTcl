@@ -4,7 +4,7 @@ make dist
 
 amversion=`grep AM_INIT_AUTOMAKE configure.in | cut -f2 -d" " | sed s/,//`
 
-target= ${WORKSPACE}/${amversion}-${BUILD_NUMBER}
+target=${WORKSPACE}/${amversion}-${BUILD_NUMBER}
 rm -rf ${target}
 
 
@@ -19,7 +19,7 @@ echo ${tarball}
 tar xzf ${tarball}
 cd `basename ${tarball} .tar.gz`
 
-./configure --prefix=${target}
+./configure --prefix=${target}  --with-epics-rootdir=/usr/lib/epics
 make clean all
 make install
 
