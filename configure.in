@@ -7,7 +7,7 @@ AM_CONFIG_HEADER(config.h)
 
 #    Separate device libraries.
 
-AM_INIT_AUTOMAKE(epicstcl, 2.3-000, fox@nscl.msu.edu, [], [http://www.sourceforge.net/projects/epicstcl])  
+AM_INIT_AUTOMAKE(epicstcl, 2.3, fox@nscl.msu.edu, [], [http://www.sourceforge.net/projects/epicstcl])  
 
 #
 #   The variable below should track the
