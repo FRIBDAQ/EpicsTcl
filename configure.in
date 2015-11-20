@@ -7,7 +7,7 @@ AM_CONFIG_HEADER(config.h)
 
 #    Separate device libraries.
 
-AM_INIT_AUTOMAKE(epicstcl, 2.3)  
+AM_INIT_AUTOMAKE(epicstcl, 2.3-000)  
 
 #
 #   The variable below should track the
