@@ -308,10 +308,12 @@ fi
 
 if test $haveepics == "yes"
 then
-	# Have epics:
+	# Have epics -- assuming gcc for now -- at some point epics adds a ...compiler/compiler-name
+	# that must be included.
+
 
    EPICSSOFTWARE="controlpush epicsdisplay chanlog" # Add these directories to build.
-   EPICS_INCLUDES="-I$epicsroot/include -I$epicsroot/include/$incsysdir"
+   EPICS_INCLUDES="-I$epicsroot/include -I$epicsroot/include/$incsysdir -I$epicsroot/include/compiler/gcc"
    EPICS_LDFLAGS="-L$epicsroot/lib/$libsysdir -lca -lCom -lrt"
    if test "$host_os" == "linux-gnu"
    then
