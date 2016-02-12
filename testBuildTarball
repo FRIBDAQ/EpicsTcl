@@ -2,7 +2,7 @@
 
 make dist
 
-amversion=`grep AM_INIT_AUTOMAKE configure.in | cut -f2 -d" " | sed s/,//`
+amversion=`grep AM_INIT_AUTOMAKE configure.ac | cut -f2 -d" " | sed s/,//`
 
 target=${WORKSPACE}/${amversion}-${BUILD_NUMBER}
 rm -rf ${target}
