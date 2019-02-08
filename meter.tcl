@@ -442,6 +442,7 @@ snit::widget controlwidget::meter {
     #  and the last decade.
     #
     onconfigure -log value {
+	variable constructing
 	#  No change return.
         
 	if {$value == $options(-log)}  return;    # short cut exit.
