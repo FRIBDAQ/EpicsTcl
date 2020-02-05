@@ -40,46 +40,51 @@ AX_PTHREAD
 
 
 
-if test "$host_os" == "linux-gnu"
-then
-   kernel_full_version="$(uname -r)"
-   kernel_version="$(echo $kernel_full_version | cut -f1,2 -d.)"
-   AC_MSG_RESULT([Building on $host_os kernel $kernel_version])  
+case $host_os in
+    linux-gnu*)
+        kernel_full_version="$(uname -r)"
+        kernel_version="$(echo $kernel_full_version | cut -f1,2 -d.)"
+        AC_MSG_RESULT([Building on $host_os kernel $kernel_version])
 
-   arch="$(uname -m)"
-   case $arch in
-       i[[3456]]86)
-           libsysdir="linux-x86"
-           binsysdir="linux-x86"
-           ;;
-       x86_64)
-           libsysdir="linux-x86_64"
-           binsysdir="linux-x86_64"
-           ;;
-       *)
-           echo 'no idea how to deal with this architecture: ' $arch
-           exit
-           ;;
-   esac
+        arch="$(uname -m)"
+        case $arch in
+            i[[3456]]86)
+                libsysdir="linux-x86"
+                binsysdir="linux-x86"
+                ;;
+            x86_64)
+                libsysdir="linux-x86_64"
+                binsysdir="linux-x86_64"
+                ;;
+            aarch64|armv[[678]]*)
+                libsysdir="linux-arm"
+                binsysdir="linux-arm"
+                ;;
+            *)
+                echo 'no idea how to deal with this architecture: ' $arch
+                exit
+                ;;
+        esac
 
 
-   incsysdir="os/Linux"
-   OSLDFLAGS="-Wl,\"-rpath=$libdir\""
-   SLIBEXT=".so"
-elif echo $host_os |grep -s darwin 
-then
-   # God help me when the version changes:
+        incsysdir="os/Linux"
+        OSLDFLAGS="-Wl,\"-rpath=$libdir\""
+        SLIBEXT=".so"
+	;;
+    *darwin*)
+        # God help me when the version changes:
 
-   AC_MSG_RESULT([Building on MAC-OSX 8.9.0])
-   incsysdir="os/Darwin"
-   libsysdir="darwin-ppc"
-   binsysdir="darwin-ppc"
-   SLIBEXT=".dylib"
+        AC_MSG_RESULT([Building on MAC-OSX 8.9.0])
+        incsysdir="os/Darwin"
+        libsysdir="darwin-ppc"
+        binsysdir="darwin-ppc"
+        SLIBEXT=".dylib"
  
-else
-   AC_MSG_ERROR([This software can only be built on linux-gnu or darwin not $host_os])
-fi
-
+	;;
+    *)
+        AC_MSG_ERROR([This software can only be built on linux-gnu or darwin not $host_os])
+        ;;
+esac
 
 
 # Checks for programs.
