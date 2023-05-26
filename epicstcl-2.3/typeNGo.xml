@@ -1,0 +1,209 @@
+<refentry>
+    <refmeta>
+        <refentrytitle>typeNGo compound widget   </refentrytitle>
+        <manvolnum>1tcl</manvolnum>
+    </refmeta>
+    <refnamediv>
+        <refname>typeNGo</refname>
+        <refpurpose>
+            provides a compound widget for entering text with an explicit commit.
+        </refpurpose>
+    </refnamediv>
+    <refsynopsisdiv>
+        <cmdsynopsis>
+            <command>
+package require typeNGo
+            </command>
+        </cmdsynopsis>
+        <cmdsynopsis>
+            <command>
+controlwidget::typeNGo <replaceable>path ?options...?</replaceable>
+            </command>
+        </cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+        <title>SUMMARY</title>
+        <para>
+            The <command>typeNGo</command> is a compound widget that consists of
+            vertically stacked label, entry and button widgets.  The idea is that this will
+            typcially be used to provide controlled updates of the value of the variable that
+            controls the label widget.  If you consider the case of an entry and a label both
+            bound via <command>-textvariable</command> to the same variable, as you type in the
+            entry, the variable value dynamically changes.  This is not suitable for controls
+            applications e.g.
+        </para>
+        <para>
+            The typeNGo widget provides explicit control over when the entry widget is a correct
+            value worth propagating to the application.  This is done either by clicking the
+            button or by hitting the enter/return key while the focus in in the entry widget.
+        </para>
+        <para>
+            Validation scripts are also supported (see <command>-validate</command> in the
+            OPTIONS secion).  Validation scripts are invoked when the button is clicked and
+            must return a true or false value.  If false is returned, the <command>-command</command>
+            script is not invoked and the entry field is returned to its prior value.
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>OPTIONS</title>
+        <para>
+            All label operations except <command>-text</command> are forwarded directly
+            tothe label widget contained by the megawidget.  See, however the
+            <command>-label</command> option.
+            <variablelist>
+                <varlistentry>
+                    <term><command>-orient <replaceable>vertical | horizontal</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Only processed at widget creation time.  This option determines the
+                            layout of the widget.  If the value is <literal>vertical</literal>
+                            (the default), the label, entry and button are laid out vertically in
+                            that order.  If the value is <literal>horizontal</literal>,
+                            the label, entry and button are laid out horizontally in that order.
+                            See however, <command>-showlabel</command>.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-showlabel <replaceable>bool</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Only processed at widget creation time.  This option determines
+                            if the label widget is actually displayed. If the value is
+                            <literal>true</literal> (default), the label widget is displayed.
+                            If the value is <literal>false</literal>, the label widget is
+                            created but not displayed.
+                        </para>
+                    </listitem>
+                </varlistentry>  
+                <varlistentry>
+                    <term><command>-text  <replaceable>labelstring</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Provides a label for the button widget.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-label</command> <replaceable>labelstring</replaceable></term>
+                    <listitem>
+                        <para>
+                            Provides a string for the label.  This is overridden if a
+                            <command>-textvariable </command> is specified.
+                        </para>
+                    </listitem>
+                    </varlistentry>
+                <varlistentry>
+                    <term><command>-command</command> <replaceable>script</replaceable></term>
+                    <listitem>
+                        <para>
+                            Provides a callback script that will be invoked when the entry is
+                            committed via a button click or enter key.  In the script,
+                            %W is substituted wih the widget command name.  %V is substituted
+                            with the value of the entry.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-validate</command> <replaceable>script</replaceable></term>
+                    <listitem>
+                        <para>Provides a scripttoperform validation.  The %V and %W substitutions
+                            described in <command>-command</command> are supported.  If the script
+                            does not return a true value,
+                            the <command>-command</command> script will not
+                            be executed, and the entry field value will be returned to its prior
+                            value.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </para>
+
+    </refsect1>
+    <refsect1>
+        <title>METHODS</title>
+        <para>
+            <variablelist>
+                <varlistentry>
+                    <term><command>Get</command></term>
+                    <listitem><para>
+                        Gets the current value of the entry widget.. this will be the text
+                        currently displayed in that widget, not the most recently committed
+                        value.
+                     </para></listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>Set <replaceable>value</replaceable></command></term>
+                    <listitem>
+                        <para>
+                            Sets the value of the entry widget to the <replaceable>value</replaceable>
+                            string.  This does not commit it (see <command>Invoke</command>).
+                            This also does not do any validation.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>Invoke</command></term>
+                    <listitem>
+                        <para>
+                            Simulates a button click.  This will cause entry validiation and,
+                            if permitted, a commit of the entry.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>BINDINGS</title>
+        <para>
+            <variablelist>
+                <varlistentry>
+                    <term>&lt;Return&gt; - with focus in the entry widget.</term>
+                    <listitem>
+                        <para>
+                            does an <command>Invoke</command> on self.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>&lt;FocusOut&gt; - With focus in the entry widget</term>
+                    <listitem>
+                        <para>
+                        restores the prior value to the widget.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>EXAMPLES</title>
+        <para>
+            This example shows how to use the -validate switch to ensure that
+            the entry field has a  legal floating point value when the -command
+            script would be invoked.  If the entry field is not a floating point
+            value, the prior value of the field is restored.
+        </para>
+        <programlisting>
+            
+package require typeNGo
+controlwidget::typeNGo .tng -validate [list string is double -strict %V]
+pack .tng
+
+        </programlisting>
+        <para>
+            This example uses the Tcl <command>string is double</command> command
+            to determine if the new value (%V) is a double.  If not, the validation fails,
+            <command>-command</command> won't be executed, and the prior value of the
+            entry field will be restored.
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>SEE ALSO</title>
+        <para>
+            epicsTypeNGo(1tcl)
+        </para>
+    </refsect1>
+</refentry>

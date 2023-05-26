@@ -1,0 +1,396 @@
+'\" t
+.\"     Title: epics tcl package
+.\"    Author: Ron Fox
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 07/14/2022
+.\"    Manual: NSCL Epics support for Tcl/Tk (1tcl)
+.\"    Source: [FIXME: source]
+.\"  Language: English
+.\"
+.TH "EPICS TCL PACKAGE" "3tcl" "07/14/2022" "[FIXME: source]" "NSCL Epics support for Tcl/Tk"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+epics \- Loadable package to access epics\&.
+.SH "SYNOPSIS"
+.HP \w'\fB\ package\ require\ epics\ \fR\ 'u
+\fB
+package require epics
+            \fR
+.HP \w'\fB\ epicschannel\ \fR\fB\fIname\fR\fR\fB\ \fR\ 'u
+\fB
+epicschannel \fR\fB\fIname\fR\fR\fB
+            \fR
+.HP \w'\fB\ \fR\fB\fIname\fR\fR\fB\ get\ ?count?\ \fR\ 'u
+\fB
+\fR\fB\fIname\fR\fR\fB get ?count?
+            \fR
+.HP \w'\fB\ \fR\fB\fIname\fR\fR\fB\ set\ \fR\fB\fIvalue\-list\ ?data\-type?\fR\fR\fB\ \fR\ 'u
+\fB
+\fR\fB\fIname\fR\fR\fB set \fR\fB\fIvalue\-list ?data\-type?\fR\fR\fB
+            \fR
+.HP \w'\fB\ \fR\fB\fIname\fR\fR\fB\ updatetime\ \fR\ 'u
+\fB
+\fR\fB\fIname\fR\fR\fB updatetime
+            \fR
+.HP \w'\fB\ \fR\fB\fIname\fR\fR\fB\ delete\ \fR\ 'u
+\fB
+\fR\fB\fIname\fR\fR\fB delete
+            \fR
+.HP \w'\fB\ \fR\fB\fIname\fR\fR\fB\ link\ \fR\fB\fItclVariableName\fR\fR\fB\ \fR\ 'u
+\fB
+\fR\fB\fIname\fR\fR\fB link \fR\fB\fItclVariableName\fR\fR\fB
+            \fR
+.HP \w'\fB\ \fR\fB\fIname\fR\fR\fB\ unlink\ \fR\fB\fItclVariableName\fR\fR\fB\ \fR\ 'u
+\fB
+\fR\fB\fIname\fR\fR\fB unlink \fR\fB\fItclVariableName\fR\fR\fB
+            \fR
+.HP \w'\fB\ \fR\fB\fIname\fR\fR\fB\ listlinks\ \fR\fB\fI?pattern?\fR\fR\fB\ \fR\ 'u
+\fB   
+\fR\fB\fIname\fR\fR\fB listlinks \fR\fB\fI?pattern?\fR\fR\fB
+            \fR
+.HP \w'\fB\ \fR\fB\fIname\fR\fR\fB\ values\ \fR\ 'u
+\fB
+\fR\fB\fIname\fR\fR\fB values
+			\fR
+.HP \w'\fB\ \fR\fB\fIname\fR\fR\fB\ size\ \fR\ 'u
+\fB
+\fR\fB\fIname\fR\fR\fB size
+		\fR
+.SH "SUMMARY"
+.PP
+The epics package is a loadable package that supplies access to an epics control system\&. Loading epics will also load the shared libraries required for epics, so these must be installed on the system on which this package is being used\&.
+.PP
+The
+\fBepicschannel\fR
+command expresses an interest in a specific named channel, or database field\&. Once specified, this becomes a new command\&. The new command is an ensemble with several subcommands\&. These subcommands allow one to manipulate and inquire about the channel\&. When interest is declared epics events are requested to maintain the state of a channel\&. Epics events can only be processed, however, by entering the Tcl event loop\&. Either by running wish, or by doing a
+\fBvwait\fR
+in a pure Tcl interpreter\&.
+.PP
+It is perfectly possible and acceptable to do something like:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+epicschannel aaa
+\&.\&.\&.
+epicschannel aaa
+          
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+Rather than creating a second, duplicate command, the epics package maintains a reference count for each distinct epics channel created\&. The first
+\fBepicschannel\fR
+in the example above creates the new command, with a reference count of 1\&. The second increments the reference count of the existing aaa command to 2\&.
+.PP
+Having done the sequence of commands shown above;
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+aaa delete;       # Decrements the refcount to 1 aaa still exists\&.
+\&.\&.\&.
+aaa delete;       # refcount becomes 0 so aaa is deleted\&.
+          
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Hopefully this reference count scheme will make large programs easier to build, as sections will not have to worry about other sections yanking existing commands out from underneath them\&.
+.PP
+The subcommands for an epics channel are:
+.PP
+\fBget\fR \fI?size?\fR
+.RS 4
+Retrieves the value of the channel or field\&. Note that if a connection event has not yet been recieved and processed, this will return an error\&. This can happen either if the channel is not an epics channel or if the event loop has not yet been entered enough times to allow the event to be seen\&. Note that epics events are processed prior to executing this command so it is possible for this command to fail first and then work a few tries later\&.
+.sp
+If the channel is an array, the entire array is returned as a Tcl list unless the optional
+\fIsize\fR
+parameter is provided\&. In that case, the first
+\fIsize\fR
+elements are returned or all elements depending on which is fewer\&.
+.RE
+.PP
+\fBset\fR \fIvalue\-list ?data\-type?\fR
+.RS 4
+Sets the value of the channel or database field (if changeable) to
+\fIvalue\-list\fR\&. All the remarks about the
+\fBset\fR
+subcommand apply here too\&.
+.sp
+If the channel is an array,
+\fIvalue\-list\fR
+is a list of values that will be used to set the first elements of the array\&. The number of elements set is the smaller of the size of the list and the number of array elements managed by the channel\&.
+.sp
+If the optional
+\fIdata\-type\fR
+keyword is present, it provides the data type to be used to do the set\&. The data type can be any of
+string
+(default),
+real
+or
+int\&. It is an error for
+\fIvalue\-list\fR
+to contain a value that cannot be converted to the type specified\&.
+.RE
+.PP
+\fBupdatetime\fR
+.RS 4
+Returns the time of the last update received for the channel\&. The time is returned as an integer suitable for use in the Tcl
+\fBclock\fR
+command\&. This allows the result to be formatted as a time and date, or used arithmetically to calculate time diferences in seconds\&.
+.RE
+.PP
+\fBdelete\fR
+.RS 4
+Deletes the command and attachment to an epics channel\&. All resources associated with the command are also destroyed\&.
+.RE
+.PP
+\fBlink\fR \fIvarname\fR
+.RS 4
+Links a variable to the epics proces variable (channel)\&. Changes to the channel get reflected into the linked variable\&. Changes to the varible from Tcl scripts are traced and result in attempts to modify the epics channel\&.
+.sp
+Additional
+\fBlink\fRs are allowed and create a 1 to many link between an epics channel and several Tcl Variables\&.
+.sp
+At present, only the first element of array process variables is linked to the Tcl variable\&. Array process variables must be handled via the
+\fBget\fR
+and
+\fBset\fR
+sub\-commands\&.
+.RE
+.PP
+\fBunlink \fR\fB\fIvarname\fR\fR
+.RS 4
+Removes the link between the epics channel and the Tcl variable
+\fIvarname\fR\&. It is an error to attempt to unlink from a variable that is not linked\&.
+.RE
+.PP
+\fIname\fR listlinks \fI?pattern?\fR
+.RS 4
+Lists the set of links that match the optional
+\fIpattern\fR\&. If no pattern is supplied, it defaults to *\&.
+.RE
+.PP
+\fIname\fR values
+.RS 4
+Lists the set of values that the process variable can legally accept\&. If this list is empty, the channel is either not connected or has not received its first value and therefore does not yet know its list of enumerated values\&. If the list size is one, this will be a textual encoding of the data types acceptable by the channel e\&.g\&.
+float,
+string
+or
+int\&. If the list size is greater than 1, this is a list of allowed values for the enumerated variable\&.
+.RE
+.PP
+\fIname\fR \fBsize\fR
+.RS 4
+Returns the number of elements in
+\fIname\fR\&. Epics process variables can be thought of as arrays, where a scalar value is just the special case of an array of size 1\&.
+.RE
+.SH "EXAMPLES"
+.PP
+The code below creates a label widget that follows the value of the epics channel SOMECHANNEL:
+.PP \fBExample\ \&3.\ \&Linking an epics channel to a Tcl variable\fR .sp .if n \{\ .RS 4 .\} .nf package require epics epicschannel SOMECHANNEL SOMECHANNEL link SOMECHANNELvar label \&.l \-textvariable SOMECHANNELvar pack \&.l .fi .if n \{\ .RE .\}
+.PP
+Note that this can be done much more simply using the epics Tcl widgets\&. Those widgets understand how to display epics channels directly e\&.g\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+package require epicsLabelWithUnits
+controlwidget::epicsLabelWithUnits \&.l \-channel SOMECHANNEL
+pack \&.l
+           
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+Creates a GUI that displays SOMECHANNEL with its engineering units, updating as the value updates in Epics\&.
+.PP
+The example below finds out how many elements are in the channel
+K5RGA_HSCAN_DAT
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+package require epics
+epicschannel K5RGA_HSCAN_DAT
+\&...
+set elements [K5RGA_HSCAN_DAT size]
+		
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The following example, takes the channel K5RGA_HSCAN_DAT, already assumed to be connected, and clears its second array element\&. Note that the elements of Tcl lists number from 0\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+set data [K5RGA_HSCAN_DAT get 2];     # get elements 0,1\&.
+set data [lreplace $data 1 1 0];      # Replace second item with 0\&.
+K5RGA_HSCAN_DAT set $data;            # Set elements 0,1
+		
+.fi
+.if n \{\
+.RE
+.\}
+.SH "OPEN ISSUES"
+.PP
+On some linux systems a broken implementation of the Linux Native Posix Thread Library (NPTL) causes the tcl shell extended with the epics package to deadlock (hang)\&. This is a known issue with Linux\&. If this is observed then prior to starting tcl/wish applications, select the LinuxThreads implementation of the threading library by (bash):
+.PP \fBExample\ \&4.\ \&Selecting the LinuxThreads thread library to prevent hangs\fR .PP .sp .if n \{\ .RS 4 .\} .nf export LD_ASSUME_KERNEL=2\&.4\&.19 .fi .if n \{\ .RE .\} .sp For the C shell: .sp .if n \{\ .RS 4 .\} .nf setenv LD_ASSUME_KERNEL 2\&.4\&.19 .fi .if n \{\ .RE .\} .sp
+.SS "Issues with enumerated variable types"
+.PP
+Enumerated types have an interesting interaction with array sets\&. This is not an defect in the software package, it is simply a property of Tcl that interacts with some enumerated types, and the ability to set enumerated types by string values\&. Consider an enumerated type whose string values have spaces e\&.g one legitimate value is
+"a b"\&. Let\*(Aqs call this process variable
+funky1
+(we will have a
+funky2
+to show another interesting issue with enumerated process variables\&. Suppose that this value
+"a b"
+corresponds to enumerated index 0\&. Consider the following two chunks of Tcl (funky1
+is already assumed to be established as a channel)\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+funky1 set [lindex [funky1 values] 0]
+funky1 set "a b"
+		
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Both of these provide the parameter
+a b
+to the
+\fBset\fR
+subcommand\&. this looks like a two element list, but
+funky1
+is only a single element array, so the value
+a
+is set which may not be legal, in which case epics will throw an error or, even worse, may correspond to another legal value for the enumerated type\&.
+.PP
+There are two potential solutions to this problem\&. First, ensure that a single element list is received by the
+\fBset\fR
+command, second, use indices only:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+funky1 set [list [lindex [funky1 values] 0]]		
+funky1 set [lsearch [funky1 values] "a "b] int
+		
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The
+\fBlist\fR
+command will add an additional level of quoting if necessary to ensure that each parameter it recieves is a properly quoted list element\&. The
+\fBlsearch\fR
+command will return the index of
+"a b"
+in the list of allowed values for
+funky1\&. This is an integer that represents the enumerated index value\&. The
+int
+at the back end of the command forces the
+\fBset\fR
+to be done as an integer data type rather than a string\&. See the discussion below about
+pathalogical
+enumerated process variables
+.PP
+For enumerated process variables there can also be an interesting pathology\&. Consider a process variable
+funky2
+for which the
+\fBvalues\fR
+subcommand returns the list:
+5 4 3 2 1 0\&. It is not clear what the following does, or even what the intent is:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+funky2 set 2
+		
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Is the 2 the string 2 (which has enumerated index 3), or is it the index 2 which has the string value 3? Process variable designers should avoid such pathologies\&. If, however, a pathology like this does exist, that would imply that the only unambiguous way to set enumerated process variables is by index\&. The following
+\fIis\fR
+unambiguous:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+funky2 set 2 int
+         
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+This forces an integer set of the process variable which selects the textual value 3\&. Note that this pathology may well be hidden from the programmer, who is just using the
+\fBvalues\fR
+command to get the list of legal values and selecting from amongst them\&. The above discussion should hopefully lead you to conclude that for enumerated epics variable types, you should probably only use the textual representation, relying on the index to set the value and ensuring that the index is treated as an index by using the
+int
+data type parameter on the
+\fBset\fR
+sub command to ensure that pathalogically labelled variables are not a problem\&. e\&.g:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+someenum set [lindex [someenum values] $index];  # Avoid this!!!
+someenum set $index int;                         # use this instead\&.
+       	
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+There is a further subtlety\&. For linked variables, modifications of the variable triggers a set in
+\fIstring\fR
+form\&. This avoids the vector/list issue, but steps right into the issue with pathological value sets\&. Therefore once more enumerated process variables, following the plan of using the text (variable) for display only, but use the
+\fB\fIsomeenum\fR\fR\fB set \fR\fB\fIsome\-integer\fR\fR\fB int\fR
+form for setting the variable is the best policy\&.
+.SH "AUTHOR"
+.PP
+\fBRon Fox\fR
+.RS 4
+Author.
+.RE

@@ -1,0 +1,10 @@
+Epics Tcl interfaces consists of two parts
+tcl loadable package for EPICS
+megawidgets for epics process variables.
+
+known dependencies:
+- Epics
+- Snit (megawidgets)
+- BLT (megawidgets)
+
+

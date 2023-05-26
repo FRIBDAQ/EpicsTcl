@@ -1,0 +1,80 @@
+
+<refentry>
+    <refmeta>
+        <refentrytitle>epicsMeter</refentrytitle>
+        <manvolnum>1tcl</manvolnum>
+    </refmeta>
+    <refnamediv>
+        <refname>epicsMeter</refname>
+        <refpurpose>
+            Provide a generic meter that can display an epics channel
+        </refpurpose>
+    </refnamediv>
+    <refsynopsisdiv>
+        <cmdsynopsis>
+            <command>
+packge require epicsMeter
+            </command>
+        </cmdsynopsis>
+        <cmdsynopsis>
+            <command>
+controlwidget::epicsMeter <replaceable>name  </replaceable> <option>-channel</option><replaceable> channel ?options?</replaceable>
+            </command>
+        </cmdsynopsis>
+
+    </refsynopsisdiv>
+    <refsect1>
+        <title>DESCRIPTION</title>
+        <para>
+            Provides a generic meter that can display any numeric epics process variable.
+            The meter's normal appearance is a vertical strip of subwidgets consisting of
+            a textual label describing the widget contents (defaults to the channel name),
+            An epicsLabel that shows the current value and units of the channel.
+            A meter whose indicator shows the current value of the channel.
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>OPTIONS</title>
+        <para>
+            All options supported by the <command>controwidget::meter</command> widget are supported
+            by this widget except the <option>-variable</option> option.
+        </para>
+        <variablelist>
+            <varlistentry>
+                <term><option>-channel</option> <replaceable>channel-name</replaceable></term>
+                <listitem>
+                    <para>
+                        Provides the name of the epics process variable (channel) to display on the meter.
+                        This must be provided at construction time and cannot be changed.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term><option>-label</option> <replaceable>string</replaceable></term>
+                <listitem>
+                    <para>
+                        Overrides the default widget label string, which is the channel name.
+                    </para>
+                </listitem>
+            </varlistentry>
+        </variablelist>
+    </refsect1>
+    <refsect1>
+        <title>EXAMPLES</title>
+        <para>
+            The example below displays the temperature outside the NSCL in degrees F, on a meter
+            that goes from 0 to 100 degrees with tick marks every 20 degrees:
+            <programlisting>
+package require epicsMeter
+controlwidget::epicsMeter .temp -from 0 -to 100 -majorticks 20 -channel TI9400
+pack .temp
+            </programlisting>  
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>SEE ALSO</title>
+        <para>
+            controlwidget::meter(1tcl)
+        </para>
+    </refsect1>
+</refentry>

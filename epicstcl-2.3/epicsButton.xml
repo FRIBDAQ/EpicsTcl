@@ -1,0 +1,254 @@
+
+<refentry>
+    <refmeta>
+        <refentrytitle>epicsButton</refentrytitle>
+        <manvolnum>1tcl</manvolnum>
+    </refmeta>
+    <refnamediv>
+        <refname>epicsButton</refname>
+        <refpurpose>
+            Provide a control for on/off values in epics.
+        </refpurpose>
+    </refnamediv>
+    <refsynopsisdiv>
+        <cmdsynopsis>
+            <command>
+package require epicsButton                
+            </command>
+        </cmdsynopsis>
+        <cmdsynopsis>
+            <command>
+controlwidget::epicsButton <replaceable>path ?options...?</replaceable>
+            </command>
+        </cmdsynopsis>
+
+    </refsynopsisdiv>
+    <refsect1>
+        <title>DESCRIPTION</title>
+        <para>
+            This widget provides a mechanism for controlling binary output
+            style devices with the ability to monitor an optional associated
+            input status channel.  Two control styles are supported, a single button
+            and a pair of buttons.   The widget can also be labeled.
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>OPTIONS</title>
+        <para>
+            <variablelist>
+                <varlistentry>
+                    <term><command>-channel</command> <replaceable>channel-name</replaceable></term>
+                    <listitem>
+                        <para>
+                            Specifies the name of the channel that will be controlled by the
+                            pushbutton widget.  Note that unless the <command>-statechannel</command>
+                            option is specified, this channel will also be used to reflect the
+                            state of the device. This option must be specified when the
+                            button is created.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-statechannel</command> <replaceable>channel-name</replaceable></term>
+                    <listitem>
+                        <para>
+                            Specifies the name of the channel that reflects the state of the
+                            device.  The channel state is assumed to be 'on' if this channel is
+                            boolean <literal>true</literal> and off otherwise.  If this option
+                            is not specified when the button is constructed, the state will be
+                            read from the channel specified by <command>-channel</command>.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-onvalue</command> <replaceable>value</replaceable></term>
+                    <listitem>
+                        <para>Specifies the value to write to the channel to turn the device
+                            to the <emphasis>on</emphasis> state.  If not specified, this defaults
+                            to 1. 
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-offvalue</command> <replaceable>value</replaceable></term>
+                    <listitem>
+                        <para>
+                            Specifies the value to write to the channel to turn the device
+                            to the <emphasis>off</emphasis> state.  If not specified,
+                            this defaults to 0.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-onlabel</command> <replaceable>string</replaceable></term>
+                    <listitem>
+                        <para>
+                            Specifies the string to use to label the button that turns the device on.
+                            If a single button representation has been selected, this string will
+                            label the button when the device is off (the button turns the device on),
+                            and the button will display the off color.  In a double
+                            button representation, this label will label the left button, which turns
+                            the device on.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-offlabel</command> <replaceable>string</replaceable></term>
+                    <listitem>
+                        <para>
+                            Specifies a string to use to label the button that turns the
+                            device off.  If a single button representation is selected, this
+                            string will label the button when the device is on (the button
+                            turns the device off in that case), and the button will display the
+                            on color.  In a double button representation, this label will
+                            label the right button which turns the device off.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-oncolor</command> <replaceable>color</replaceable></term>
+                    <listitem>
+                        <para>
+                            Specifies the color to use to indicate the device is on.
+                            In a single button case, the color is the background color of the
+                            single button, in a double button case, this color is the background
+                            color of the button that is enabled (when the device is on, the
+                            on button is disabled).
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-offcolor</command> <replaceable>color</replaceable></term>
+                    <listitem>
+                        <para>
+                            Specifies the color to use to indicate the device is off.  See the
+                            discussion of <command>-oncolor</command> for a hint about how this
+                            works.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-modality</command> <replaceable>keyword</replaceable></term>
+                    <listitem>
+                        <para>
+                            Selects the type of button presentation desired.  The keyword can
+                            have the value <literal>single</literal> or <literal>double</literal>.
+                            Selecting whether a single button or a pair of buttons will be used
+                            to control this device.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><command>-showlabel</command> <replaceable>boolean</replaceable></term>
+                    <listitem>
+                        <para>
+                            If <literal>true</literal> (default)
+                            a channel name label is placed above the
+                            button(s). If <literal>false</literal>, no channel label is displayed.
+                        </para>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </para>
+    </refsect1>
+    <refsect1>
+        <title>EXAMPLES</title>
+        <para>
+            The example below (to the best of my knowledge), creates a pair of buttons
+            that can turn the D125DV power supply on and off:
+            <example>
+                <title>Using a button pair to turn on/off D125DV</title>
+                <programlisting>
+package require epicsButton
+controlwidget::epicsButton .d125dvonoff -channel D125DV.ONL -statechannel D125DV.SONL \
+                                        -modality double \
+                                        -onlabel {Turn On} \
+                                        -offlabel {Turn Off} \
+                                        -oncolor  green -offcolor red
+pack .d125dvonoff
+                </programlisting>
+            </example>
+        </para>
+    </refsect1>
+
+</refentry>
+<refentry id="epicsCommandButton">
+      <refmeta>
+         <refentrytitle>epicsCommandButton</refentrytitle>
+         <manvolnum>1tcl</manvolnum>
+      </refmeta>
+      <refnamediv>
+         <refname>epicsCommandButton</refname>
+	 <refpurpose>Button that sends a value to a channel</refpurpose>
+      </refnamediv>
+      
+      <refsynopsisdiv>
+        <cmdsynopsis>
+        <command>
+package require epicsButton
+		</command>
+		</cmdsynopsis>	
+        <cmdsynopsis>
+            <command>
+controlwidget::epicsCommandButton <replaceable>path ?options?...</replaceable>            
+            </command>
+        </cmdsynopsis>
+      </refsynopsisdiv>
+      <refsect1>
+         <title>DESCRIPTION</title>
+         <para>
+            The <command>epicsCommandButton</command> is wraps the Tk 
+            button widget so that clicking the button sends a specific value
+            to an associated epics process variable.  The appearance defaults
+            for the widget are the same as ordinary Tk buttons, in contrast
+            with <command>epicsButton</command> widgets.
+         </para>
+      </refsect1>
+      <refsect1>
+         <title>
+            OPTIONS
+         </title>
+         <para>
+         	The epicsCommandButton inherits all options and methods from the
+         	Tk button widget.  The <command>-command</command> option is, however
+         	disabled to prevent interference with the epicsCommandButton's use
+         	of this feature in the underlying button.
+         </para>
+         <variablelist>
+            <varlistentry>
+                <term><command>-channel</command> <replaceable>epicschannel</replaceable></term>
+                <listitem>
+                    <para>
+                      	<replaceable>epicschannel</replaceable> is the channel controlled by
+                      	this widget.  This must be supplied when constructing the widget and
+                      	cannot be dynamically modified (attempts to do so are silently ignored).
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+            	<term><command>-value</command> <replaceable>value</replaceable></term>
+            	<listitem>
+            		<para>
+            			<replaceable>value</replaceable> is the value that will be written to
+            			the channel when the button is clicked.  This defaults to an empty 
+            			string, and can be dynamically modified after the widget is created.
+           			</para>
+       			</listitem>
+    		</varlistentry>
+         </variablelist>
+      </refsect1>
+      <refsect1>
+         <title>EXAMPLES</title>
+         <para>
+         	The example below creates a button that, when pressed 
+         	sets the channel <literal>IGAI0</literal> to zero.
+         </para>
+         <programlisting>
+package require epicsButton
+controlwidget::epicsCommandButton .eb -channel IGAI0 -value 0 -text IGAI0=>0
+pack .eb
+         </programlisting>
+      </refsect1>
+ 
+   </refentry>
+

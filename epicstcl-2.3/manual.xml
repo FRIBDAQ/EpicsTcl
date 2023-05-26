@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+                      "file:///usr/share/xml/docbook/schema/dtd/4.3/docbookx.dtd"
+
+[
+<!ENTITY epics             SYSTEM "epics.xml">
+<!ENTITY epicsBCMMeter     SYSTEM "epicsBCMMeter.xml">
+<!ENTITY epicsButton       SYSTEM "epicsButton.xml">
+<!ENTITY epicsEnumeratedControl SYSTEM "epicsEnumeratedControl.xml">
+<!ENTITY epicsGraph        SYSTEM   "epicsgraph.xml">
+<!ENTITY epicsLabel        SYSTEM   "epicsLabel.xml">
+<!ENTITY epicsLabelWithUnits SYSTEM "epicsLabelWithUnits.xml">
+<!ENTITY epicsLed          SYSTEM   "epicsLed.xml">
+<!ENTITY epicsMeter        SYSTEM   "epicsMeter.xml">
+<!ENTITY epicsStripChart   SYSTEM   "epicsStripChart.xml">
+<!ENTITY epicsTypeNGo      SYSTEM   "epicsTypeNGo.xml">
+<!ENTITY epicsspinbox      SYSTEM   "epicsspinbox.xml">
+<!ENTITY led               SYSTEM   "led.xml">
+<!ENTITY meter             SYSTEM   "meter.xml">
+<!ENTITY typeNGo           SYSTEM   "typeNGo.xml">
+<!ENTITY epicsPullDown     SYSTEM   "epicsPullDown.xml">
+]
+>
+
+<book>
+   <bookinfo>
+      <title>NSCL Epics support software</title>
+      <author><firstname>Ron</firstname><surname>Fox</surname></author>
+      <revhistory>
+          <revision>
+	     <revnumber>1.0</revnumber>
+	     <date>March 28, 2007</date>
+	     <authorinitials>RF</authorinitials>
+	     <revremark>Original Release</revremark>
+	  </revision>
+      </revhistory>
+   </bookinfo>
+<reference>
+<title>NSCL Epics support for Tcl/Tk (1tcl)</title>
+<refentry>
+<refmeta>
+  <refentrytitle>NSCL Epics support</refentrytitle>
+  <manvolnum>1tcl</manvolnum>
+</refmeta>
+<refnamediv>
+   <refname>Intro</refname>
+   <refpurpose>Overview of Epics support for Tcl/Tk at the NSCL</refpurpose>
+</refnamediv>
+<refsect1>
+<title>DESCRIPTION</title>
+   <para>
+      NSCL has developed base support for epics access from within Tk programs
+      or Tcl programs that are based around the Tcl event loop.  The base support
+      consists of a package called <emphasis>epics</emphasis>.   You can use
+      this package to directly access EPICS channels.  In  many cases, however, when
+      building pure control panel applications, you will be able to accomplish your
+      objectives by writing your application using the NSCL epics widget set.
+   </para>
+    <para>
+       NSCL has developed several Tcl/Tk widgets that understand
+       how to directly interface with the EPICS control system.
+       these widgets are built to directly understand  EPICS channels,
+       record fields and how to display them.
+    </para>
+    <para>
+       The Widget set consists of the following:
+    </para>
+	<variablelist>
+	  <varlistentry>
+	    <term>epicsBCMMeter</term>
+	    <listitem>
+	      <para>
+                   A meter with range controls that knows how to
+                   display NSCL Beam Current meters and control their
+                   ranges.  This widget requires an EPICS record of a
+                   specific subset of types.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsButton</term>
+	    <listitem>
+	      <para>
+                    A pushbutton that is connected to an epics
+                    field.  This normally is used to control
+                    binary I/O records.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsEnumeratedControl</term>
+	    <listitem>
+	      <para>
+                   Controls an epics field that can have
+                   a value from a set of discrete pre-defined values.
+                </para>
+	    </listitem>
+	  </varlistentry>
+          <varlistentry>
+            <term>epicsGraph.xml</term>
+            <listitem>
+             <para>
+                Creates 2-d plots of epics channels vs. each other.
+             </para>
+            </listitem>
+          </varlistentry>
+	  <varlistentry>
+	    <term>epicsLabel.</term>
+	    <listitem>
+	      <para>
+                    Displays the value of an epics record field
+                    in a Tk label widget.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsLabelWithUnits</term>
+	    <listitem>
+	      <para>
+                    Displays the value of an epics record primary
+                    field in a Tk label widget along with the value of
+                    the record's engineering unit's field.
+                </para>
+	      </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsLed</term>
+	    <listitem>
+	      <para> 
+                   Displays an indicator which is lit when the epics
+                   field is nonzero and not when it isn't  the
+                   on and off colors of the LED can be configured.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsMeter</term>
+	    <listitem>
+	      <para>Displays the value of an arbitrary
+                      EPICS record field in a meter.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsStripChart</term>
+	    <listitem>
+	      <para>
+                    Wraps the very flexible BLT Stripchart widget in some
+                    code that allows it to produce strip charts of the time
+                    evolution of an arbitrary number of epics fields.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsTypeNGo</term>
+	    <listitem>
+	      <para>
+                    Provides a simple type-in entry field that allows users
+                    to control the value of an arbitrary epics field. New
+                    values are comitted by pressing a button.
+                </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>epicsspinbox</term>
+	    <listitem>
+	      <para>
+                  Provides a spinbox that can control an arbitrary EPICS record
+                  field.
+              </para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+</refsect1>
+<refsect1>
+   <title>Getting started</title>
+   <para>
+      The NSCL epics software is made up of several packages.  A base epics package
+      provides raw support to the channel access layer.  Each widget provides a separate
+      package as well.  In Tcl, packages are loaded using the:
+      <programlisting>
+<command>package require <replaceable>package-name</replaceable></command>
+      </programlisting>
+      command.
+   </para>
+   <para>
+      The
+      <command>package require</command> searches a list of library directories
+      for matching packages.  In general it will be necessary to add the directory in which
+      the epics packages are installed to this list of directories.  This can be done either
+      by setting the <varname>TCLLIBPATH</varname> environment variable prior to running your
+      scripts, or by adding that directory to the Tcl <varname>auto_path</varname> variable
+      in your script.
+   </para>
+   <para>
+      I cannot anticipate where the NSCL epics software will be installed on all systems,
+      however when I (Ron Fox) install this package, I install it in
+      <filename>/usr/opt/epicstcl</filename> which
+      will put the packages in <filename>/usr/opt/epicstcl/TclLibs</filename>.
+   </para>
+   <example>
+      <title>Setting TCLLIBPATH to /usr/opt/epicstcl/TclLibs</title>
+      <para>
+sh, bash shells:
+      <programlisting>
+<command>export TCLLIBPATH=/usr/opt/epicstcl/TclLibs</command>
+      </programlisting>
+      </para>
+      <para>
+csh:
+      <programlisting>
+<command>setenv TCLLIBPATH /usr/opt/epicstcl/TclLibs</command>
+      </programlisting>
+      </para>
+   </example>
+   <example>
+      <title>Adding /usr/opt/epicstcl/TclLibs to auto_path in a Tcl Script:</title>
+      <programlisting>
+lappend auto_path /usr/opt/epicstcl/TclLibs
+      </programlisting>
+   </example>
+   <para>
+      On windows, no environment variables are needed.  Simply
+      <orderedlist>
+        <listitem>
+            <para> 
+                If not already installed, install the NCSAPPS package
+                on your PC.  This makes the EPICS channel access layer
+                required by the epics package available.
+            </para>
+         </listitem>
+         <listitem>
+            <para>
+               Download and install the ActiveTcl package available at
+               no charge from http://www.activestate.com
+               Install this package in its default location.
+            </para>
+         </listitem>
+         <listitem>
+            <para>
+                Download the epics installer from the NSCL anonymous
+                FTP site.  At the time this is being written it is:
+                ftp://ftp.nscl.msu.edu/pub/epicstcl13-001.exe
+            </para>
+         </listitem>
+         <listitem>
+            <para>
+                Run the epics installer you downloaded.
+            </para>
+         </listitem>
+      </orderedlist>
+   </para>
+</refsect1>
+</refentry>
+	       
+
+
+&epics;
+&epicsBCMMeter;
+&epicsButton;
+&epicsEnumeratedControl;
+&epicsGraph;
+&epicsLabel;
+&epicsLabelWithUnits;
+&epicsLed;
+&epicsMeter;
+&epicsPullDown;
+&epicsStripChart;
+&epicsTypeNGo;
+&epicsspinbox;
+
+<!-- put in the non epics documentation here -->
+
+&meter;
+&led;
+&typeNGo;
+
+</reference>
+</book>
