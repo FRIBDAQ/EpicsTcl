@@ -1,13 +1,13 @@
 '\" t
 .\"     Title: epics tcl package
 .\"    Author: Ron Fox
-.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 07/14/2022
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 09/09/2024
 .\"    Manual: NSCL Epics support for Tcl/Tk (1tcl)
 .\"    Source: [FIXME: source]
 .\"  Language: English
 .\"
-.TH "EPICS TCL PACKAGE" "3tcl" "07/14/2022" "[FIXME: source]" "NSCL Epics support for Tcl/Tk"
+.TH "EPICS TCL PACKAGE" "3tcl" "09/09/2024" "[FIXME: source]" "NSCL Epics support for Tcl/Tk"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
